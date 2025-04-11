@@ -1,0 +1,34 @@
+import '@/config/passport';
+import AuthController from '@/controllers/auth.controller';
+import { Router } from 'express';
+import passport from 'passport';
+
+const router = Router();
+
+router.post('/login', AuthController.login);
+
+router.get(
+  '/google',
+  passport.authenticate('google', { scope: ['profile', 'email'] })
+);
+
+router.get(
+  '/google/callback',
+  passport.authenticate('google', { failureRedirect: '/', session: false }),
+  AuthController.oauthCallback
+);
+
+router.get(
+  '/github',
+  passport.authenticate('github', { scope: ['profile', 'email'] })
+);
+
+router.get(
+  '/github/callback',
+  passport.authenticate('github', { failureRedirect: '/', session: false }),
+  AuthController.oauthCallback
+);
+
+router.post('/logout', AuthController.logout);
+
+export default router;

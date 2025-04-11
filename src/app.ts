@@ -1,13 +1,13 @@
-import express from 'express';
-import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import cors from 'cors';
+import express from 'express';
 import passport from 'passport';
-import dotenv from 'dotenv';
-
-dotenv.config();
+import { errorHandler } from './middlewares/errorHandler';
+import routes from './routes';
 
 const app = express();
 
+// cài đặt cần thiết
 app.use(express.json());
 app.use(
   cors({
@@ -17,5 +17,9 @@ app.use(
 );
 app.use(cookieParser());
 app.use(passport.initialize());
+
+app.use('/', routes); // setup routes
+
+app.use(errorHandler); // để cuối cùng
 
 export default app;

@@ -21,8 +21,8 @@ const AuthController = {
       const resBody: ApiResponse = {
         success: true,
         statusCode: 200,
-        message: 'api:auth.login-successful',
-        data: null,
+        message: 'auth.login-successful',
+        content: null,
       };
 
       res.status(200).json(resBody);
@@ -34,7 +34,7 @@ const AuthController = {
   oauthCallback: (async (req, res, next) => {
     try {
       if (!req.user) {
-        throw new ApiError(401, 'api:auth.not-authenticated');
+        throw new ApiError(401, 'auth.not-authenticated');
       }
 
       const token = req.user.token;
@@ -56,9 +56,9 @@ const AuthController = {
 
     const resBody: ApiResponse = {
       success: true,
-      message: 'api:auth.logout-successful',
+      message: 'auth.logout-successful',
       statusCode: 200,
-      data: null,
+      content: null,
     };
 
     res.status(200).json(resBody);

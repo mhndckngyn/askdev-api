@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { ApiError } from '@/utils/ApiError';
+import { ApiResponse } from '@/types/response.type';
 
 export function errorHandler(
   err: any,
@@ -13,13 +14,14 @@ export function errorHandler(
 
   const statusCode = err instanceof ApiError ? err.statusCode : 500;
   const message =
-    err instanceof ApiError ? err.message : 'api:common.internal-server-error';
+    err instanceof ApiError ? err.message : 'common.internal-server-error';
 
-  res.status(statusCode).json({
+  const body: ApiResponse = {
     success: false,
-    message,
-    data: err.data || null,
-    error: err.stack,
-    statusCode,
-  });
+    content: err.data || null,
+    error: err.message,
+    statusCode
+  }
+
+  res.status(statusCode).json(body);
 }

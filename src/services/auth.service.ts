@@ -14,13 +14,13 @@ const AuthService = {
     const user = await prisma.user.findUnique({ where: { email } });
 
     if (!user || !user.password) {
-      throw new ApiError(401, 'api:auth.incorrect-login-data', true);
+      throw new ApiError(401, 'auth.incorrect-login-data', true);
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
-      throw new ApiError(401, 'api:auth.incorrect-login-data', true);
+      throw new ApiError(401, 'auth.incorrect-login-data', true);
     }
 
     const token = generateToken({

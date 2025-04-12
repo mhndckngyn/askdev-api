@@ -14,6 +14,14 @@ const UserService = {
       throw new ApiError(409, 'api:user.already-exist', true);
     }
 
+    const usernameExist = await prisma.user.findFirst({
+      where: { username: data.username },
+    });
+
+    if (usernameExist) {
+      throw new ApiError(409, 'api:user.username-already-taken', true);
+    }
+
     const hashedPassword = await bcrypt.hash(
       data.password,
       constants.saltWorkFactor

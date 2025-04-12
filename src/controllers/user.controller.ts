@@ -12,8 +12,8 @@ const UserController = {
       const resBody: ApiResponse = {
         success: true,
         statusCode: 201,
-        message: 'api:user.signup-successful',
-        data: user,
+        message: 'user.signup-successful',
+        content: user,
       };
 
       res.status(201).json(resBody);
@@ -29,8 +29,8 @@ const UserController = {
       const resBody: ApiResponse = {
         success: true,
         statusCode: 200,
-        message: 'api:user.getme-successful',
-        data: {
+        message: 'user.getme-successful',
+        content: {
           user,
         },
       };

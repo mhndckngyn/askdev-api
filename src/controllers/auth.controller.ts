@@ -1,9 +1,8 @@
-import { RequestHandler } from 'express';
-import AuthService from '@/services/auth.service';
-import { Profile } from 'passport-google-oauth20';
-import { ApiError } from '@/utils/ApiError';
 import { constants } from '@/config/constants';
+import AuthService from '@/services/auth.service';
 import { ApiResponse } from '@/types/response.type';
+import { ApiError } from '@/utils/ApiError';
+import { RequestHandler } from 'express';
 
 const AuthController = {
   login: (async (req, res, next) => {
@@ -21,8 +20,8 @@ const AuthController = {
       const resBody: ApiResponse = {
         success: true,
         statusCode: 200,
-        message: 'api:auth.login-successful',
-        data: null,
+        message: 'auth.login-successful',
+        content: null,
       };
 
       res.status(200).json(resBody);
@@ -34,7 +33,8 @@ const AuthController = {
   oauthCallback: (async (req, res, next) => {
     try {
       if (!req.user) {
-        throw new ApiError(401, 'api:auth.not-authenticated');
+        // TODO: redirect ve frontend de hien thi loi
+        throw new ApiError(401, 'auth.not-authenticated', true);
       }
 
       const token = req.user.token;
@@ -51,14 +51,60 @@ const AuthController = {
     }
   }) as RequestHandler,
 
+  verifyEmail: (async (req, res, next) => {
+    try {
+      const { token } = req.body;
+
+      if (!token) {
+        throw new ApiError(400, 'auth.invalid-verification-token');
+      }
+
+      const account = await AuthService.verifyEmail(token);
+
+      const resBody: ApiResponse = {
+        success: true,
+        message: 'auth.email-verification-successful',
+        statusCode: 200,
+        content: account,
+      };
+
+      res.status(200).json(resBody);
+    } catch (err) {
+      next(err);
+    }
+  }) as RequestHandler,
+
+  resendVerificationEmail: (async (req, res, next) => {
+    try {
+      const { email } = req.body;
+
+      if (!email) {
+        throw new ApiError(400, 'auth.invalid-resend-email');
+      }
+
+      await AuthService.resendVerificationEmail(email);
+
+      const resBody: ApiResponse = {
+        success: true,
+        message: 'auth.email-verification-resent',
+        statusCode: 200,
+        content: null,
+      };
+
+      res.status(200).json(resBody);
+    } catch (err) {
+      next(err);
+    }
+  }) as RequestHandler,
+
   logout: (async (req, res, next) => {
     res.clearCookie('jwt');
 
     const resBody: ApiResponse = {
       success: true,
-      message: 'api:auth.logout-successful',
+      message: 'auth.logout-successful',
       statusCode: 200,
-      data: null,
+      content: null,
     };
 
     res.status(200).json(resBody);

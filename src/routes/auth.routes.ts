@@ -13,14 +13,14 @@ router.get(
 );
 
 router.get(
-  '/google/callback',
-  passport.authenticate('google', { failureRedirect: '/', session: false }),
-  AuthController.oauthCallback
+  '/github',
+  passport.authenticate('github', { scope: ['profile', 'email'] })
 );
 
 router.get(
-  '/github',
-  passport.authenticate('github', { scope: ['profile', 'email'] })
+  '/google/callback',
+  passport.authenticate('google', { failureRedirect: '/', session: false }),
+  AuthController.oauthCallback
 );
 
 router.get(
@@ -28,6 +28,10 @@ router.get(
   passport.authenticate('github', { failureRedirect: '/', session: false }),
   AuthController.oauthCallback
 );
+
+router.post('/verify-email', AuthController.verifyEmail);
+
+router.post('/resend-verification-email', AuthController.resendVerificationEmail);
 
 router.post('/logout', AuthController.logout);
 

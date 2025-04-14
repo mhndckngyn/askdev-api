@@ -10,7 +10,7 @@ export const authMiddleware: RequestHandler = async (req, _res, next) => {
     const token = req.cookies.jwt || req.headers.authorization?.split(' ')[1];
 
     if (!token) {
-      throw new ApiError(401, 'api:auth.login-first', true);
+      throw new ApiError(401, 'auth.login-first', true);
     }
 
     const decoded = jwt.verify(
@@ -21,7 +21,7 @@ export const authMiddleware: RequestHandler = async (req, _res, next) => {
     const user = await prisma.user.findFirst({ where: { id: decoded.id } });
 
     if (!user) {
-      throw new ApiError(401, 'api:auth.user-not-found', true);
+      throw new ApiError(401, 'auth.user-not-found', true);
     }
 
     req.user = {

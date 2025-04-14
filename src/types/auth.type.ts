@@ -4,3 +4,5 @@ export interface TokenPayload {
   username: string;
   avatar: string;
 }
+
+export type OAuthProvider = 'GITHUB' | 'GOOGLE';

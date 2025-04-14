@@ -5,12 +5,8 @@ import { authMiddleware } from '@/middlewares/auth';
 
 const router = express.Router();
 
-router.post(
-  '/signup',
-  upload.single('avatar'),
-  UserController.signup
-);
+router.post('/signup', UserController.signup);
 
-router.get('/me', authMiddleware, UserController.getMe)
+router.get('/me', authMiddleware, UserController.getMe);
 
 export default router;

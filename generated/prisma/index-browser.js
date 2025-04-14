@@ -132,6 +132,25 @@ exports.Prisma.UserScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.QuestionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  title: 'title',
+  content: 'content',
+  createdAt: 'createdAt',
+  isEdited: 'isEdited',
+  upvotes: 'upvotes',
+  downvotes: 'downvotes',
+  isSolved: 'isSolved'
+};
+
+exports.Prisma.QuestionEditScalarFieldEnum = {
+  questionId: 'questionId',
+  createdAt: 'createdAt',
+  previousContent: 'previousContent',
+  previousTitle: 'previousTitle'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -158,7 +177,9 @@ exports.Role = exports.$Enums.Role = {
 };
 
 exports.Prisma.ModelName = {
-  User: 'User'
+  User: 'User',
+  Question: 'Question',
+  QuestionEdit: 'QuestionEdit'
 };
 
 /**

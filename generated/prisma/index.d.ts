@@ -18,6 +18,16 @@ export type PrismaPromise<T> = $Public.PrismaPromise<T>
  * 
  */
 export type User = $Result.DefaultSelection<Prisma.$UserPayload>
+/**
+ * Model Question
+ * 
+ */
+export type Question = $Result.DefaultSelection<Prisma.$QuestionPayload>
+/**
+ * Model QuestionEdit
+ * 
+ */
+export type QuestionEdit = $Result.DefaultSelection<Prisma.$QuestionEditPayload>
 
 /**
  * Enums
@@ -183,6 +193,26 @@ export class PrismaClient<
     * ```
     */
   get user(): Prisma.UserDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.question`: Exposes CRUD operations for the **Question** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Questions
+    * const questions = await prisma.question.findMany()
+    * ```
+    */
+  get question(): Prisma.QuestionDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.questionEdit`: Exposes CRUD operations for the **QuestionEdit** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more QuestionEdits
+    * const questionEdits = await prisma.questionEdit.findMany()
+    * ```
+    */
+  get questionEdit(): Prisma.QuestionEditDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -623,7 +653,9 @@ export namespace Prisma {
 
 
   export const ModelName: {
-    User: 'User'
+    User: 'User',
+    Question: 'Question',
+    QuestionEdit: 'QuestionEdit'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -642,7 +674,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user"
+      modelProps: "user" | "question" | "questionEdit"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -717,6 +749,154 @@ export namespace Prisma {
           count: {
             args: Prisma.UserCountArgs<ExtArgs>
             result: $Utils.Optional<UserCountAggregateOutputType> | number
+          }
+        }
+      }
+      Question: {
+        payload: Prisma.$QuestionPayload<ExtArgs>
+        fields: Prisma.QuestionFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.QuestionFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$QuestionPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.QuestionFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$QuestionPayload>
+          }
+          findFirst: {
+            args: Prisma.QuestionFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$QuestionPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.QuestionFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$QuestionPayload>
+          }
+          findMany: {
+            args: Prisma.QuestionFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$QuestionPayload>[]
+          }
+          create: {
+            args: Prisma.QuestionCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$QuestionPayload>
+          }
+          createMany: {
+            args: Prisma.QuestionCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.QuestionCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$QuestionPayload>[]
+          }
+          delete: {
+            args: Prisma.QuestionDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$QuestionPayload>
+          }
+          update: {
+            args: Prisma.QuestionUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$QuestionPayload>
+          }
+          deleteMany: {
+            args: Prisma.QuestionDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.QuestionUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.QuestionUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$QuestionPayload>[]
+          }
+          upsert: {
+            args: Prisma.QuestionUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$QuestionPayload>
+          }
+          aggregate: {
+            args: Prisma.QuestionAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateQuestion>
+          }
+          groupBy: {
+            args: Prisma.QuestionGroupByArgs<ExtArgs>
+            result: $Utils.Optional<QuestionGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.QuestionCountArgs<ExtArgs>
+            result: $Utils.Optional<QuestionCountAggregateOutputType> | number
+          }
+        }
+      }
+      QuestionEdit: {
+        payload: Prisma.$QuestionEditPayload<ExtArgs>
+        fields: Prisma.QuestionEditFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.QuestionEditFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$QuestionEditPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.QuestionEditFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$QuestionEditPayload>
+          }
+          findFirst: {
+            args: Prisma.QuestionEditFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$QuestionEditPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.QuestionEditFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$QuestionEditPayload>
+          }
+          findMany: {
+            args: Prisma.QuestionEditFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$QuestionEditPayload>[]
+          }
+          create: {
+            args: Prisma.QuestionEditCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$QuestionEditPayload>
+          }
+          createMany: {
+            args: Prisma.QuestionEditCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.QuestionEditCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$QuestionEditPayload>[]
+          }
+          delete: {
+            args: Prisma.QuestionEditDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$QuestionEditPayload>
+          }
+          update: {
+            args: Prisma.QuestionEditUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$QuestionEditPayload>
+          }
+          deleteMany: {
+            args: Prisma.QuestionEditDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.QuestionEditUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.QuestionEditUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$QuestionEditPayload>[]
+          }
+          upsert: {
+            args: Prisma.QuestionEditUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$QuestionEditPayload>
+          }
+          aggregate: {
+            args: Prisma.QuestionEditAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateQuestionEdit>
+          }
+          groupBy: {
+            args: Prisma.QuestionEditGroupByArgs<ExtArgs>
+            result: $Utils.Optional<QuestionEditGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.QuestionEditCountArgs<ExtArgs>
+            result: $Utils.Optional<QuestionEditCountAggregateOutputType> | number
           }
         }
       }
@@ -805,6 +985,8 @@ export namespace Prisma {
   }
   export type GlobalOmitConfig = {
     user?: UserOmit
+    question?: QuestionOmit
+    questionEdit?: QuestionEditOmit
   }
 
   /* Types for Logging */
@@ -893,6 +1075,36 @@ export namespace Prisma {
    * Count Types
    */
 
+
+  /**
+   * Count Type QuestionCountOutputType
+   */
+
+  export type QuestionCountOutputType = {
+    edits: number
+  }
+
+  export type QuestionCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    edits?: boolean | QuestionCountOutputTypeCountEditsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * QuestionCountOutputType without action
+   */
+  export type QuestionCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the QuestionCountOutputType
+     */
+    select?: QuestionCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * QuestionCountOutputType without action
+   */
+  export type QuestionCountOutputTypeCountEditsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: QuestionEditWhereInput
+  }
 
 
   /**
@@ -1986,6 +2198,2211 @@ export namespace Prisma {
 
 
   /**
+   * Model Question
+   */
+
+  export type AggregateQuestion = {
+    _count: QuestionCountAggregateOutputType | null
+    _avg: QuestionAvgAggregateOutputType | null
+    _sum: QuestionSumAggregateOutputType | null
+    _min: QuestionMinAggregateOutputType | null
+    _max: QuestionMaxAggregateOutputType | null
+  }
+
+  export type QuestionAvgAggregateOutputType = {
+    upvotes: number | null
+    downvotes: number | null
+  }
+
+  export type QuestionSumAggregateOutputType = {
+    upvotes: number | null
+    downvotes: number | null
+  }
+
+  export type QuestionMinAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    title: string | null
+    content: string | null
+    createdAt: Date | null
+    isEdited: boolean | null
+    upvotes: number | null
+    downvotes: number | null
+    isSolved: boolean | null
+  }
+
+  export type QuestionMaxAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    title: string | null
+    content: string | null
+    createdAt: Date | null
+    isEdited: boolean | null
+    upvotes: number | null
+    downvotes: number | null
+    isSolved: boolean | null
+  }
+
+  export type QuestionCountAggregateOutputType = {
+    id: number
+    userId: number
+    title: number
+    content: number
+    createdAt: number
+    isEdited: number
+    upvotes: number
+    downvotes: number
+    isSolved: number
+    _all: number
+  }
+
+
+  export type QuestionAvgAggregateInputType = {
+    upvotes?: true
+    downvotes?: true
+  }
+
+  export type QuestionSumAggregateInputType = {
+    upvotes?: true
+    downvotes?: true
+  }
+
+  export type QuestionMinAggregateInputType = {
+    id?: true
+    userId?: true
+    title?: true
+    content?: true
+    createdAt?: true
+    isEdited?: true
+    upvotes?: true
+    downvotes?: true
+    isSolved?: true
+  }
+
+  export type QuestionMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    title?: true
+    content?: true
+    createdAt?: true
+    isEdited?: true
+    upvotes?: true
+    downvotes?: true
+    isSolved?: true
+  }
+
+  export type QuestionCountAggregateInputType = {
+    id?: true
+    userId?: true
+    title?: true
+    content?: true
+    createdAt?: true
+    isEdited?: true
+    upvotes?: true
+    downvotes?: true
+    isSolved?: true
+    _all?: true
+  }
+
+  export type QuestionAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Question to aggregate.
+     */
+    where?: QuestionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Questions to fetch.
+     */
+    orderBy?: QuestionOrderByWithRelationInput | QuestionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: QuestionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Questions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Questions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Questions
+    **/
+    _count?: true | QuestionCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: QuestionAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: QuestionSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: QuestionMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: QuestionMaxAggregateInputType
+  }
+
+  export type GetQuestionAggregateType<T extends QuestionAggregateArgs> = {
+        [P in keyof T & keyof AggregateQuestion]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateQuestion[P]>
+      : GetScalarType<T[P], AggregateQuestion[P]>
+  }
+
+
+
+
+  export type QuestionGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: QuestionWhereInput
+    orderBy?: QuestionOrderByWithAggregationInput | QuestionOrderByWithAggregationInput[]
+    by: QuestionScalarFieldEnum[] | QuestionScalarFieldEnum
+    having?: QuestionScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: QuestionCountAggregateInputType | true
+    _avg?: QuestionAvgAggregateInputType
+    _sum?: QuestionSumAggregateInputType
+    _min?: QuestionMinAggregateInputType
+    _max?: QuestionMaxAggregateInputType
+  }
+
+  export type QuestionGroupByOutputType = {
+    id: string
+    userId: string | null
+    title: string
+    content: string
+    createdAt: Date
+    isEdited: boolean
+    upvotes: number
+    downvotes: number
+    isSolved: boolean
+    _count: QuestionCountAggregateOutputType | null
+    _avg: QuestionAvgAggregateOutputType | null
+    _sum: QuestionSumAggregateOutputType | null
+    _min: QuestionMinAggregateOutputType | null
+    _max: QuestionMaxAggregateOutputType | null
+  }
+
+  type GetQuestionGroupByPayload<T extends QuestionGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<QuestionGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof QuestionGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], QuestionGroupByOutputType[P]>
+            : GetScalarType<T[P], QuestionGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type QuestionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    title?: boolean
+    content?: boolean
+    createdAt?: boolean
+    isEdited?: boolean
+    upvotes?: boolean
+    downvotes?: boolean
+    isSolved?: boolean
+    edits?: boolean | Question$editsArgs<ExtArgs>
+    _count?: boolean | QuestionCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["question"]>
+
+  export type QuestionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    title?: boolean
+    content?: boolean
+    createdAt?: boolean
+    isEdited?: boolean
+    upvotes?: boolean
+    downvotes?: boolean
+    isSolved?: boolean
+  }, ExtArgs["result"]["question"]>
+
+  export type QuestionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    title?: boolean
+    content?: boolean
+    createdAt?: boolean
+    isEdited?: boolean
+    upvotes?: boolean
+    downvotes?: boolean
+    isSolved?: boolean
+  }, ExtArgs["result"]["question"]>
+
+  export type QuestionSelectScalar = {
+    id?: boolean
+    userId?: boolean
+    title?: boolean
+    content?: boolean
+    createdAt?: boolean
+    isEdited?: boolean
+    upvotes?: boolean
+    downvotes?: boolean
+    isSolved?: boolean
+  }
+
+  export type QuestionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "title" | "content" | "createdAt" | "isEdited" | "upvotes" | "downvotes" | "isSolved", ExtArgs["result"]["question"]>
+  export type QuestionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    edits?: boolean | Question$editsArgs<ExtArgs>
+    _count?: boolean | QuestionCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type QuestionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type QuestionIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+
+  export type $QuestionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Question"
+    objects: {
+      edits: Prisma.$QuestionEditPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      userId: string | null
+      title: string
+      content: string
+      createdAt: Date
+      isEdited: boolean
+      upvotes: number
+      downvotes: number
+      isSolved: boolean
+    }, ExtArgs["result"]["question"]>
+    composites: {}
+  }
+
+  type QuestionGetPayload<S extends boolean | null | undefined | QuestionDefaultArgs> = $Result.GetResult<Prisma.$QuestionPayload, S>
+
+  type QuestionCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<QuestionFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: QuestionCountAggregateInputType | true
+    }
+
+  export interface QuestionDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Question'], meta: { name: 'Question' } }
+    /**
+     * Find zero or one Question that matches the filter.
+     * @param {QuestionFindUniqueArgs} args - Arguments to find a Question
+     * @example
+     * // Get one Question
+     * const question = await prisma.question.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends QuestionFindUniqueArgs>(args: SelectSubset<T, QuestionFindUniqueArgs<ExtArgs>>): Prisma__QuestionClient<$Result.GetResult<Prisma.$QuestionPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Question that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {QuestionFindUniqueOrThrowArgs} args - Arguments to find a Question
+     * @example
+     * // Get one Question
+     * const question = await prisma.question.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends QuestionFindUniqueOrThrowArgs>(args: SelectSubset<T, QuestionFindUniqueOrThrowArgs<ExtArgs>>): Prisma__QuestionClient<$Result.GetResult<Prisma.$QuestionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Question that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {QuestionFindFirstArgs} args - Arguments to find a Question
+     * @example
+     * // Get one Question
+     * const question = await prisma.question.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends QuestionFindFirstArgs>(args?: SelectSubset<T, QuestionFindFirstArgs<ExtArgs>>): Prisma__QuestionClient<$Result.GetResult<Prisma.$QuestionPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Question that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {QuestionFindFirstOrThrowArgs} args - Arguments to find a Question
+     * @example
+     * // Get one Question
+     * const question = await prisma.question.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends QuestionFindFirstOrThrowArgs>(args?: SelectSubset<T, QuestionFindFirstOrThrowArgs<ExtArgs>>): Prisma__QuestionClient<$Result.GetResult<Prisma.$QuestionPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Questions that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {QuestionFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Questions
+     * const questions = await prisma.question.findMany()
+     * 
+     * // Get first 10 Questions
+     * const questions = await prisma.question.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const questionWithIdOnly = await prisma.question.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends QuestionFindManyArgs>(args?: SelectSubset<T, QuestionFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$QuestionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Question.
+     * @param {QuestionCreateArgs} args - Arguments to create a Question.
+     * @example
+     * // Create one Question
+     * const Question = await prisma.question.create({
+     *   data: {
+     *     // ... data to create a Question
+     *   }
+     * })
+     * 
+     */
+    create<T extends QuestionCreateArgs>(args: SelectSubset<T, QuestionCreateArgs<ExtArgs>>): Prisma__QuestionClient<$Result.GetResult<Prisma.$QuestionPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Questions.
+     * @param {QuestionCreateManyArgs} args - Arguments to create many Questions.
+     * @example
+     * // Create many Questions
+     * const question = await prisma.question.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends QuestionCreateManyArgs>(args?: SelectSubset<T, QuestionCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Questions and returns the data saved in the database.
+     * @param {QuestionCreateManyAndReturnArgs} args - Arguments to create many Questions.
+     * @example
+     * // Create many Questions
+     * const question = await prisma.question.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Questions and only return the `id`
+     * const questionWithIdOnly = await prisma.question.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends QuestionCreateManyAndReturnArgs>(args?: SelectSubset<T, QuestionCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$QuestionPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Question.
+     * @param {QuestionDeleteArgs} args - Arguments to delete one Question.
+     * @example
+     * // Delete one Question
+     * const Question = await prisma.question.delete({
+     *   where: {
+     *     // ... filter to delete one Question
+     *   }
+     * })
+     * 
+     */
+    delete<T extends QuestionDeleteArgs>(args: SelectSubset<T, QuestionDeleteArgs<ExtArgs>>): Prisma__QuestionClient<$Result.GetResult<Prisma.$QuestionPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Question.
+     * @param {QuestionUpdateArgs} args - Arguments to update one Question.
+     * @example
+     * // Update one Question
+     * const question = await prisma.question.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends QuestionUpdateArgs>(args: SelectSubset<T, QuestionUpdateArgs<ExtArgs>>): Prisma__QuestionClient<$Result.GetResult<Prisma.$QuestionPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Questions.
+     * @param {QuestionDeleteManyArgs} args - Arguments to filter Questions to delete.
+     * @example
+     * // Delete a few Questions
+     * const { count } = await prisma.question.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends QuestionDeleteManyArgs>(args?: SelectSubset<T, QuestionDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Questions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {QuestionUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Questions
+     * const question = await prisma.question.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends QuestionUpdateManyArgs>(args: SelectSubset<T, QuestionUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Questions and returns the data updated in the database.
+     * @param {QuestionUpdateManyAndReturnArgs} args - Arguments to update many Questions.
+     * @example
+     * // Update many Questions
+     * const question = await prisma.question.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Questions and only return the `id`
+     * const questionWithIdOnly = await prisma.question.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends QuestionUpdateManyAndReturnArgs>(args: SelectSubset<T, QuestionUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$QuestionPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Question.
+     * @param {QuestionUpsertArgs} args - Arguments to update or create a Question.
+     * @example
+     * // Update or create a Question
+     * const question = await prisma.question.upsert({
+     *   create: {
+     *     // ... data to create a Question
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Question we want to update
+     *   }
+     * })
+     */
+    upsert<T extends QuestionUpsertArgs>(args: SelectSubset<T, QuestionUpsertArgs<ExtArgs>>): Prisma__QuestionClient<$Result.GetResult<Prisma.$QuestionPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Questions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {QuestionCountArgs} args - Arguments to filter Questions to count.
+     * @example
+     * // Count the number of Questions
+     * const count = await prisma.question.count({
+     *   where: {
+     *     // ... the filter for the Questions we want to count
+     *   }
+     * })
+    **/
+    count<T extends QuestionCountArgs>(
+      args?: Subset<T, QuestionCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], QuestionCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Question.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {QuestionAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends QuestionAggregateArgs>(args: Subset<T, QuestionAggregateArgs>): Prisma.PrismaPromise<GetQuestionAggregateType<T>>
+
+    /**
+     * Group by Question.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {QuestionGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends QuestionGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: QuestionGroupByArgs['orderBy'] }
+        : { orderBy?: QuestionGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, QuestionGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetQuestionGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Question model
+   */
+  readonly fields: QuestionFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Question.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__QuestionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    edits<T extends Question$editsArgs<ExtArgs> = {}>(args?: Subset<T, Question$editsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$QuestionEditPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Question model
+   */
+  interface QuestionFieldRefs {
+    readonly id: FieldRef<"Question", 'String'>
+    readonly userId: FieldRef<"Question", 'String'>
+    readonly title: FieldRef<"Question", 'String'>
+    readonly content: FieldRef<"Question", 'String'>
+    readonly createdAt: FieldRef<"Question", 'DateTime'>
+    readonly isEdited: FieldRef<"Question", 'Boolean'>
+    readonly upvotes: FieldRef<"Question", 'Int'>
+    readonly downvotes: FieldRef<"Question", 'Int'>
+    readonly isSolved: FieldRef<"Question", 'Boolean'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Question findUnique
+   */
+  export type QuestionFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Question
+     */
+    select?: QuestionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Question
+     */
+    omit?: QuestionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: QuestionInclude<ExtArgs> | null
+    /**
+     * Filter, which Question to fetch.
+     */
+    where: QuestionWhereUniqueInput
+  }
+
+  /**
+   * Question findUniqueOrThrow
+   */
+  export type QuestionFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Question
+     */
+    select?: QuestionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Question
+     */
+    omit?: QuestionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: QuestionInclude<ExtArgs> | null
+    /**
+     * Filter, which Question to fetch.
+     */
+    where: QuestionWhereUniqueInput
+  }
+
+  /**
+   * Question findFirst
+   */
+  export type QuestionFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Question
+     */
+    select?: QuestionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Question
+     */
+    omit?: QuestionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: QuestionInclude<ExtArgs> | null
+    /**
+     * Filter, which Question to fetch.
+     */
+    where?: QuestionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Questions to fetch.
+     */
+    orderBy?: QuestionOrderByWithRelationInput | QuestionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Questions.
+     */
+    cursor?: QuestionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Questions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Questions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Questions.
+     */
+    distinct?: QuestionScalarFieldEnum | QuestionScalarFieldEnum[]
+  }
+
+  /**
+   * Question findFirstOrThrow
+   */
+  export type QuestionFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Question
+     */
+    select?: QuestionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Question
+     */
+    omit?: QuestionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: QuestionInclude<ExtArgs> | null
+    /**
+     * Filter, which Question to fetch.
+     */
+    where?: QuestionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Questions to fetch.
+     */
+    orderBy?: QuestionOrderByWithRelationInput | QuestionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Questions.
+     */
+    cursor?: QuestionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Questions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Questions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Questions.
+     */
+    distinct?: QuestionScalarFieldEnum | QuestionScalarFieldEnum[]
+  }
+
+  /**
+   * Question findMany
+   */
+  export type QuestionFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Question
+     */
+    select?: QuestionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Question
+     */
+    omit?: QuestionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: QuestionInclude<ExtArgs> | null
+    /**
+     * Filter, which Questions to fetch.
+     */
+    where?: QuestionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Questions to fetch.
+     */
+    orderBy?: QuestionOrderByWithRelationInput | QuestionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Questions.
+     */
+    cursor?: QuestionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Questions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Questions.
+     */
+    skip?: number
+    distinct?: QuestionScalarFieldEnum | QuestionScalarFieldEnum[]
+  }
+
+  /**
+   * Question create
+   */
+  export type QuestionCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Question
+     */
+    select?: QuestionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Question
+     */
+    omit?: QuestionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: QuestionInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Question.
+     */
+    data: XOR<QuestionCreateInput, QuestionUncheckedCreateInput>
+  }
+
+  /**
+   * Question createMany
+   */
+  export type QuestionCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Questions.
+     */
+    data: QuestionCreateManyInput | QuestionCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Question createManyAndReturn
+   */
+  export type QuestionCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Question
+     */
+    select?: QuestionSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Question
+     */
+    omit?: QuestionOmit<ExtArgs> | null
+    /**
+     * The data used to create many Questions.
+     */
+    data: QuestionCreateManyInput | QuestionCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Question update
+   */
+  export type QuestionUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Question
+     */
+    select?: QuestionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Question
+     */
+    omit?: QuestionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: QuestionInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Question.
+     */
+    data: XOR<QuestionUpdateInput, QuestionUncheckedUpdateInput>
+    /**
+     * Choose, which Question to update.
+     */
+    where: QuestionWhereUniqueInput
+  }
+
+  /**
+   * Question updateMany
+   */
+  export type QuestionUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Questions.
+     */
+    data: XOR<QuestionUpdateManyMutationInput, QuestionUncheckedUpdateManyInput>
+    /**
+     * Filter which Questions to update
+     */
+    where?: QuestionWhereInput
+    /**
+     * Limit how many Questions to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Question updateManyAndReturn
+   */
+  export type QuestionUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Question
+     */
+    select?: QuestionSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Question
+     */
+    omit?: QuestionOmit<ExtArgs> | null
+    /**
+     * The data used to update Questions.
+     */
+    data: XOR<QuestionUpdateManyMutationInput, QuestionUncheckedUpdateManyInput>
+    /**
+     * Filter which Questions to update
+     */
+    where?: QuestionWhereInput
+    /**
+     * Limit how many Questions to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Question upsert
+   */
+  export type QuestionUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Question
+     */
+    select?: QuestionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Question
+     */
+    omit?: QuestionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: QuestionInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Question to update in case it exists.
+     */
+    where: QuestionWhereUniqueInput
+    /**
+     * In case the Question found by the `where` argument doesn't exist, create a new Question with this data.
+     */
+    create: XOR<QuestionCreateInput, QuestionUncheckedCreateInput>
+    /**
+     * In case the Question was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<QuestionUpdateInput, QuestionUncheckedUpdateInput>
+  }
+
+  /**
+   * Question delete
+   */
+  export type QuestionDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Question
+     */
+    select?: QuestionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Question
+     */
+    omit?: QuestionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: QuestionInclude<ExtArgs> | null
+    /**
+     * Filter which Question to delete.
+     */
+    where: QuestionWhereUniqueInput
+  }
+
+  /**
+   * Question deleteMany
+   */
+  export type QuestionDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Questions to delete
+     */
+    where?: QuestionWhereInput
+    /**
+     * Limit how many Questions to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Question.edits
+   */
+  export type Question$editsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the QuestionEdit
+     */
+    select?: QuestionEditSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the QuestionEdit
+     */
+    omit?: QuestionEditOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: QuestionEditInclude<ExtArgs> | null
+    where?: QuestionEditWhereInput
+    orderBy?: QuestionEditOrderByWithRelationInput | QuestionEditOrderByWithRelationInput[]
+    cursor?: QuestionEditWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: QuestionEditScalarFieldEnum | QuestionEditScalarFieldEnum[]
+  }
+
+  /**
+   * Question without action
+   */
+  export type QuestionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Question
+     */
+    select?: QuestionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Question
+     */
+    omit?: QuestionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: QuestionInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model QuestionEdit
+   */
+
+  export type AggregateQuestionEdit = {
+    _count: QuestionEditCountAggregateOutputType | null
+    _min: QuestionEditMinAggregateOutputType | null
+    _max: QuestionEditMaxAggregateOutputType | null
+  }
+
+  export type QuestionEditMinAggregateOutputType = {
+    questionId: string | null
+    createdAt: Date | null
+    previousContent: string | null
+    previousTitle: string | null
+  }
+
+  export type QuestionEditMaxAggregateOutputType = {
+    questionId: string | null
+    createdAt: Date | null
+    previousContent: string | null
+    previousTitle: string | null
+  }
+
+  export type QuestionEditCountAggregateOutputType = {
+    questionId: number
+    createdAt: number
+    previousContent: number
+    previousTitle: number
+    _all: number
+  }
+
+
+  export type QuestionEditMinAggregateInputType = {
+    questionId?: true
+    createdAt?: true
+    previousContent?: true
+    previousTitle?: true
+  }
+
+  export type QuestionEditMaxAggregateInputType = {
+    questionId?: true
+    createdAt?: true
+    previousContent?: true
+    previousTitle?: true
+  }
+
+  export type QuestionEditCountAggregateInputType = {
+    questionId?: true
+    createdAt?: true
+    previousContent?: true
+    previousTitle?: true
+    _all?: true
+  }
+
+  export type QuestionEditAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which QuestionEdit to aggregate.
+     */
+    where?: QuestionEditWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of QuestionEdits to fetch.
+     */
+    orderBy?: QuestionEditOrderByWithRelationInput | QuestionEditOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: QuestionEditWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` QuestionEdits from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` QuestionEdits.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned QuestionEdits
+    **/
+    _count?: true | QuestionEditCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: QuestionEditMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: QuestionEditMaxAggregateInputType
+  }
+
+  export type GetQuestionEditAggregateType<T extends QuestionEditAggregateArgs> = {
+        [P in keyof T & keyof AggregateQuestionEdit]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateQuestionEdit[P]>
+      : GetScalarType<T[P], AggregateQuestionEdit[P]>
+  }
+
+
+
+
+  export type QuestionEditGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: QuestionEditWhereInput
+    orderBy?: QuestionEditOrderByWithAggregationInput | QuestionEditOrderByWithAggregationInput[]
+    by: QuestionEditScalarFieldEnum[] | QuestionEditScalarFieldEnum
+    having?: QuestionEditScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: QuestionEditCountAggregateInputType | true
+    _min?: QuestionEditMinAggregateInputType
+    _max?: QuestionEditMaxAggregateInputType
+  }
+
+  export type QuestionEditGroupByOutputType = {
+    questionId: string
+    createdAt: Date
+    previousContent: string | null
+    previousTitle: string | null
+    _count: QuestionEditCountAggregateOutputType | null
+    _min: QuestionEditMinAggregateOutputType | null
+    _max: QuestionEditMaxAggregateOutputType | null
+  }
+
+  type GetQuestionEditGroupByPayload<T extends QuestionEditGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<QuestionEditGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof QuestionEditGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], QuestionEditGroupByOutputType[P]>
+            : GetScalarType<T[P], QuestionEditGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type QuestionEditSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    questionId?: boolean
+    createdAt?: boolean
+    previousContent?: boolean
+    previousTitle?: boolean
+    question?: boolean | QuestionDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["questionEdit"]>
+
+  export type QuestionEditSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    questionId?: boolean
+    createdAt?: boolean
+    previousContent?: boolean
+    previousTitle?: boolean
+    question?: boolean | QuestionDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["questionEdit"]>
+
+  export type QuestionEditSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    questionId?: boolean
+    createdAt?: boolean
+    previousContent?: boolean
+    previousTitle?: boolean
+    question?: boolean | QuestionDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["questionEdit"]>
+
+  export type QuestionEditSelectScalar = {
+    questionId?: boolean
+    createdAt?: boolean
+    previousContent?: boolean
+    previousTitle?: boolean
+  }
+
+  export type QuestionEditOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"questionId" | "createdAt" | "previousContent" | "previousTitle", ExtArgs["result"]["questionEdit"]>
+  export type QuestionEditInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    question?: boolean | QuestionDefaultArgs<ExtArgs>
+  }
+  export type QuestionEditIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    question?: boolean | QuestionDefaultArgs<ExtArgs>
+  }
+  export type QuestionEditIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    question?: boolean | QuestionDefaultArgs<ExtArgs>
+  }
+
+  export type $QuestionEditPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "QuestionEdit"
+    objects: {
+      question: Prisma.$QuestionPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      questionId: string
+      createdAt: Date
+      previousContent: string | null
+      previousTitle: string | null
+    }, ExtArgs["result"]["questionEdit"]>
+    composites: {}
+  }
+
+  type QuestionEditGetPayload<S extends boolean | null | undefined | QuestionEditDefaultArgs> = $Result.GetResult<Prisma.$QuestionEditPayload, S>
+
+  type QuestionEditCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<QuestionEditFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: QuestionEditCountAggregateInputType | true
+    }
+
+  export interface QuestionEditDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['QuestionEdit'], meta: { name: 'QuestionEdit' } }
+    /**
+     * Find zero or one QuestionEdit that matches the filter.
+     * @param {QuestionEditFindUniqueArgs} args - Arguments to find a QuestionEdit
+     * @example
+     * // Get one QuestionEdit
+     * const questionEdit = await prisma.questionEdit.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends QuestionEditFindUniqueArgs>(args: SelectSubset<T, QuestionEditFindUniqueArgs<ExtArgs>>): Prisma__QuestionEditClient<$Result.GetResult<Prisma.$QuestionEditPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one QuestionEdit that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {QuestionEditFindUniqueOrThrowArgs} args - Arguments to find a QuestionEdit
+     * @example
+     * // Get one QuestionEdit
+     * const questionEdit = await prisma.questionEdit.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends QuestionEditFindUniqueOrThrowArgs>(args: SelectSubset<T, QuestionEditFindUniqueOrThrowArgs<ExtArgs>>): Prisma__QuestionEditClient<$Result.GetResult<Prisma.$QuestionEditPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first QuestionEdit that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {QuestionEditFindFirstArgs} args - Arguments to find a QuestionEdit
+     * @example
+     * // Get one QuestionEdit
+     * const questionEdit = await prisma.questionEdit.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends QuestionEditFindFirstArgs>(args?: SelectSubset<T, QuestionEditFindFirstArgs<ExtArgs>>): Prisma__QuestionEditClient<$Result.GetResult<Prisma.$QuestionEditPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first QuestionEdit that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {QuestionEditFindFirstOrThrowArgs} args - Arguments to find a QuestionEdit
+     * @example
+     * // Get one QuestionEdit
+     * const questionEdit = await prisma.questionEdit.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends QuestionEditFindFirstOrThrowArgs>(args?: SelectSubset<T, QuestionEditFindFirstOrThrowArgs<ExtArgs>>): Prisma__QuestionEditClient<$Result.GetResult<Prisma.$QuestionEditPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more QuestionEdits that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {QuestionEditFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all QuestionEdits
+     * const questionEdits = await prisma.questionEdit.findMany()
+     * 
+     * // Get first 10 QuestionEdits
+     * const questionEdits = await prisma.questionEdit.findMany({ take: 10 })
+     * 
+     * // Only select the `questionId`
+     * const questionEditWithQuestionIdOnly = await prisma.questionEdit.findMany({ select: { questionId: true } })
+     * 
+     */
+    findMany<T extends QuestionEditFindManyArgs>(args?: SelectSubset<T, QuestionEditFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$QuestionEditPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a QuestionEdit.
+     * @param {QuestionEditCreateArgs} args - Arguments to create a QuestionEdit.
+     * @example
+     * // Create one QuestionEdit
+     * const QuestionEdit = await prisma.questionEdit.create({
+     *   data: {
+     *     // ... data to create a QuestionEdit
+     *   }
+     * })
+     * 
+     */
+    create<T extends QuestionEditCreateArgs>(args: SelectSubset<T, QuestionEditCreateArgs<ExtArgs>>): Prisma__QuestionEditClient<$Result.GetResult<Prisma.$QuestionEditPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many QuestionEdits.
+     * @param {QuestionEditCreateManyArgs} args - Arguments to create many QuestionEdits.
+     * @example
+     * // Create many QuestionEdits
+     * const questionEdit = await prisma.questionEdit.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends QuestionEditCreateManyArgs>(args?: SelectSubset<T, QuestionEditCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many QuestionEdits and returns the data saved in the database.
+     * @param {QuestionEditCreateManyAndReturnArgs} args - Arguments to create many QuestionEdits.
+     * @example
+     * // Create many QuestionEdits
+     * const questionEdit = await prisma.questionEdit.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many QuestionEdits and only return the `questionId`
+     * const questionEditWithQuestionIdOnly = await prisma.questionEdit.createManyAndReturn({
+     *   select: { questionId: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends QuestionEditCreateManyAndReturnArgs>(args?: SelectSubset<T, QuestionEditCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$QuestionEditPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a QuestionEdit.
+     * @param {QuestionEditDeleteArgs} args - Arguments to delete one QuestionEdit.
+     * @example
+     * // Delete one QuestionEdit
+     * const QuestionEdit = await prisma.questionEdit.delete({
+     *   where: {
+     *     // ... filter to delete one QuestionEdit
+     *   }
+     * })
+     * 
+     */
+    delete<T extends QuestionEditDeleteArgs>(args: SelectSubset<T, QuestionEditDeleteArgs<ExtArgs>>): Prisma__QuestionEditClient<$Result.GetResult<Prisma.$QuestionEditPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one QuestionEdit.
+     * @param {QuestionEditUpdateArgs} args - Arguments to update one QuestionEdit.
+     * @example
+     * // Update one QuestionEdit
+     * const questionEdit = await prisma.questionEdit.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends QuestionEditUpdateArgs>(args: SelectSubset<T, QuestionEditUpdateArgs<ExtArgs>>): Prisma__QuestionEditClient<$Result.GetResult<Prisma.$QuestionEditPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more QuestionEdits.
+     * @param {QuestionEditDeleteManyArgs} args - Arguments to filter QuestionEdits to delete.
+     * @example
+     * // Delete a few QuestionEdits
+     * const { count } = await prisma.questionEdit.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends QuestionEditDeleteManyArgs>(args?: SelectSubset<T, QuestionEditDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more QuestionEdits.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {QuestionEditUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many QuestionEdits
+     * const questionEdit = await prisma.questionEdit.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends QuestionEditUpdateManyArgs>(args: SelectSubset<T, QuestionEditUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more QuestionEdits and returns the data updated in the database.
+     * @param {QuestionEditUpdateManyAndReturnArgs} args - Arguments to update many QuestionEdits.
+     * @example
+     * // Update many QuestionEdits
+     * const questionEdit = await prisma.questionEdit.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more QuestionEdits and only return the `questionId`
+     * const questionEditWithQuestionIdOnly = await prisma.questionEdit.updateManyAndReturn({
+     *   select: { questionId: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends QuestionEditUpdateManyAndReturnArgs>(args: SelectSubset<T, QuestionEditUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$QuestionEditPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one QuestionEdit.
+     * @param {QuestionEditUpsertArgs} args - Arguments to update or create a QuestionEdit.
+     * @example
+     * // Update or create a QuestionEdit
+     * const questionEdit = await prisma.questionEdit.upsert({
+     *   create: {
+     *     // ... data to create a QuestionEdit
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the QuestionEdit we want to update
+     *   }
+     * })
+     */
+    upsert<T extends QuestionEditUpsertArgs>(args: SelectSubset<T, QuestionEditUpsertArgs<ExtArgs>>): Prisma__QuestionEditClient<$Result.GetResult<Prisma.$QuestionEditPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of QuestionEdits.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {QuestionEditCountArgs} args - Arguments to filter QuestionEdits to count.
+     * @example
+     * // Count the number of QuestionEdits
+     * const count = await prisma.questionEdit.count({
+     *   where: {
+     *     // ... the filter for the QuestionEdits we want to count
+     *   }
+     * })
+    **/
+    count<T extends QuestionEditCountArgs>(
+      args?: Subset<T, QuestionEditCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], QuestionEditCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a QuestionEdit.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {QuestionEditAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends QuestionEditAggregateArgs>(args: Subset<T, QuestionEditAggregateArgs>): Prisma.PrismaPromise<GetQuestionEditAggregateType<T>>
+
+    /**
+     * Group by QuestionEdit.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {QuestionEditGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends QuestionEditGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: QuestionEditGroupByArgs['orderBy'] }
+        : { orderBy?: QuestionEditGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, QuestionEditGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetQuestionEditGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the QuestionEdit model
+   */
+  readonly fields: QuestionEditFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for QuestionEdit.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__QuestionEditClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    question<T extends QuestionDefaultArgs<ExtArgs> = {}>(args?: Subset<T, QuestionDefaultArgs<ExtArgs>>): Prisma__QuestionClient<$Result.GetResult<Prisma.$QuestionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the QuestionEdit model
+   */
+  interface QuestionEditFieldRefs {
+    readonly questionId: FieldRef<"QuestionEdit", 'String'>
+    readonly createdAt: FieldRef<"QuestionEdit", 'DateTime'>
+    readonly previousContent: FieldRef<"QuestionEdit", 'String'>
+    readonly previousTitle: FieldRef<"QuestionEdit", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * QuestionEdit findUnique
+   */
+  export type QuestionEditFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the QuestionEdit
+     */
+    select?: QuestionEditSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the QuestionEdit
+     */
+    omit?: QuestionEditOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: QuestionEditInclude<ExtArgs> | null
+    /**
+     * Filter, which QuestionEdit to fetch.
+     */
+    where: QuestionEditWhereUniqueInput
+  }
+
+  /**
+   * QuestionEdit findUniqueOrThrow
+   */
+  export type QuestionEditFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the QuestionEdit
+     */
+    select?: QuestionEditSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the QuestionEdit
+     */
+    omit?: QuestionEditOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: QuestionEditInclude<ExtArgs> | null
+    /**
+     * Filter, which QuestionEdit to fetch.
+     */
+    where: QuestionEditWhereUniqueInput
+  }
+
+  /**
+   * QuestionEdit findFirst
+   */
+  export type QuestionEditFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the QuestionEdit
+     */
+    select?: QuestionEditSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the QuestionEdit
+     */
+    omit?: QuestionEditOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: QuestionEditInclude<ExtArgs> | null
+    /**
+     * Filter, which QuestionEdit to fetch.
+     */
+    where?: QuestionEditWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of QuestionEdits to fetch.
+     */
+    orderBy?: QuestionEditOrderByWithRelationInput | QuestionEditOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for QuestionEdits.
+     */
+    cursor?: QuestionEditWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` QuestionEdits from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` QuestionEdits.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of QuestionEdits.
+     */
+    distinct?: QuestionEditScalarFieldEnum | QuestionEditScalarFieldEnum[]
+  }
+
+  /**
+   * QuestionEdit findFirstOrThrow
+   */
+  export type QuestionEditFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the QuestionEdit
+     */
+    select?: QuestionEditSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the QuestionEdit
+     */
+    omit?: QuestionEditOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: QuestionEditInclude<ExtArgs> | null
+    /**
+     * Filter, which QuestionEdit to fetch.
+     */
+    where?: QuestionEditWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of QuestionEdits to fetch.
+     */
+    orderBy?: QuestionEditOrderByWithRelationInput | QuestionEditOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for QuestionEdits.
+     */
+    cursor?: QuestionEditWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` QuestionEdits from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` QuestionEdits.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of QuestionEdits.
+     */
+    distinct?: QuestionEditScalarFieldEnum | QuestionEditScalarFieldEnum[]
+  }
+
+  /**
+   * QuestionEdit findMany
+   */
+  export type QuestionEditFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the QuestionEdit
+     */
+    select?: QuestionEditSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the QuestionEdit
+     */
+    omit?: QuestionEditOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: QuestionEditInclude<ExtArgs> | null
+    /**
+     * Filter, which QuestionEdits to fetch.
+     */
+    where?: QuestionEditWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of QuestionEdits to fetch.
+     */
+    orderBy?: QuestionEditOrderByWithRelationInput | QuestionEditOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing QuestionEdits.
+     */
+    cursor?: QuestionEditWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` QuestionEdits from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` QuestionEdits.
+     */
+    skip?: number
+    distinct?: QuestionEditScalarFieldEnum | QuestionEditScalarFieldEnum[]
+  }
+
+  /**
+   * QuestionEdit create
+   */
+  export type QuestionEditCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the QuestionEdit
+     */
+    select?: QuestionEditSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the QuestionEdit
+     */
+    omit?: QuestionEditOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: QuestionEditInclude<ExtArgs> | null
+    /**
+     * The data needed to create a QuestionEdit.
+     */
+    data: XOR<QuestionEditCreateInput, QuestionEditUncheckedCreateInput>
+  }
+
+  /**
+   * QuestionEdit createMany
+   */
+  export type QuestionEditCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many QuestionEdits.
+     */
+    data: QuestionEditCreateManyInput | QuestionEditCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * QuestionEdit createManyAndReturn
+   */
+  export type QuestionEditCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the QuestionEdit
+     */
+    select?: QuestionEditSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the QuestionEdit
+     */
+    omit?: QuestionEditOmit<ExtArgs> | null
+    /**
+     * The data used to create many QuestionEdits.
+     */
+    data: QuestionEditCreateManyInput | QuestionEditCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: QuestionEditIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * QuestionEdit update
+   */
+  export type QuestionEditUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the QuestionEdit
+     */
+    select?: QuestionEditSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the QuestionEdit
+     */
+    omit?: QuestionEditOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: QuestionEditInclude<ExtArgs> | null
+    /**
+     * The data needed to update a QuestionEdit.
+     */
+    data: XOR<QuestionEditUpdateInput, QuestionEditUncheckedUpdateInput>
+    /**
+     * Choose, which QuestionEdit to update.
+     */
+    where: QuestionEditWhereUniqueInput
+  }
+
+  /**
+   * QuestionEdit updateMany
+   */
+  export type QuestionEditUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update QuestionEdits.
+     */
+    data: XOR<QuestionEditUpdateManyMutationInput, QuestionEditUncheckedUpdateManyInput>
+    /**
+     * Filter which QuestionEdits to update
+     */
+    where?: QuestionEditWhereInput
+    /**
+     * Limit how many QuestionEdits to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * QuestionEdit updateManyAndReturn
+   */
+  export type QuestionEditUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the QuestionEdit
+     */
+    select?: QuestionEditSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the QuestionEdit
+     */
+    omit?: QuestionEditOmit<ExtArgs> | null
+    /**
+     * The data used to update QuestionEdits.
+     */
+    data: XOR<QuestionEditUpdateManyMutationInput, QuestionEditUncheckedUpdateManyInput>
+    /**
+     * Filter which QuestionEdits to update
+     */
+    where?: QuestionEditWhereInput
+    /**
+     * Limit how many QuestionEdits to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: QuestionEditIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * QuestionEdit upsert
+   */
+  export type QuestionEditUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the QuestionEdit
+     */
+    select?: QuestionEditSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the QuestionEdit
+     */
+    omit?: QuestionEditOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: QuestionEditInclude<ExtArgs> | null
+    /**
+     * The filter to search for the QuestionEdit to update in case it exists.
+     */
+    where: QuestionEditWhereUniqueInput
+    /**
+     * In case the QuestionEdit found by the `where` argument doesn't exist, create a new QuestionEdit with this data.
+     */
+    create: XOR<QuestionEditCreateInput, QuestionEditUncheckedCreateInput>
+    /**
+     * In case the QuestionEdit was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<QuestionEditUpdateInput, QuestionEditUncheckedUpdateInput>
+  }
+
+  /**
+   * QuestionEdit delete
+   */
+  export type QuestionEditDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the QuestionEdit
+     */
+    select?: QuestionEditSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the QuestionEdit
+     */
+    omit?: QuestionEditOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: QuestionEditInclude<ExtArgs> | null
+    /**
+     * Filter which QuestionEdit to delete.
+     */
+    where: QuestionEditWhereUniqueInput
+  }
+
+  /**
+   * QuestionEdit deleteMany
+   */
+  export type QuestionEditDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which QuestionEdits to delete
+     */
+    where?: QuestionEditWhereInput
+    /**
+     * Limit how many QuestionEdits to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * QuestionEdit without action
+   */
+  export type QuestionEditDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the QuestionEdit
+     */
+    select?: QuestionEditSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the QuestionEdit
+     */
+    omit?: QuestionEditOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: QuestionEditInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -2015,6 +4432,31 @@ export namespace Prisma {
   };
 
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+  export const QuestionScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    title: 'title',
+    content: 'content',
+    createdAt: 'createdAt',
+    isEdited: 'isEdited',
+    upvotes: 'upvotes',
+    downvotes: 'downvotes',
+    isSolved: 'isSolved'
+  };
+
+  export type QuestionScalarFieldEnum = (typeof QuestionScalarFieldEnum)[keyof typeof QuestionScalarFieldEnum]
+
+
+  export const QuestionEditScalarFieldEnum: {
+    questionId: 'questionId',
+    createdAt: 'createdAt',
+    previousContent: 'previousContent',
+    previousTitle: 'previousTitle'
+  };
+
+  export type QuestionEditScalarFieldEnum = (typeof QuestionEditScalarFieldEnum)[keyof typeof QuestionEditScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -2121,6 +4563,20 @@ export namespace Prisma {
    */
   export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
     
+
+
+  /**
+   * Reference to a field of type 'Float'
+   */
+  export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
+    
+
+
+  /**
+   * Reference to a field of type 'Float[]'
+   */
+  export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
+    
   /**
    * Deep Input Types
    */
@@ -2212,6 +4668,134 @@ export namespace Prisma {
     github?: StringNullableWithAggregatesFilter<"User"> | string | null
     showGithub?: BoolWithAggregatesFilter<"User"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
+  }
+
+  export type QuestionWhereInput = {
+    AND?: QuestionWhereInput | QuestionWhereInput[]
+    OR?: QuestionWhereInput[]
+    NOT?: QuestionWhereInput | QuestionWhereInput[]
+    id?: StringFilter<"Question"> | string
+    userId?: StringNullableFilter<"Question"> | string | null
+    title?: StringFilter<"Question"> | string
+    content?: StringFilter<"Question"> | string
+    createdAt?: DateTimeFilter<"Question"> | Date | string
+    isEdited?: BoolFilter<"Question"> | boolean
+    upvotes?: IntFilter<"Question"> | number
+    downvotes?: IntFilter<"Question"> | number
+    isSolved?: BoolFilter<"Question"> | boolean
+    edits?: QuestionEditListRelationFilter
+  }
+
+  export type QuestionOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrderInput | SortOrder
+    title?: SortOrder
+    content?: SortOrder
+    createdAt?: SortOrder
+    isEdited?: SortOrder
+    upvotes?: SortOrder
+    downvotes?: SortOrder
+    isSolved?: SortOrder
+    edits?: QuestionEditOrderByRelationAggregateInput
+  }
+
+  export type QuestionWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: QuestionWhereInput | QuestionWhereInput[]
+    OR?: QuestionWhereInput[]
+    NOT?: QuestionWhereInput | QuestionWhereInput[]
+    userId?: StringNullableFilter<"Question"> | string | null
+    title?: StringFilter<"Question"> | string
+    content?: StringFilter<"Question"> | string
+    createdAt?: DateTimeFilter<"Question"> | Date | string
+    isEdited?: BoolFilter<"Question"> | boolean
+    upvotes?: IntFilter<"Question"> | number
+    downvotes?: IntFilter<"Question"> | number
+    isSolved?: BoolFilter<"Question"> | boolean
+    edits?: QuestionEditListRelationFilter
+  }, "id">
+
+  export type QuestionOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrderInput | SortOrder
+    title?: SortOrder
+    content?: SortOrder
+    createdAt?: SortOrder
+    isEdited?: SortOrder
+    upvotes?: SortOrder
+    downvotes?: SortOrder
+    isSolved?: SortOrder
+    _count?: QuestionCountOrderByAggregateInput
+    _avg?: QuestionAvgOrderByAggregateInput
+    _max?: QuestionMaxOrderByAggregateInput
+    _min?: QuestionMinOrderByAggregateInput
+    _sum?: QuestionSumOrderByAggregateInput
+  }
+
+  export type QuestionScalarWhereWithAggregatesInput = {
+    AND?: QuestionScalarWhereWithAggregatesInput | QuestionScalarWhereWithAggregatesInput[]
+    OR?: QuestionScalarWhereWithAggregatesInput[]
+    NOT?: QuestionScalarWhereWithAggregatesInput | QuestionScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Question"> | string
+    userId?: StringNullableWithAggregatesFilter<"Question"> | string | null
+    title?: StringWithAggregatesFilter<"Question"> | string
+    content?: StringWithAggregatesFilter<"Question"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"Question"> | Date | string
+    isEdited?: BoolWithAggregatesFilter<"Question"> | boolean
+    upvotes?: IntWithAggregatesFilter<"Question"> | number
+    downvotes?: IntWithAggregatesFilter<"Question"> | number
+    isSolved?: BoolWithAggregatesFilter<"Question"> | boolean
+  }
+
+  export type QuestionEditWhereInput = {
+    AND?: QuestionEditWhereInput | QuestionEditWhereInput[]
+    OR?: QuestionEditWhereInput[]
+    NOT?: QuestionEditWhereInput | QuestionEditWhereInput[]
+    questionId?: StringFilter<"QuestionEdit"> | string
+    createdAt?: DateTimeFilter<"QuestionEdit"> | Date | string
+    previousContent?: StringNullableFilter<"QuestionEdit"> | string | null
+    previousTitle?: StringNullableFilter<"QuestionEdit"> | string | null
+    question?: XOR<QuestionScalarRelationFilter, QuestionWhereInput>
+  }
+
+  export type QuestionEditOrderByWithRelationInput = {
+    questionId?: SortOrder
+    createdAt?: SortOrder
+    previousContent?: SortOrderInput | SortOrder
+    previousTitle?: SortOrderInput | SortOrder
+    question?: QuestionOrderByWithRelationInput
+  }
+
+  export type QuestionEditWhereUniqueInput = Prisma.AtLeast<{
+    questionId_createdAt?: QuestionEditQuestionIdCreatedAtCompoundUniqueInput
+    AND?: QuestionEditWhereInput | QuestionEditWhereInput[]
+    OR?: QuestionEditWhereInput[]
+    NOT?: QuestionEditWhereInput | QuestionEditWhereInput[]
+    questionId?: StringFilter<"QuestionEdit"> | string
+    createdAt?: DateTimeFilter<"QuestionEdit"> | Date | string
+    previousContent?: StringNullableFilter<"QuestionEdit"> | string | null
+    previousTitle?: StringNullableFilter<"QuestionEdit"> | string | null
+    question?: XOR<QuestionScalarRelationFilter, QuestionWhereInput>
+  }, "questionId_createdAt">
+
+  export type QuestionEditOrderByWithAggregationInput = {
+    questionId?: SortOrder
+    createdAt?: SortOrder
+    previousContent?: SortOrderInput | SortOrder
+    previousTitle?: SortOrderInput | SortOrder
+    _count?: QuestionEditCountOrderByAggregateInput
+    _max?: QuestionEditMaxOrderByAggregateInput
+    _min?: QuestionEditMinOrderByAggregateInput
+  }
+
+  export type QuestionEditScalarWhereWithAggregatesInput = {
+    AND?: QuestionEditScalarWhereWithAggregatesInput | QuestionEditScalarWhereWithAggregatesInput[]
+    OR?: QuestionEditScalarWhereWithAggregatesInput[]
+    NOT?: QuestionEditScalarWhereWithAggregatesInput | QuestionEditScalarWhereWithAggregatesInput[]
+    questionId?: StringWithAggregatesFilter<"QuestionEdit"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"QuestionEdit"> | Date | string
+    previousContent?: StringNullableWithAggregatesFilter<"QuestionEdit"> | string | null
+    previousTitle?: StringNullableWithAggregatesFilter<"QuestionEdit"> | string | null
   }
 
   export type UserCreateInput = {
@@ -2317,6 +4901,142 @@ export namespace Prisma {
     github?: NullableStringFieldUpdateOperationsInput | string | null
     showGithub?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type QuestionCreateInput = {
+    id?: string
+    userId?: string | null
+    title: string
+    content: string
+    createdAt?: Date | string
+    isEdited?: boolean
+    upvotes?: number
+    downvotes?: number
+    isSolved?: boolean
+    edits?: QuestionEditCreateNestedManyWithoutQuestionInput
+  }
+
+  export type QuestionUncheckedCreateInput = {
+    id?: string
+    userId?: string | null
+    title: string
+    content: string
+    createdAt?: Date | string
+    isEdited?: boolean
+    upvotes?: number
+    downvotes?: number
+    isSolved?: boolean
+    edits?: QuestionEditUncheckedCreateNestedManyWithoutQuestionInput
+  }
+
+  export type QuestionUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    title?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isEdited?: BoolFieldUpdateOperationsInput | boolean
+    upvotes?: IntFieldUpdateOperationsInput | number
+    downvotes?: IntFieldUpdateOperationsInput | number
+    isSolved?: BoolFieldUpdateOperationsInput | boolean
+    edits?: QuestionEditUpdateManyWithoutQuestionNestedInput
+  }
+
+  export type QuestionUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    title?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isEdited?: BoolFieldUpdateOperationsInput | boolean
+    upvotes?: IntFieldUpdateOperationsInput | number
+    downvotes?: IntFieldUpdateOperationsInput | number
+    isSolved?: BoolFieldUpdateOperationsInput | boolean
+    edits?: QuestionEditUncheckedUpdateManyWithoutQuestionNestedInput
+  }
+
+  export type QuestionCreateManyInput = {
+    id?: string
+    userId?: string | null
+    title: string
+    content: string
+    createdAt?: Date | string
+    isEdited?: boolean
+    upvotes?: number
+    downvotes?: number
+    isSolved?: boolean
+  }
+
+  export type QuestionUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    title?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isEdited?: BoolFieldUpdateOperationsInput | boolean
+    upvotes?: IntFieldUpdateOperationsInput | number
+    downvotes?: IntFieldUpdateOperationsInput | number
+    isSolved?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type QuestionUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    title?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isEdited?: BoolFieldUpdateOperationsInput | boolean
+    upvotes?: IntFieldUpdateOperationsInput | number
+    downvotes?: IntFieldUpdateOperationsInput | number
+    isSolved?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type QuestionEditCreateInput = {
+    createdAt: Date | string
+    previousContent?: string | null
+    previousTitle?: string | null
+    question: QuestionCreateNestedOneWithoutEditsInput
+  }
+
+  export type QuestionEditUncheckedCreateInput = {
+    questionId: string
+    createdAt: Date | string
+    previousContent?: string | null
+    previousTitle?: string | null
+  }
+
+  export type QuestionEditUpdateInput = {
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    previousContent?: NullableStringFieldUpdateOperationsInput | string | null
+    previousTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    question?: QuestionUpdateOneRequiredWithoutEditsNestedInput
+  }
+
+  export type QuestionEditUncheckedUpdateInput = {
+    questionId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    previousContent?: NullableStringFieldUpdateOperationsInput | string | null
+    previousTitle?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type QuestionEditCreateManyInput = {
+    questionId: string
+    createdAt: Date | string
+    previousContent?: string | null
+    previousTitle?: string | null
+  }
+
+  export type QuestionEditUpdateManyMutationInput = {
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    previousContent?: NullableStringFieldUpdateOperationsInput | string | null
+    previousTitle?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type QuestionEditUncheckedUpdateManyInput = {
+    questionId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    previousContent?: NullableStringFieldUpdateOperationsInput | string | null
+    previousTitle?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -2512,6 +5232,120 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type IntFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntFilter<$PrismaModel> | number
+  }
+
+  export type QuestionEditListRelationFilter = {
+    every?: QuestionEditWhereInput
+    some?: QuestionEditWhereInput
+    none?: QuestionEditWhereInput
+  }
+
+  export type QuestionEditOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type QuestionCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    title?: SortOrder
+    content?: SortOrder
+    createdAt?: SortOrder
+    isEdited?: SortOrder
+    upvotes?: SortOrder
+    downvotes?: SortOrder
+    isSolved?: SortOrder
+  }
+
+  export type QuestionAvgOrderByAggregateInput = {
+    upvotes?: SortOrder
+    downvotes?: SortOrder
+  }
+
+  export type QuestionMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    title?: SortOrder
+    content?: SortOrder
+    createdAt?: SortOrder
+    isEdited?: SortOrder
+    upvotes?: SortOrder
+    downvotes?: SortOrder
+    isSolved?: SortOrder
+  }
+
+  export type QuestionMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    title?: SortOrder
+    content?: SortOrder
+    createdAt?: SortOrder
+    isEdited?: SortOrder
+    upvotes?: SortOrder
+    downvotes?: SortOrder
+    isSolved?: SortOrder
+  }
+
+  export type QuestionSumOrderByAggregateInput = {
+    upvotes?: SortOrder
+    downvotes?: SortOrder
+  }
+
+  export type IntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
+  }
+
+  export type QuestionScalarRelationFilter = {
+    is?: QuestionWhereInput
+    isNot?: QuestionWhereInput
+  }
+
+  export type QuestionEditQuestionIdCreatedAtCompoundUniqueInput = {
+    questionId: string
+    createdAt: Date | string
+  }
+
+  export type QuestionEditCountOrderByAggregateInput = {
+    questionId?: SortOrder
+    createdAt?: SortOrder
+    previousContent?: SortOrder
+    previousTitle?: SortOrder
+  }
+
+  export type QuestionEditMaxOrderByAggregateInput = {
+    questionId?: SortOrder
+    createdAt?: SortOrder
+    previousContent?: SortOrder
+    previousTitle?: SortOrder
+  }
+
+  export type QuestionEditMinOrderByAggregateInput = {
+    questionId?: SortOrder
+    createdAt?: SortOrder
+    previousContent?: SortOrder
+    previousTitle?: SortOrder
+  }
+
   export type StringFieldUpdateOperationsInput = {
     set?: string
   }
@@ -2534,6 +5368,70 @@ export namespace Prisma {
 
   export type DateTimeFieldUpdateOperationsInput = {
     set?: Date | string
+  }
+
+  export type QuestionEditCreateNestedManyWithoutQuestionInput = {
+    create?: XOR<QuestionEditCreateWithoutQuestionInput, QuestionEditUncheckedCreateWithoutQuestionInput> | QuestionEditCreateWithoutQuestionInput[] | QuestionEditUncheckedCreateWithoutQuestionInput[]
+    connectOrCreate?: QuestionEditCreateOrConnectWithoutQuestionInput | QuestionEditCreateOrConnectWithoutQuestionInput[]
+    createMany?: QuestionEditCreateManyQuestionInputEnvelope
+    connect?: QuestionEditWhereUniqueInput | QuestionEditWhereUniqueInput[]
+  }
+
+  export type QuestionEditUncheckedCreateNestedManyWithoutQuestionInput = {
+    create?: XOR<QuestionEditCreateWithoutQuestionInput, QuestionEditUncheckedCreateWithoutQuestionInput> | QuestionEditCreateWithoutQuestionInput[] | QuestionEditUncheckedCreateWithoutQuestionInput[]
+    connectOrCreate?: QuestionEditCreateOrConnectWithoutQuestionInput | QuestionEditCreateOrConnectWithoutQuestionInput[]
+    createMany?: QuestionEditCreateManyQuestionInputEnvelope
+    connect?: QuestionEditWhereUniqueInput | QuestionEditWhereUniqueInput[]
+  }
+
+  export type IntFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
+  export type QuestionEditUpdateManyWithoutQuestionNestedInput = {
+    create?: XOR<QuestionEditCreateWithoutQuestionInput, QuestionEditUncheckedCreateWithoutQuestionInput> | QuestionEditCreateWithoutQuestionInput[] | QuestionEditUncheckedCreateWithoutQuestionInput[]
+    connectOrCreate?: QuestionEditCreateOrConnectWithoutQuestionInput | QuestionEditCreateOrConnectWithoutQuestionInput[]
+    upsert?: QuestionEditUpsertWithWhereUniqueWithoutQuestionInput | QuestionEditUpsertWithWhereUniqueWithoutQuestionInput[]
+    createMany?: QuestionEditCreateManyQuestionInputEnvelope
+    set?: QuestionEditWhereUniqueInput | QuestionEditWhereUniqueInput[]
+    disconnect?: QuestionEditWhereUniqueInput | QuestionEditWhereUniqueInput[]
+    delete?: QuestionEditWhereUniqueInput | QuestionEditWhereUniqueInput[]
+    connect?: QuestionEditWhereUniqueInput | QuestionEditWhereUniqueInput[]
+    update?: QuestionEditUpdateWithWhereUniqueWithoutQuestionInput | QuestionEditUpdateWithWhereUniqueWithoutQuestionInput[]
+    updateMany?: QuestionEditUpdateManyWithWhereWithoutQuestionInput | QuestionEditUpdateManyWithWhereWithoutQuestionInput[]
+    deleteMany?: QuestionEditScalarWhereInput | QuestionEditScalarWhereInput[]
+  }
+
+  export type QuestionEditUncheckedUpdateManyWithoutQuestionNestedInput = {
+    create?: XOR<QuestionEditCreateWithoutQuestionInput, QuestionEditUncheckedCreateWithoutQuestionInput> | QuestionEditCreateWithoutQuestionInput[] | QuestionEditUncheckedCreateWithoutQuestionInput[]
+    connectOrCreate?: QuestionEditCreateOrConnectWithoutQuestionInput | QuestionEditCreateOrConnectWithoutQuestionInput[]
+    upsert?: QuestionEditUpsertWithWhereUniqueWithoutQuestionInput | QuestionEditUpsertWithWhereUniqueWithoutQuestionInput[]
+    createMany?: QuestionEditCreateManyQuestionInputEnvelope
+    set?: QuestionEditWhereUniqueInput | QuestionEditWhereUniqueInput[]
+    disconnect?: QuestionEditWhereUniqueInput | QuestionEditWhereUniqueInput[]
+    delete?: QuestionEditWhereUniqueInput | QuestionEditWhereUniqueInput[]
+    connect?: QuestionEditWhereUniqueInput | QuestionEditWhereUniqueInput[]
+    update?: QuestionEditUpdateWithWhereUniqueWithoutQuestionInput | QuestionEditUpdateWithWhereUniqueWithoutQuestionInput[]
+    updateMany?: QuestionEditUpdateManyWithWhereWithoutQuestionInput | QuestionEditUpdateManyWithWhereWithoutQuestionInput[]
+    deleteMany?: QuestionEditScalarWhereInput | QuestionEditScalarWhereInput[]
+  }
+
+  export type QuestionCreateNestedOneWithoutEditsInput = {
+    create?: XOR<QuestionCreateWithoutEditsInput, QuestionUncheckedCreateWithoutEditsInput>
+    connectOrCreate?: QuestionCreateOrConnectWithoutEditsInput
+    connect?: QuestionWhereUniqueInput
+  }
+
+  export type QuestionUpdateOneRequiredWithoutEditsNestedInput = {
+    create?: XOR<QuestionCreateWithoutEditsInput, QuestionUncheckedCreateWithoutEditsInput>
+    connectOrCreate?: QuestionCreateOrConnectWithoutEditsInput
+    upsert?: QuestionUpsertWithoutEditsInput
+    connect?: QuestionWhereUniqueInput
+    update?: XOR<XOR<QuestionUpdateToOneWithWhereWithoutEditsInput, QuestionUpdateWithoutEditsInput>, QuestionUncheckedUpdateWithoutEditsInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -2690,6 +5588,169 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedDateTimeFilter<$PrismaModel>
     _max?: NestedDateTimeFilter<$PrismaModel>
+  }
+
+  export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
+  }
+
+  export type NestedFloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatFilter<$PrismaModel> | number
+  }
+
+  export type QuestionEditCreateWithoutQuestionInput = {
+    createdAt: Date | string
+    previousContent?: string | null
+    previousTitle?: string | null
+  }
+
+  export type QuestionEditUncheckedCreateWithoutQuestionInput = {
+    createdAt: Date | string
+    previousContent?: string | null
+    previousTitle?: string | null
+  }
+
+  export type QuestionEditCreateOrConnectWithoutQuestionInput = {
+    where: QuestionEditWhereUniqueInput
+    create: XOR<QuestionEditCreateWithoutQuestionInput, QuestionEditUncheckedCreateWithoutQuestionInput>
+  }
+
+  export type QuestionEditCreateManyQuestionInputEnvelope = {
+    data: QuestionEditCreateManyQuestionInput | QuestionEditCreateManyQuestionInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type QuestionEditUpsertWithWhereUniqueWithoutQuestionInput = {
+    where: QuestionEditWhereUniqueInput
+    update: XOR<QuestionEditUpdateWithoutQuestionInput, QuestionEditUncheckedUpdateWithoutQuestionInput>
+    create: XOR<QuestionEditCreateWithoutQuestionInput, QuestionEditUncheckedCreateWithoutQuestionInput>
+  }
+
+  export type QuestionEditUpdateWithWhereUniqueWithoutQuestionInput = {
+    where: QuestionEditWhereUniqueInput
+    data: XOR<QuestionEditUpdateWithoutQuestionInput, QuestionEditUncheckedUpdateWithoutQuestionInput>
+  }
+
+  export type QuestionEditUpdateManyWithWhereWithoutQuestionInput = {
+    where: QuestionEditScalarWhereInput
+    data: XOR<QuestionEditUpdateManyMutationInput, QuestionEditUncheckedUpdateManyWithoutQuestionInput>
+  }
+
+  export type QuestionEditScalarWhereInput = {
+    AND?: QuestionEditScalarWhereInput | QuestionEditScalarWhereInput[]
+    OR?: QuestionEditScalarWhereInput[]
+    NOT?: QuestionEditScalarWhereInput | QuestionEditScalarWhereInput[]
+    questionId?: StringFilter<"QuestionEdit"> | string
+    createdAt?: DateTimeFilter<"QuestionEdit"> | Date | string
+    previousContent?: StringNullableFilter<"QuestionEdit"> | string | null
+    previousTitle?: StringNullableFilter<"QuestionEdit"> | string | null
+  }
+
+  export type QuestionCreateWithoutEditsInput = {
+    id?: string
+    userId?: string | null
+    title: string
+    content: string
+    createdAt?: Date | string
+    isEdited?: boolean
+    upvotes?: number
+    downvotes?: number
+    isSolved?: boolean
+  }
+
+  export type QuestionUncheckedCreateWithoutEditsInput = {
+    id?: string
+    userId?: string | null
+    title: string
+    content: string
+    createdAt?: Date | string
+    isEdited?: boolean
+    upvotes?: number
+    downvotes?: number
+    isSolved?: boolean
+  }
+
+  export type QuestionCreateOrConnectWithoutEditsInput = {
+    where: QuestionWhereUniqueInput
+    create: XOR<QuestionCreateWithoutEditsInput, QuestionUncheckedCreateWithoutEditsInput>
+  }
+
+  export type QuestionUpsertWithoutEditsInput = {
+    update: XOR<QuestionUpdateWithoutEditsInput, QuestionUncheckedUpdateWithoutEditsInput>
+    create: XOR<QuestionCreateWithoutEditsInput, QuestionUncheckedCreateWithoutEditsInput>
+    where?: QuestionWhereInput
+  }
+
+  export type QuestionUpdateToOneWithWhereWithoutEditsInput = {
+    where?: QuestionWhereInput
+    data: XOR<QuestionUpdateWithoutEditsInput, QuestionUncheckedUpdateWithoutEditsInput>
+  }
+
+  export type QuestionUpdateWithoutEditsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    title?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isEdited?: BoolFieldUpdateOperationsInput | boolean
+    upvotes?: IntFieldUpdateOperationsInput | number
+    downvotes?: IntFieldUpdateOperationsInput | number
+    isSolved?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type QuestionUncheckedUpdateWithoutEditsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    title?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isEdited?: BoolFieldUpdateOperationsInput | boolean
+    upvotes?: IntFieldUpdateOperationsInput | number
+    downvotes?: IntFieldUpdateOperationsInput | number
+    isSolved?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type QuestionEditCreateManyQuestionInput = {
+    createdAt: Date | string
+    previousContent?: string | null
+    previousTitle?: string | null
+  }
+
+  export type QuestionEditUpdateWithoutQuestionInput = {
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    previousContent?: NullableStringFieldUpdateOperationsInput | string | null
+    previousTitle?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type QuestionEditUncheckedUpdateWithoutQuestionInput = {
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    previousContent?: NullableStringFieldUpdateOperationsInput | string | null
+    previousTitle?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type QuestionEditUncheckedUpdateManyWithoutQuestionInput = {
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    previousContent?: NullableStringFieldUpdateOperationsInput | string | null
+    previousTitle?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
 

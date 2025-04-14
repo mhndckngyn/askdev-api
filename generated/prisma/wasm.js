@@ -119,10 +119,6 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
 
 exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
-  email: 'email',
-  provider: 'provider',
-  providerUserId: 'providerUserId',
-  password: 'password',
   role: 'role',
   username: 'username',
   profilePicture: 'profilePicture',
@@ -130,6 +126,18 @@ exports.Prisma.UserScalarFieldEnum = {
   github: 'github',
   showGithub: 'showGithub',
   createdAt: 'createdAt'
+};
+
+exports.Prisma.AccountScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  provider: 'provider',
+  email: 'email',
+  password: 'password',
+  providerUserId: 'providerUserId',
+  isVerified: 'isVerified',
+  verificationToken: 'verificationToken',
+  tokenExpiry: 'tokenExpiry'
 };
 
 exports.Prisma.SortOrder = {
@@ -146,19 +154,20 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
+exports.Role = exports.$Enums.Role = {
+  ADMIN: 'ADMIN',
+  MEMBER: 'MEMBER'
+};
+
 exports.AuthProvider = exports.$Enums.AuthProvider = {
   EMAIL: 'EMAIL',
   GOOGLE: 'GOOGLE',
   GITHUB: 'GITHUB'
 };
 
-exports.Role = exports.$Enums.Role = {
-  ADMIN: 'ADMIN',
-  MEMBER: 'MEMBER'
-};
-
 exports.Prisma.ModelName = {
-  User: 'User'
+  User: 'User',
+  Account: 'Account'
 };
 
 /**

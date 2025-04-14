@@ -26,10 +26,18 @@ export const constants = {
     key: ensureEnv('CLOUDINARY_API_KEY'),
     secret: ensureEnv('CLOUDINARY_API_SECRET'),
   },
+  nodemailer: {
+    service: ensureEnv('MAILER_SERVICE'),
+    email: ensureEnv('MAILER_EMAIL'),
+    password: ensureEnv('MAILER_PASSWORD'),
+  },
   secrets: {
     jwt: {
       secret: ensureEnv('JWT_SECRET'),
-      exp: 360000,
+      exp: 3600000,
+    },
+    verificationToken: {
+      exp: 1800000, // 30 phút
     },
   },
   cookie: {

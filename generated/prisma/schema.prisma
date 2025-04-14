@@ -20,18 +20,30 @@ enum AuthProvider {
 }
 
 model User {
-  id             String       @id @default(uuid())
-  email          String?      @unique
-  provider       AuthProvider
-  providerUserId String?
-  password       String? // only for EMAIL auth
-  role           Role         @default(MEMBER)
-  username       String       @unique
+  id             String   @id @default(uuid())
+  role           Role     @default(MEMBER)
+  username       String   @unique
   profilePicture String
   bio            String?
   github         String?
-  showGithub     Boolean      @default(false)
-  createdAt      DateTime     @default(now())
+  showGithub     Boolean  @default(false)
+  createdAt      DateTime @default(now())
+
+  account Account? @relation()
+}
+
+model Account {
+  id                String       @id @default(uuid())
+  userId            String       @unique
+  provider          AuthProvider
+  email             String?      @unique
+  password          String? // only for EMAIL auth
+  providerUserId    String? // only for GOOGLE/GITHUB auth
+  isVerified        Boolean
+  verificationToken String?
+  tokenExpiry       DateTime?
+
+  user User @relation(fields: [userId], references: [id])
 
   @@unique([provider, providerUserId])
 }

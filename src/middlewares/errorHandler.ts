@@ -16,12 +16,13 @@ export function errorHandler(
   const message =
     err instanceof ApiError ? err.message : 'common.internal-server-error';
 
-  const body: ApiResponse = {
+  const resBody: ApiResponse = {
     success: false,
+    message,
     content: err.data || null,
-    error: err.message,
-    statusCode
-  }
+    error: err.stack,
+    statusCode,
+  };
 
-  res.status(statusCode).json(body);
+  res.status(statusCode).json(resBody);
 }

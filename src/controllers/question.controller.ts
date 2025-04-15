@@ -25,7 +25,7 @@ const QuestionController = {
         success: true,
         statusCode: 201,
         message: "api:question.created-successfully",
-        data: question,
+        content: question,
       };
 
       res.status(201).json(resBody);
@@ -46,7 +46,7 @@ const QuestionController = {
         success: true,
         statusCode: 200,
         message: "api:question.updated-successfully",
-        data: updated,
+        content: updated,
       };
 
       res.status(200).json(resBody);
@@ -65,7 +65,7 @@ const QuestionController = {
         success: true,
         statusCode: 200,
         message: "api:question.deleted-successfully",
-        data: question,
+        content: question,
       };
 
       res.status(200).json(resBody);

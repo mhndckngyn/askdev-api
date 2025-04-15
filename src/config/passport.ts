@@ -18,7 +18,7 @@ passport.use(
     async (accessToken, refreshToken, profile, done) => {
       try {
         const { user, token } = await AuthService.oauthLogin(profile, 'GOOGLE');
-        done(null, { user, token });
+        done(null, { ...user, token });
       } catch (error) {
         done(error);
       }
@@ -42,7 +42,7 @@ passport.use(
     ) => {
       try {
         const { user, token } = await AuthService.oauthLogin(profile, 'GITHUB');
-        done(null, { user, token });
+        done(null, { ...user, token });
       } catch (error) {
         done(error);
       }

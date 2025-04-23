@@ -1,7 +1,6 @@
-import express from 'express';
-import upload from '@/middlewares/multer';
 import UserController from '@/controllers/user.controller';
 import { authMiddleware } from '@/middlewares/auth';
+import express from 'express';
 
 const router = express.Router();
 

@@ -13,6 +13,24 @@ type CreateQuestionPayload = {
 };
 
 const QuestionService = {
+  getQuestionById: async (id: string) => {
+    const question = await prisma.question.findFirst({
+      where: { id },
+      include: {
+        tags: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    });
+    if (!question) {
+      throw new ApiError(404, 'api:question.not-found', true);
+    }
+    return question;
+  },
+
   createQuestion: async ({
     userId,
     title,

@@ -53,26 +53,29 @@ model Account {
 }
 
 model Question {
-  id             String @id @default(uuid())
-  userId         String?
-  title          String
-  content        String
-  createdAt      DateTime @default(now())
-  isEdited       Boolean @default(false)
-  upvotes        Int @default(0)
-  downvotes      Int @default(0)
-  isSolved       Boolean @default(false)
+  id        String   @id @default(uuid())
+  userId    String?
+  title     String
+  content   String
+  images    String[]
+  createdAt DateTime @default(now())
+  isEdited  Boolean  @default(false)
+  upvotes   Int      @default(0)
+  downvotes Int      @default(0)
+  isSolved  Boolean  @default(false)
 
-  edits      QuestionEdit[]
+  edits QuestionEdit[]
+  tags  Tag[]          @relation("QuestionTags")
 }
 
 model QuestionEdit {
   questionId      String
-  createdAt       DateTime 
+  createdAt       DateTime
   previousContent String?
   previousTitle   String?
 
-  question        Question @relation(fields: [questionId], references: [id])
+  question Question @relation(fields: [questionId], references: [id])
+
   @@id([questionId, createdAt])
 }
 

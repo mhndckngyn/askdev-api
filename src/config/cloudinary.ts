@@ -8,7 +8,7 @@ cloudinary.config({
   api_secret: constants.cloudinary.secret,
 });
 
-export function uploadToCloudinary(
+export async function uploadToCloudinary(
   buffer: Buffer,
   folder: string
 ): Promise<UploadApiResponse> {
@@ -30,6 +30,19 @@ export function uploadToCloudinary(
     // đọc stream từ bộ nhớ và kết nối với stream của cloudinary
     streamifier.createReadStream(buffer).pipe(uploadStream);
   });
+}
+
+export async function uploadMultiple(
+  images: Express.Multer.File[]
+): Promise<string[]> {
+  const imageUrls: string[] = [];
+
+  for (const image of images) {
+    const result = await uploadToCloudinary(image.buffer, 'questions');
+    imageUrls.push(result.secure_url);
+  }
+
+  return imageUrls;
 }
 
 export async function uploadFromUrl(

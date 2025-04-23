@@ -5,6 +5,8 @@ import upload from '@/middlewares/multer';
 
 const router = Router();
 
+router.get('/:id', QuestionController.getById);
+
 router.post(
   '/',
   upload.array('images'),

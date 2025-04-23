@@ -75,3 +75,10 @@ model QuestionEdit {
   question        Question @relation(fields: [questionId], references: [id])
   @@id([questionId, createdAt])
 }
+
+model Tag {
+  id   String @id @default(uuid())
+  name String
+
+  questions Question[] @relation("QuestionTags")
+}

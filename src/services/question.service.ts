@@ -1,21 +1,51 @@
-import prisma from "@/prisma";
-import { ApiError } from "@/utils/ApiError";
+import prisma from '@/prisma';
+import { ApiError } from '@/utils/ApiError';
+import TagService from './tag.service';
+import { uploadMultiple } from '@/config/cloudinary';
+
+type CreateQuestionPayload = {
+  userId: string;
+  title: string;
+  content: string;
+  existingTags: string[];
+  newTags: string[];
+  imageFiles: Express.Multer.File[];
+};
 
 const QuestionService = {
-  createQuestion: async (userId: string, title: string, content: string) => {
-    try {
-      const question = await prisma.question.create({
-        data: {
-          userId,
-          title,
-          content,
-          createdAt: new Date(new Date().getTime() + 7 * 60 * 60 * 1000),
+  createQuestion: async ({
+    userId,
+    title,
+    content,
+    existingTags,
+    newTags,
+    imageFiles,
+  }: CreateQuestionPayload) => {
+    const [imageUrls, createdNewTags] = await Promise.all([
+      uploadMultiple(imageFiles),
+      newTags.length > 0 ? TagService.createTags(newTags) : Promise.resolve([]),
+    ]);
+
+    const question = await prisma.question.create({
+      data: {
+        userId,
+        title,
+        content,
+        tags: {
+          connect: [
+            ...existingTags.map((tagId) => ({ id: tagId })),
+            ...createdNewTags.map((tag) => ({ id: tag.id })),
+          ],
         },
-      });
-      return question;
-    } catch (error) {
-      throw new ApiError(500, "api:question.create-failed", true);
-    }
+        images: imageUrls,
+        createdAt: new Date(new Date().getTime() + 7 * 60 * 60 * 1000), // UTC+7
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    return question;
   },
 
   updateQuestion: async (id: string, title: string, content: string) => {
@@ -25,7 +55,7 @@ const QuestionService = {
       });
 
       if (!existing) {
-        throw new ApiError(404, "api:question.not-found", true);
+        throw new ApiError(404, 'api:question.not-found', true);
       }
 
       await prisma.questionEdit.create({
@@ -49,8 +79,8 @@ const QuestionService = {
 
       return updated;
     } catch (error: any) {
-      console.error("❌ updateQuestion error:", error);
-      throw new ApiError(500, "api:question.update-failed", true);
+      console.error('❌ updateQuestion error:', error);
+      throw new ApiError(500, 'api:question.update-failed', true);
     }
   },
 
@@ -66,7 +96,7 @@ const QuestionService = {
 
       return question;
     } catch (error) {
-      throw new ApiError(404, "api:question.not-found", true);
+      throw new ApiError(404, 'api:question.not-found', true);
     }
   },
 };

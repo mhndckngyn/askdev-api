@@ -228,7 +228,7 @@ const AuthService = {
         tokenExpiry
       );
     } catch (err) {
-      throw new ApiError(500, 'auth.resend-send-failed');
+      throw new ApiError(500, 'auth.resend-failed');
     }
 
     await prisma.account.update({

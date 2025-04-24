@@ -1,8 +1,7 @@
-import { RequestHandler } from 'express';
 import QuestionService from '@/services/question.service';
 import { ApiResponse } from '@/types/response.type';
 import { ApiError } from '@/utils/ApiError';
-import { uploadMultiple } from '@/config/cloudinary';
+import { RequestHandler } from 'express';
 
 const QuestionController = {
   getById: (async (req, res, next) => {
@@ -26,7 +25,7 @@ const QuestionController = {
   create: (async (req, res, next) => {
     try {
       if (!req.user?.id) {
-        throw new ApiError(401, 'api:auth.login-first', true);
+        throw new ApiError(401, 'auth.login-first', true);
       }
 
       const userId = req.user.id;
@@ -45,8 +44,8 @@ const QuestionController = {
 
       const resBody: ApiResponse = {
         success: true,
+        message: 'question.created-successfully',
         statusCode: 201,
-        message: 'api:question.created-successfully',
         content: question,
       };
 
@@ -66,7 +65,7 @@ const QuestionController = {
       const resBody: ApiResponse = {
         success: true,
         statusCode: 200,
-        message: 'api:question.updated-successfully',
+        message: 'question.updated-successfully',
         content: updated,
       };
 
@@ -85,7 +84,7 @@ const QuestionController = {
       const resBody: ApiResponse = {
         success: true,
         statusCode: 200,
-        message: 'api:question.deleted-successfully',
+        message: 'question.deleted-successfully',
         content: question,
       };
 

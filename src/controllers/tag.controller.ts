@@ -1,37 +1,21 @@
 import TagService from '@/services/tag.service';
-import { ApiResponse } from '@/types/response.type';
-import { ApiError } from '@/utils/ApiError';
-import { RequestHandler } from 'express';
+import {ApiResponse} from '@/types/response.type';
+import {RequestHandler} from 'express';
 
 const TagController = {
   searchTags: (async (req, res, next) => {
-    const termParam = req.query.term;
-    const countParam = req.query.count;
-
-    if (termParam !== undefined && typeof termParam !== 'string') {
-      throw new ApiError(422, 'api:tag.invalid-params');
-    }
-
-    let count: number | undefined;
-    if (countParam !== undefined) {
-      if (typeof countParam !== 'string' || isNaN(Number(countParam))) {
-        throw new ApiError(422, 'api:tag.invalid-params');
-      }
-      count = parseInt(countParam);
-    }
+    const keyword = (req.query.keyword as string)?.trim() || '';
+    const count = parseInt(req.query.count as string) || 5;
+    const page = parseInt(req.query.page as string) || 1;
+    const sortBy = (req.query.sortBy as 'name' | 'popularity') || 'name';
 
     try {
-      let tags;
-      if (termParam) {
-        tags = await TagService.searchTags(termParam, count);
-      } else {
-        tags = await TagService.getTags(count);
-      }
+      const content = await TagService.searchTags(keyword, count, page, sortBy);
 
       const resBody: ApiResponse = {
         success: true,
         statusCode: 200,
-        content: tags,
+        content,
       };
 
       res.status(200).json(resBody);

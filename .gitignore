@@ -1,4 +1,5 @@
 generated/prisma/
+.idea/*
 
 # Logs
 logs

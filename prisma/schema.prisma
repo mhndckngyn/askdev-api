@@ -80,8 +80,10 @@ model QuestionEdit {
 }
 
 model Tag {
-  id   String @id @default(uuid())
-  name String
+  id            String  @id @default(uuid())
+  name          String  @unique
+  descriptionVi String?
+  descriptionEn String?
 
   questions Question[] @relation("QuestionTags")
 }

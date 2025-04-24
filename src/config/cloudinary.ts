@@ -35,14 +35,12 @@ export async function uploadToCloudinary(
 export async function uploadMultiple(
   images: Express.Multer.File[]
 ): Promise<string[]> {
-  const imageUrls: string[] = [];
+  const uploadPromises = images.map((image) =>
+    uploadToCloudinary(image.buffer, 'questions')
+  );
 
-  for (const image of images) {
-    const result = await uploadToCloudinary(image.buffer, 'questions');
-    imageUrls.push(result.secure_url);
-  }
-
-  return imageUrls;
+  const results = await Promise.all(uploadPromises);
+  return results.map((res) => res.secure_url);
 }
 
 export async function uploadFromUrl(

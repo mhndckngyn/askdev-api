@@ -1,44 +1,72 @@
 import prisma from '@/prisma';
-import { ApiError } from '@/utils/ApiError';
-
-const MAX_TAGS_TO_SEARCH = 5;
-const MAX_TAGS_TO_GET = 10;
+import { Prisma } from 'generated/prisma';
 
 const TagService = {
-  searchTags: async (query: string, count: number = MAX_TAGS_TO_SEARCH) => {
-    try {
-      const tags = await prisma.tag.findMany({
-        where: {
-          name: query,
+  searchTags: async (
+    keyword: string,
+    limit: number,
+    page: number,
+    sortBy: 'name' | 'popularity'
+  ) => {
+    const where: Prisma.TagWhereInput =
+      keyword !== ''
+        ? {
+            name: {
+              contains: keyword,
+              mode: Prisma.QueryMode.insensitive,
+            },
+          }
+        : {};
+
+    // sap xep theo Ten (A -> Z) hoac theo so cau hoi
+    const orderBy: Prisma.TagOrderByWithRelationInput =
+      sortBy === 'name'
+        ? {
+            name: 'asc',
+          }
+        : {
+            questions: {
+              _count: 'desc',
+            },
+          };
+
+    const results = await prisma.tag.findMany({
+      where,
+      skip: (page - 1) * limit,
+      take: limit,
+      include: {
+        _count: {
+          select: {
+            questions: true,
+          },
         },
-        take: count,
-      });
+      },
+      orderBy,
+    });
 
-      return tags;
-    } catch (error) {
-      throw new ApiError(500, 'api:tag.unexpected-error');
-    }
-  },
-  getTags: async (count: number = MAX_TAGS_TO_GET) => {
-    try {
-      const tags = await prisma.tag.findMany({
-        take: count,
-      });
+    const total = await prisma.tag.count({ where });
 
-      return tags;
-    } catch (error) {
-      throw new ApiError(500, 'api:tag.unexpected-error');
-    }
+    const pagination = {
+      total,
+      count: limit,
+      currentPage: page,
+      totalPages: Math.ceil(total / limit),
+    };
+
+    const tags = results.map((tag) => ({
+      ...tag,
+      questionCount: tag._count.questions,
+    }));
+
+    return { tags, pagination };
   },
+
   createTags: async (values: string[]) => {
-    try {
-      return prisma.tag.createManyAndReturn({
-        data: values.map((name) => ({ name })),
-        select: { id: true },
-      });
-    } catch (error) {
-      throw new ApiError(500, 'api:tag.unexpected-error');
-    }
+    return prisma.tag.createManyAndReturn({
+      data: values.map((name) => ({ name })),
+      select: { id: true },
+      skipDuplicates: true,
+    });
   },
 };
 

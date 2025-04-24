@@ -4,6 +4,24 @@ import { ApiError } from '@/utils/ApiError';
 import { RequestHandler } from 'express';
 
 const QuestionController = {
+  getById: (async (req, res, next) => {
+    try {
+      const { id } = req.params;
+
+      const question = await QuestionService.getQuestionById(id);
+
+      const resBody: ApiResponse = {
+        success: true,
+        statusCode: 200,
+        content: question,
+      };
+
+      res.status(200).json(resBody);
+    } catch (err) {
+      next(err);
+    }
+  }) as RequestHandler,
+
   create: (async (req, res, next) => {
     try {
       if (!req.user?.id) {
@@ -24,11 +42,14 @@ const QuestionController = {
         imageFiles,
       });
 
-      res.status(201).json({
+      const resBody: ApiResponse = {
         success: true,
         message: 'question.created-successfully',
+        statusCode: 201,
         content: question,
-      });
+      };
+
+      res.status(201).json(resBody);
     } catch (err) {
       next(err);
     }

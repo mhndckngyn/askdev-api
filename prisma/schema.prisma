@@ -55,8 +55,8 @@ model Account {
 model Question {
   id        String   @id @default(uuid())
   userId    String?
-  title     String
-  content   String
+  title     String   
+  content   Json
   images    String[]
   createdAt DateTime @default(now())
   isEdited  Boolean  @default(false)
@@ -71,7 +71,7 @@ model Question {
 model QuestionEdit {
   questionId      String
   createdAt       DateTime
-  previousContent String?
+  previousContent Json?
   previousTitle   String?
 
   question Question @relation(fields: [questionId], references: [id])

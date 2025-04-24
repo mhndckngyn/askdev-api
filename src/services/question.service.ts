@@ -57,7 +57,7 @@ const QuestionService = {
           ],
         },
         images: imageUrls,
-        createdAt: new Date(new Date().getTime() + 7 * 60 * 60 * 1000), 
+        createdAt: new Date(),
       },
       select: {
         id: true,
@@ -92,7 +92,7 @@ const QuestionService = {
           title,
           content,
           isEdited: true,
-          createdAt: new Date(new Date().getTime() + 7 * 60 * 60 * 1000),
+          createdAt: new Date(),
         },
       });
 

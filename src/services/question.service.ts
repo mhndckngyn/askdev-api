@@ -1,7 +1,8 @@
-import prisma from '@/prisma';
-import { ApiError } from '@/utils/ApiError';
-import TagService from './tag.service';
-import { uploadMultiple } from '@/config/cloudinary';
+import prisma from "@/prisma";
+import { ApiError } from "@/utils/ApiError";
+import TagService from "./tag.service";
+import { uploadMultiple } from "@/config/cloudinary";
+import { Prisma } from "@prisma/client";
 
 type CreateQuestionPayload = {
   userId: string;
@@ -26,7 +27,7 @@ const QuestionService = {
       },
     });
     if (!question) {
-      throw new ApiError(404, 'api:question.not-found', true);
+      throw new ApiError(404, "api:question.not-found", true);
     }
     return question;
   },
@@ -56,7 +57,7 @@ const QuestionService = {
           ],
         },
         images: imageUrls,
-        createdAt: new Date(new Date().getTime() + 7 * 60 * 60 * 1000), // UTC+7
+        createdAt: new Date(new Date().getTime() + 7 * 60 * 60 * 1000), 
       },
       select: {
         id: true,
@@ -73,13 +74,13 @@ const QuestionService = {
       });
 
       if (!existing) {
-        throw new ApiError(404, 'api:question.not-found', true);
+        throw new ApiError(404, "api:question.not-found", true);
       }
 
       await prisma.questionEdit.create({
         data: {
           questionId: id,
-          previousContent: existing.content,
+          previousContent: existing.content ?? "",
           previousTitle: existing.title,
           createdAt: existing.createdAt,
         },
@@ -97,8 +98,8 @@ const QuestionService = {
 
       return updated;
     } catch (error: any) {
-      console.error('❌ updateQuestion error:', error);
-      throw new ApiError(500, 'api:question.update-failed', true);
+      console.error("❌ updateQuestion error:", error);
+      throw new ApiError(500, "api:question.update-failed", true);
     }
   },
 
@@ -114,7 +115,7 @@ const QuestionService = {
 
       return question;
     } catch (error) {
-      throw new ApiError(404, 'api:question.not-found', true);
+      throw new ApiError(404, "api:question.not-found", true);
     }
   },
 };

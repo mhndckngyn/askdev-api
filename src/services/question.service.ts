@@ -2,7 +2,6 @@ import prisma from "@/prisma";
 import { ApiError } from "@/utils/ApiError";
 import TagService from "./tag.service";
 import { uploadMultiple } from "@/config/cloudinary";
-import { Prisma } from "@prisma/client";
 
 type CreateQuestionPayload = {
   userId: string;
@@ -12,8 +11,6 @@ type CreateQuestionPayload = {
   newTags: string[];
   imageFiles: Express.Multer.File[];
 };
-
-const toUtc7 = 7 * 60 * 60 * 1000;
 
 const QuestionService = {
   getQuestionById: async (id: string) => {
@@ -73,7 +70,7 @@ const QuestionService = {
     const existing = await prisma.question.findUnique({
       where: { id },
     });
-    
+
     if (!existing) {
       throw new ApiError(404, "api:question.not-found", true);
     }
@@ -110,10 +107,110 @@ const QuestionService = {
     });
 
     if (!question) {
-      throw new ApiError(404, 'question.not-found', true);
+      throw new ApiError(404, "question.not-found", true);
     }
 
     return question;
+  },
+
+  voteQuestion: async (userId: string, questionId: string, type: number) => {
+    const existingVote = await prisma.questionVote.findUnique({
+      where: {
+        userId_questionId: {
+          userId,
+          questionId,
+        },
+      },
+    });
+
+    if (existingVote) {
+      if (existingVote.type === type) {
+        await prisma.questionVote.delete({
+          where: {
+            userId_questionId: {
+              userId,
+              questionId,
+            },
+          },
+        });
+        await prisma.question.update({
+          where: { id: questionId },
+          data: {
+            upvotes: {
+              decrement: type === 1 ? 1 : 0,
+            },
+            downvotes: {
+              decrement: type === -1 ? 1 : 0,
+            },
+          },
+        });
+
+        return { action: "removed" };
+      } else {
+        await prisma.questionVote.update({
+          where: {
+            userId_questionId: {
+              userId,
+              questionId,
+            },
+          },
+          data: { type },
+        });
+
+        await prisma.question.update({
+          where: { id: questionId },
+          data: {
+            upvotes: {
+              increment: type === 1 ? 1 : -1,
+            },
+            downvotes: {
+              increment: type === -1 ? 1 : -1,
+            },
+          },
+        });
+
+        return { action: "changed" };
+      }
+    } else {
+      await prisma.questionVote.create({
+        data: {
+          userId,
+          questionId,
+          type,
+        },
+      });
+
+      await prisma.question.update({
+        where: { id: questionId },
+        data: {
+          upvotes: {
+            increment: type === 1 ? 1 : 0,
+          },
+          downvotes: {
+            increment: type === -1 ? 1 : 0,
+          },
+        },
+      });
+
+      return { action: "created" };
+    }
+  },
+
+  getVoteStatus: async (userId: string, questionId: string) => {
+    const existingVote = await prisma.questionVote.findUnique({
+      where: {
+        userId_questionId: {
+          userId,
+          questionId,
+        },
+      },
+    });
+
+    if (!existingVote) {
+      return { status: "none" }; 
+    }
+
+    return { status: existingVote.type === 1 ? "like" : "dislike" }; 
   },
 };
 

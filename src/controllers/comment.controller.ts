@@ -1,19 +1,19 @@
-import QuestionService from "@/services/question.service";
+import { RequestHandler } from "express";
+import CommentService from "@/services/comment.service";
 import { ApiResponse } from "@/types/response.type";
 import { ApiError } from "@/utils/ApiError";
-import { RequestHandler } from "express";
 
-const QuestionController = {
-  getById: (async (req, res, next) => {
+const CommentController = {
+  getByAnswerId: (async (req, res, next) => {
     try {
-      const { id } = req.params;
+      const { answerId } = req.params;
 
-      const question = await QuestionService.getQuestionById(id);
+      const comments = await CommentService.getCommentsByAnswerId(answerId);
 
       const resBody: ApiResponse = {
         success: true,
         statusCode: 200,
-        content: question,
+        content: comments,
       };
 
       res.status(200).json(resBody);
@@ -25,28 +25,23 @@ const QuestionController = {
   create: (async (req, res, next) => {
     try {
       if (!req.user?.id) {
-        throw new ApiError(401, "auth.login-first", true);
+        throw new ApiError(401, "api:auth.login-first", true);
       }
 
+      const { answerId, content } = req.body;
       const userId = req.user.id;
 
-      const { title, content, existingTags, newTags } = req.body;
-      const imageFiles = req.files as Express.Multer.File[];
-
-      const question = await QuestionService.createQuestion({
+      const comment = await CommentService.createComment({
         userId,
-        title,
+        answerId,
         content,
-        existingTags: JSON.parse(existingTags),
-        newTags: JSON.parse(newTags),
-        imageFiles,
       });
 
       const resBody: ApiResponse = {
         success: true,
-        message: "question.created-successfully",
         statusCode: 201,
-        content: question,
+        message: "api:comment.created-successfully",
+        content: comment,
       };
 
       res.status(201).json(resBody);
@@ -58,14 +53,14 @@ const QuestionController = {
   update: (async (req, res, next) => {
     try {
       const { id } = req.params;
-      const { title, content } = req.body;
+      const { content } = req.body;
 
-      const updated = await QuestionService.updateQuestion(id, title, content);
+      const updated = await CommentService.updateComment(id, content);
 
       const resBody: ApiResponse = {
         success: true,
         statusCode: 200,
-        message: "question.updated-successfully",
+        message: "api:comment.updated-successfully",
         content: updated,
       };
 
@@ -79,13 +74,13 @@ const QuestionController = {
     try {
       const { id } = req.params;
 
-      const question = await QuestionService.deleteQuestion(id);
+      const comment = await CommentService.deleteComment(id);
 
       const resBody: ApiResponse = {
         success: true,
         statusCode: 200,
-        message: "question.deleted-successfully",
-        content: question,
+        message: "api:comment.deleted-successfully",
+        content: comment,
       };
 
       res.status(200).json(resBody);
@@ -99,6 +94,7 @@ const QuestionController = {
       if (!req.user?.id) {
         throw new ApiError(401, "auth.login-first", true);
       }
+
       const userId = req.user.id;
       const { id } = req.params;
       const { type } = req.query;
@@ -107,7 +103,7 @@ const QuestionController = {
         throw new ApiError(400, "vote.invalid-type", true);
       }
 
-      const result = await QuestionService.voteQuestion(
+      const result = await CommentService.voteComment(
         userId,
         id,
         Number(type)
@@ -131,15 +127,15 @@ const QuestionController = {
       if (!req.user?.id) {
         throw new ApiError(401, "auth.login-first", true);
       }
-      
+
       const userId = req.user.id;
       const { id } = req.params;
-      const existingVote = await QuestionService.getVoteStatus(userId, id);
+      const voteStatus = await CommentService.getVoteStatus(userId, id);
 
       const resBody: ApiResponse = {
         success: true,
         statusCode: 200,
-        content: existingVote,
+        content: voteStatus,
       };
 
       res.status(200).json(resBody);
@@ -149,4 +145,4 @@ const QuestionController = {
   }) as RequestHandler,
 };
 
-export default QuestionController;
+export default CommentController;

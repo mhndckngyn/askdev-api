@@ -66,7 +66,12 @@ const QuestionService = {
     return question;
   },
 
-  updateQuestion: async (id: string, title: string, content: string) => {
+  updateQuestion: async (
+    id: string,
+    title: string,
+    content: string,
+    images: string[]
+  ) => {
     const existing = await prisma.question.findUnique({
       where: { id },
     });
@@ -80,6 +85,7 @@ const QuestionService = {
         questionId: id,
         previousContent: existing.content ?? "",
         previousTitle: existing.title,
+        previousImages: existing.images,
         createdAt: existing.createdAt,
       },
     });
@@ -89,6 +95,7 @@ const QuestionService = {
       data: {
         title,
         content,
+        images,
         isEdited: true,
         createdAt: new Date(),
       },
@@ -207,10 +214,108 @@ const QuestionService = {
     });
 
     if (!existingVote) {
-      return { status: "none" }; 
+      return { status: "none" };
     }
 
-    return { status: existingVote.type === 1 ? "like" : "dislike" }; 
+    return { status: existingVote.type === 1 ? "like" : "dislike" };
+  },
+
+  getEditHistory: async (
+    questionId: string,
+    createdAt: Date,
+    direction: number
+  ) => {
+    const question = await prisma.question.findUnique({
+      where: { id: questionId },
+    });
+
+    if (!question) {
+      throw new ApiError(404, "api:question.not-found", true);
+    }
+
+    if (question.createdAt.getTime() === createdAt.getTime()) {
+      if (direction === -1) {
+        const edit = await prisma.questionEdit.findFirst({
+          where: {
+            questionId,
+            createdAt: { lt: createdAt },
+          },
+          orderBy: {
+            createdAt: "desc",
+          },
+        });
+
+        return edit
+          ? {
+              title: edit.previousTitle,
+              content: edit.previousContent,
+              images: edit.previousImages,
+              createdAt: edit.createdAt,
+            }
+          : null;
+      } else if (direction === 1) {
+        return null;
+      }
+    } else {
+      const edit = await prisma.questionEdit.findFirst({
+        where: {
+          questionId,
+          createdAt,
+        },
+      });
+
+      if (!edit) {
+        return null;
+      }
+
+      if (direction === -1) {
+        const prevEdit = await prisma.questionEdit.findFirst({
+          where: {
+            questionId,
+            createdAt: { lt: createdAt },
+          },
+          orderBy: {
+            createdAt: "desc",
+          },
+        });
+
+        return prevEdit
+          ? {
+              title: prevEdit.previousTitle,
+              content: prevEdit.previousContent,
+              images: prevEdit.previousImages,
+              createdAt: prevEdit.createdAt,
+            }
+          : null;
+      } else if (direction === 1) {
+        const nextEdit = await prisma.questionEdit.findFirst({
+          where: {
+            questionId,
+            createdAt: { gt: createdAt },
+          },
+          orderBy: {
+            createdAt: "asc",
+          },
+        });
+
+        if (!nextEdit) {
+          return {
+            title: question.title,
+            content: question.content,
+            images: question.images,
+            createdAt: question.createdAt,
+          };
+        }
+
+        return {
+          title: nextEdit.previousTitle,
+          content: nextEdit.previousContent,
+          images: nextEdit.previousImages,
+          createdAt: nextEdit.createdAt,
+        };
+      }
+    }
+    return null;
   },
 };
 

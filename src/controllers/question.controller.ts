@@ -58,9 +58,14 @@ const QuestionController = {
   update: (async (req, res, next) => {
     try {
       const { id } = req.params;
-      const { title, content } = req.body;
+      const { title, content, images } = req.body;
 
-      const updated = await QuestionService.updateQuestion(id, title, content);
+      const updated = await QuestionService.updateQuestion(
+        id,
+        title,
+        content,
+        images
+      );
 
       const resBody: ApiResponse = {
         success: true,
@@ -131,7 +136,7 @@ const QuestionController = {
       if (!req.user?.id) {
         throw new ApiError(401, "auth.login-first", true);
       }
-      
+
       const userId = req.user.id;
       const { id } = req.params;
       const existingVote = await QuestionService.getVoteStatus(userId, id);
@@ -140,6 +145,41 @@ const QuestionController = {
         success: true,
         statusCode: 200,
         content: existingVote,
+      };
+
+      res.status(200).json(resBody);
+    } catch (err) {
+      next(err);
+    }
+  }) as RequestHandler,
+
+  getEditHistory: (async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const { createdAt, direction } = req.query;
+
+      if (!createdAt || !direction) {
+        throw new ApiError(400, "edit-history.missing-params", true);
+      }
+
+      const parsedCreatedAt = new Date(createdAt as string);
+      const parsedDirection = parseInt(direction as string, 10);
+
+
+      if (![1, -1].includes(parsedDirection)) {
+        throw new ApiError(400, "edit-history.invalid-direction", true);
+      }
+
+      const edit = await QuestionService.getEditHistory(
+        id,
+        parsedCreatedAt,
+        parsedDirection
+      );
+
+      const resBody: ApiResponse = {
+        success: true,
+        statusCode: 200,
+        content: edit,
       };
 
       res.status(200).json(resBody);

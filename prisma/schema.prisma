@@ -82,7 +82,7 @@ model QuestionEdit {
   createdAt       DateTime
   previousContent Json?
   previousTitle   String?
-
+  previousImages    String[]
   question Question @relation(fields: [questionId], references: [id])
 
   @@id([questionId, createdAt])

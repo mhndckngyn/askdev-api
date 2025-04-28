@@ -5,7 +5,7 @@ import upload from "@/middlewares/multer";
 
 const router = Router();
 
-router.get("/:id", authMiddleware, QuestionController.getById);
+router.get("/:id",  QuestionController.getById);
 
 router.post(
   "/",
@@ -24,6 +24,12 @@ router.get(
   "/:id/vote-status",
   authMiddleware,
   QuestionController.getVoteStatus
+);
+
+router.get(
+  "/:id/edit-history",
+  
+  QuestionController.getEditHistory
 );
 
 export default router;

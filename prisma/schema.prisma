@@ -19,6 +19,18 @@ enum AuthProvider {
   GITHUB
 }
 
+enum ContentType {
+  QUESTION
+  ANSWER
+  COMMENT
+}
+
+enum ReportStatus {
+  PENDING
+  REVIEWED
+  REJECTED
+}
+
 model User {
   id             String   @id @default(uuid())
   role           Role     @default(MEMBER)
@@ -36,6 +48,7 @@ model User {
   comments      Comment[] 
   questionVotes QuestionVote[]
   commentVotes  CommentVote[]
+  reports       Report[]
 }
 
 model Account {
@@ -187,3 +200,16 @@ model CommentVote {
   @@id([userId, commentId])
 }
 
+model Report {
+  id           String       @id @default(uuid())
+  reportedById String
+  contentType  ContentType
+  contentId    String
+  reason       String
+  status       ReportStatus @default(PENDING)
+  createdAt    DateTime      @default(now())
+
+  reportedBy User @relation(fields: [reportedById], references: [id])
+
+  @@index([contentId])
+}

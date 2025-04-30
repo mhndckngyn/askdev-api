@@ -43,9 +43,11 @@ model User {
 
   account Account? @relation()
 
+  questions Question[] // 👈 Thêm dòng này
+
   answers       Answer[]
   answerVotes   AnswerVote[]
-  comments      Comment[] 
+  comments      Comment[]
   questionVotes QuestionVote[]
   commentVotes  CommentVote[]
   reports       Report[]
@@ -72,17 +74,18 @@ model Account {
 }
 
 model Question {
-  id        String   @id @default(uuid())
-  userId    String?
-  title     String   
+  id        String    @id @default(uuid())
+  userId    String
+  title     String
   content   Json
   images    String[]
-  createdAt DateTime @default(now())
-  isEdited  Boolean  @default(false)
-  upvotes   Int      @default(0)
-  downvotes Int      @default(0)
-  isSolved  Boolean  @default(false)
+  upvotes   Int       @default(0)
+  downvotes Int       @default(0)
+  isSolved  Boolean   @default(false)
+  createdAt DateTime  @default(now())
+  updatedAt  DateTime?
 
+  user      User?     @relation(fields: [userId], references: [id])
   edits QuestionEdit[]
   tags  Tag[]          @relation("QuestionTags")
 
@@ -95,8 +98,8 @@ model QuestionEdit {
   createdAt       DateTime
   previousContent Json?
   previousTitle   String?
-  previousImages    String[]
-  question Question @relation(fields: [questionId], references: [id])
+  previousImages  String[]
+  question        Question @relation(fields: [questionId], references: [id])
 
   @@id([questionId, createdAt])
 }
@@ -104,13 +107,12 @@ model QuestionEdit {
 model QuestionVote {
   userId     String
   questionId String
-  type       Int  
-  user     User     @relation(fields: [userId], references: [id])
-  question Question @relation(fields: [questionId], references: [id])
+  type       Int
+  user       User     @relation(fields: [userId], references: [id])
+  question   Question @relation(fields: [questionId], references: [id])
 
   @@id([userId, questionId])
 }
-
 
 model Tag {
   id            String  @id @default(uuid())
@@ -132,8 +134,8 @@ model Answer {
   downvotes  Int      @default(0)
   isChosen   Boolean  @default(false)
 
-  user     User      @relation(fields: [userId], references: [id])
-  question Question  @relation(fields: [questionId], references: [id])
+  user     User         @relation(fields: [userId], references: [id])
+  question Question     @relation(fields: [questionId], references: [id])
   edits    AnswerEdit[]
   votes    AnswerVote[]
   comments Comment[]
@@ -145,21 +147,20 @@ model AnswerEdit {
   previousContent String
 
   answer Answer @relation(fields: [answerId], references: [id])
-  
+
   @@id([answerId, createdAt])
 }
 
 model AnswerVote {
   userId   String
   answerId String
-  type     Int  
+  type     Int
 
   user   User   @relation(fields: [userId], references: [id])
   answer Answer @relation(fields: [answerId], references: [id])
 
   @@id([userId, answerId])
 }
-
 
 model Comment {
   id        String   @id @default(uuid())
@@ -171,17 +172,18 @@ model Comment {
   createdAt DateTime @default(now())
   isEdited  Boolean  @default(false)
 
-  user      User     @relation(fields: [userId], references: [id])
-  answer    Answer   @relation(fields: [answerId], references: [id])
-  edits     CommentEdit[]
+  user   User          @relation(fields: [userId], references: [id])
+  answer Answer        @relation(fields: [answerId], references: [id])
+  edits  CommentEdit[]
 
   commentVotes CommentVote[]
+
   @@index([answerId])
 }
 
 model CommentEdit {
-  commentId    String
-  createdAt    DateTime @default(now())
+  commentId       String
+  createdAt       DateTime @default(now())
   previousContent String
 
   comment Comment @relation(fields: [commentId], references: [id])
@@ -192,10 +194,10 @@ model CommentEdit {
 model CommentVote {
   userId    String
   commentId String
-  type      Int   
+  type      Int
 
-  user      User    @relation(fields: [userId], references: [id])
-  comment   Comment @relation(fields: [commentId], references: [id])
+  user    User    @relation(fields: [userId], references: [id])
+  comment Comment @relation(fields: [commentId], references: [id])
 
   @@id([userId, commentId])
 }
@@ -207,7 +209,7 @@ model Report {
   contentId    String
   reason       String
   status       ReportStatus @default(PENDING)
-  createdAt    DateTime      @default(now())
+  createdAt    DateTime     @default(now())
 
   reportedBy User @relation(fields: [reportedById], references: [id])
 

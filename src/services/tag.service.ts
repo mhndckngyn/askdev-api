@@ -12,7 +12,7 @@ const TagService = {
       keyword !== ''
         ? {
             name: {
-              contains: keyword,
+              startsWith: keyword,
               mode: Prisma.QueryMode.insensitive,
             },
           }

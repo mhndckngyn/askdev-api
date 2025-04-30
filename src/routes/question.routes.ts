@@ -1,33 +1,35 @@
-import { Router } from "express";
-import QuestionController from "@/controllers/question.controller";
-import { authMiddleware } from "@/middlewares/auth";
-import upload from "@/middlewares/multer";
+import { Router } from 'express';
+import QuestionController from '@/controllers/question.controller';
+import { authMiddleware } from '@/middlewares/auth';
+import upload from '@/middlewares/multer';
 
 const router = Router();
 
-router.get("/:id", QuestionController.getById);
+router.get('/:id', QuestionController.getById);
+
+router.get('/', QuestionController.getByParams);
 
 router.post(
-  "/",
-  upload.array("images"),
+  '/',
+  upload.array('images'),
   authMiddleware,
   QuestionController.create
 );
 
-router.put("/:id", authMiddleware, QuestionController.update);
+router.put('/:id', authMiddleware, QuestionController.update);
 
-router.delete("/:id", authMiddleware, QuestionController.delete);
+router.delete('/:id', authMiddleware, QuestionController.delete);
 
-router.post("/:id/vote", authMiddleware, QuestionController.vote);
+router.post('/:id/vote', authMiddleware, QuestionController.vote);
 
 router.get(
-  "/:id/vote-status",
+  '/:id/vote-status',
   authMiddleware,
   QuestionController.getVoteStatus
 );
 
 router.get(
-  "/:id/edit-history",
+  '/:id/edit-history',
   authMiddleware,
   QuestionController.getEditHistory
 );

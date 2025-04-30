@@ -6,3 +6,10 @@ export type ApiResponse<T = any> = {
   content: T | null;
   error?: string;
 };
+
+export type Pagination = {
+  total: number;
+  count: number;
+  currentPage: number;
+  totalPages: number;
+};

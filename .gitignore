@@ -1,5 +1,6 @@
 generated/prisma/
 .idea/*
+.vscode/*
 
 # Logs
 logs

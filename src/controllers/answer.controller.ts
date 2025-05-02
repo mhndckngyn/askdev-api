@@ -73,7 +73,13 @@ const AnswerController = {
       const { id } = req.params;
       const { content } = req.body;
 
-      const updated = await AnswerService.updateAnswer(id, content);
+      if (!req.user?.id) {
+        throw new ApiError(401, "api:auth.login-first", true);
+      }
+
+      const userId = req.user.id;
+
+      const updated = await AnswerService.updateAnswer(id, content, userId);
 
       const resBody: ApiResponse = {
         success: true,
@@ -90,9 +96,15 @@ const AnswerController = {
 
   delete: (async (req, res, next) => {
     try {
+      if (!req.user?.id) {
+        throw new ApiError(401, "api:auth.login-first", true);
+      }
+
+      const userId = req.user.id;
+
       const { id } = req.params;
 
-      const answer = await AnswerService.deleteAnswer(id);
+      const answer = await AnswerService.deleteAnswer(id, userId);
 
       const resBody: ApiResponse = {
         success: true,

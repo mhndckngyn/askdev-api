@@ -55,7 +55,13 @@ const CommentController = {
       const { id } = req.params;
       const { content } = req.body;
 
-      const updated = await CommentService.updateComment(id, content);
+      if (!req.user?.id) {
+        throw new ApiError(401, "api:auth.login-first", true);
+      }
+
+      const userId = req.user.id;
+
+      const updated = await CommentService.updateComment(id, content, userId);
 
       const resBody: ApiResponse = {
         success: true,
@@ -74,7 +80,13 @@ const CommentController = {
     try {
       const { id } = req.params;
 
-      const comment = await CommentService.deleteComment(id);
+      if (!req.user?.id) {
+        throw new ApiError(401, "api:auth.login-first", true);
+      }
+
+      const userId = req.user.id;
+
+      const comment = await CommentService.deleteComment(id, userId);
 
       const resBody: ApiResponse = {
         success: true,
@@ -103,11 +115,7 @@ const CommentController = {
         throw new ApiError(400, "vote.invalid-type", true);
       }
 
-      const result = await CommentService.voteComment(
-        userId,
-        id,
-        Number(type)
-      );
+      const result = await CommentService.voteComment(userId, id, Number(type));
 
       const resBody: ApiResponse = {
         success: true,

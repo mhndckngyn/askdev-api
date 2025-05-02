@@ -62,13 +62,17 @@ const AnswerService = {
     return answer;
   },
 
-  updateAnswer: async (id: string, content: string) => {
+  updateAnswer: async (id: string, content: string, userId: string) => {
     const existing = await prisma.answer.findUnique({
       where: { id },
     });
 
     if (!existing) {
       throw new ApiError(404, "api:answer.not-found", true);
+    }
+
+    if (existing.userId !== userId) {
+      throw new ApiError(403, "api:answer.forbidden", true);
     }
 
     await prisma.answerEdit.create({
@@ -90,7 +94,19 @@ const AnswerService = {
     return updated;
   },
 
-  deleteAnswer: async (id: string) => {
+  deleteAnswer: async (id: string, userId: string) => {
+    const existing = await prisma.answer.findUnique({
+      where: { id },
+    });
+
+    if (!existing) {
+      throw new ApiError(404, "api:answer.not-found", true);
+    }
+
+    if (existing.userId !== userId) {
+      throw new ApiError(403, "api:answer.forbidden", true);
+    }
+
     await prisma.answerEdit.deleteMany({
       where: { answerId: id },
     });

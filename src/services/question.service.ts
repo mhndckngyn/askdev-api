@@ -1,10 +1,10 @@
-import { uploadMultiple } from '@/config/cloudinary';
-import prisma from '@/prisma';
-import { GetQuestionsParam } from '@/types/question';
-import { Pagination } from '@/types/response.type';
-import { ApiError } from '@/utils/ApiError';
-import TagService from './tag.service';
-import dayjs from 'dayjs';
+import { uploadMultiple } from "@/config/cloudinary";
+import prisma from "@/prisma";
+import { GetQuestionsParam } from "@/types/question";
+import { Pagination } from "@/types/response.type";
+import { ApiError } from "@/utils/ApiError";
+import TagService from "./tag.service";
+import dayjs from "dayjs";
 
 type CreateQuestionPayload = {
   userId: string;
@@ -29,7 +29,7 @@ const QuestionService = {
       },
     });
     if (!question) {
-      throw new ApiError(404, 'api:question.not-found', true);
+      throw new ApiError(404, "api:question.not-found", true);
     }
     return question;
   },
@@ -49,12 +49,12 @@ const QuestionService = {
 
     const createdAtFilter: Record<string, Date> = {};
     if (startDate)
-      createdAtFilter.gte = dayjs(startDate).startOf('day').toDate();
-    if (endDate) createdAtFilter.lte = dayjs(endDate).endOf('day').toDate();
+      createdAtFilter.gte = dayjs(startDate).startOf("day").toDate();
+    if (endDate) createdAtFilter.lte = dayjs(endDate).endOf("day").toDate();
 
     const where: any = {
       ...(titleKeyword && {
-        title: { contains: titleKeyword, mode: 'insensitive' },
+        title: { contains: titleKeyword, mode: "insensitive" },
       }),
       ...(isAnswered !== undefined && { isSolved: isAnswered }),
       ...(isEdited !== undefined && { isEdited }),
@@ -83,7 +83,7 @@ const QuestionService = {
         where,
         skip,
         take: pageSize,
-        orderBy: { createdAt: 'desc' },
+        orderBy: { createdAt: "desc" },
         select: {
           id: true,
           title: true,
@@ -117,13 +117,13 @@ const QuestionService = {
       id: q.id,
       title: q.title,
       tags: q.tags,
-      views: 0, // TODO: chưa có trường views
+      views: 0,
       votes: q.upvotes - q.downvotes,
       answers: q.answers.length,
       user: q.user,
       isAnswered: q.isSolved,
       createdAt: q.createdAt.toISOString(),
-      editedAt: q.updatedAt?.toISOString() || '',
+      editedAt: q.updatedAt?.toISOString() || "",
     }));
 
     const pagination: Pagination = {
@@ -178,20 +178,25 @@ const QuestionService = {
     id: string,
     title: string,
     content: string,
-    images: string[]
+    images: string[],
+    userId: string
   ) => {
     const existing = await prisma.question.findUnique({
       where: { id },
     });
 
     if (!existing) {
-      throw new ApiError(404, 'api:question.not-found', true);
+      throw new ApiError(404, "api:question.not-found", true);
+    }
+
+    if (existing.userId !== userId) {
+      throw new ApiError(403, "api:question.forbidden", true);
     }
 
     await prisma.questionEdit.create({
       data: {
         questionId: id,
-        previousContent: existing.content ?? '',
+        previousContent: existing.content ?? "",
         previousTitle: existing.title,
         previousImages: existing.images,
         createdAt: existing.createdAt,
@@ -211,7 +216,19 @@ const QuestionService = {
     return updated;
   },
 
-  deleteQuestion: async (id: string) => {
+  deleteQuestion: async (id: string, userId: string) => {
+    const existing = await prisma.question.findUnique({
+      where: { id },
+    });
+
+    if (!existing) {
+      throw new ApiError(404, "api:question.not-found", true);
+    }
+
+    if (existing.userId !== userId) {
+      throw new ApiError(403, "api:question.forbidden", true);
+    }
+
     await prisma.questionEdit.deleteMany({
       where: { questionId: id },
     });
@@ -221,7 +238,7 @@ const QuestionService = {
     });
 
     if (!question) {
-      throw new ApiError(404, 'question.not-found', true);
+      throw new ApiError(404, "question.not-found", true);
     }
 
     return question;
@@ -259,7 +276,7 @@ const QuestionService = {
           },
         });
 
-        return { action: 'removed' };
+        return { action: "removed" };
       } else {
         await prisma.questionVote.update({
           where: {
@@ -283,7 +300,7 @@ const QuestionService = {
           },
         });
 
-        return { action: 'changed' };
+        return { action: "changed" };
       }
     } else {
       await prisma.questionVote.create({
@@ -306,7 +323,7 @@ const QuestionService = {
         },
       });
 
-      return { action: 'created' };
+      return { action: "created" };
     }
   },
 
@@ -321,10 +338,10 @@ const QuestionService = {
     });
 
     if (!existingVote) {
-      return { status: 'none' };
+      return { status: "none" };
     }
 
-    return { status: existingVote.type === 1 ? 'like' : 'dislike' };
+    return { status: existingVote.type === 1 ? "like" : "dislike" };
   },
 
   getEditHistory: async (
@@ -337,7 +354,7 @@ const QuestionService = {
     });
 
     if (!question) {
-      throw new ApiError(404, 'api:question.not-found', true);
+      throw new ApiError(404, "api:question.not-found", true);
     }
 
     if (question.createdAt.getTime() === createdAt.getTime()) {
@@ -348,7 +365,7 @@ const QuestionService = {
             createdAt: { lt: createdAt },
           },
           orderBy: {
-            createdAt: 'desc',
+            createdAt: "desc",
           },
         });
 
@@ -382,7 +399,7 @@ const QuestionService = {
             createdAt: { lt: createdAt },
           },
           orderBy: {
-            createdAt: 'desc',
+            createdAt: "desc",
           },
         });
 
@@ -401,7 +418,7 @@ const QuestionService = {
             createdAt: { gt: createdAt },
           },
           orderBy: {
-            createdAt: 'asc',
+            createdAt: "asc",
           },
         });
 

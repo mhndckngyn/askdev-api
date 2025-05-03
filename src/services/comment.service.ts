@@ -54,13 +54,17 @@ const CommentService = {
     return comment;
   },
 
-  updateComment: async (id: string, content: string) => {
+  updateComment: async (id: string, content: string, userId: string) => {
     const existing = await prisma.comment.findUnique({
       where: { id },
     });
 
     if (!existing) {
       throw new ApiError(404, "api:comment.not-found", true);
+    }
+
+    if (existing.userId !== userId) {
+      throw new ApiError(403, "api:comment.forbidden", true);
     }
 
     const updated = await prisma.comment.update({
@@ -75,7 +79,18 @@ const CommentService = {
     return updated;
   },
 
-  deleteComment: async (id: string) => {
+  deleteComment: async (id: string, userId: string) => {
+    const existing = await prisma.comment.findUnique({
+      where: { id },
+    });
+
+    if (!existing) {
+      throw new ApiError(404, "api:comment.not-found", true);
+    }
+
+    if (existing.userId !== userId) {
+      throw new ApiError(403, "api:comment.forbidden", true);
+    }
     const comment = await prisma.comment.delete({
       where: { id },
     });

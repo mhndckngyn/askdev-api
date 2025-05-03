@@ -1,7 +1,7 @@
-import QuestionService from '@/services/question.service';
-import { ApiResponse } from '@/types/response.type';
-import { ApiError } from '@/utils/ApiError';
-import { RequestHandler } from 'express';
+import QuestionService from "@/services/question.service";
+import { ApiResponse } from "@/types/response.type";
+import { ApiError } from "@/utils/ApiError";
+import { RequestHandler } from "express";
 
 const QuestionController = {
   getById: (async (req, res, next) => {
@@ -33,19 +33,19 @@ const QuestionController = {
         isEdited,
         startDate,
         endDate,
-        page = '1',
-        pageSize = '10',
+        page = "1",
+        pageSize = "10",
       } = req.query;
 
       // ép kiểu về string
       const filterParams = {
         titleKeyword: titleKeyword as string | undefined,
-        tags: typeof tags === 'string' ? tags.split(',') : undefined,
+        tags: typeof tags === "string" ? tags.split(",") : undefined,
         username: username as string | undefined,
         isAnswered:
-          isAnswered === 'true'
+          isAnswered === "true"
             ? true
-            : isAnswered === 'false'
+            : isAnswered === "false"
             ? false
             : undefined,
         hiddenOption:
@@ -55,7 +55,7 @@ const QuestionController = {
             ? false
             : undefined,
         isEdited:
-          isEdited === 'true' ? true : isEdited === 'false' ? false : undefined,
+          isEdited === "true" ? true : isEdited === "false" ? false : undefined,
         startDate: startDate ? new Date(startDate as string) : undefined,
         endDate: endDate ? new Date(endDate as string) : undefined,
         page: parseInt(page as string, 10),
@@ -67,7 +67,7 @@ const QuestionController = {
       const resBody: ApiResponse = {
         success: true,
         statusCode: 200,
-        message: 'question.fetched',
+        message: "question.fetched",
         content: result,
       };
 
@@ -80,7 +80,7 @@ const QuestionController = {
   create: (async (req, res, next) => {
     try {
       if (!req.user?.id) {
-        throw new ApiError(401, 'auth.login-first', true);
+        throw new ApiError(401, "auth.login-first", true);
       }
 
       const userId = req.user.id;
@@ -99,7 +99,7 @@ const QuestionController = {
 
       const resBody: ApiResponse = {
         success: true,
-        message: 'question.created-successfully',
+        message: "question.created-successfully",
         statusCode: 201,
         content: question,
       };
@@ -115,17 +115,24 @@ const QuestionController = {
       const { id } = req.params;
       const { title, content, images } = req.body;
 
+      if (!req.user?.id) {
+        throw new ApiError(401, "auth.login-first", true);
+      }
+
+      const userId = req.user.id;
+
       const updated = await QuestionService.updateQuestion(
         id,
         title,
         content,
-        images
+        images,
+        userId
       );
 
       const resBody: ApiResponse = {
         success: true,
         statusCode: 200,
-        message: 'question.updated-successfully',
+        message: "question.updated-successfully",
         content: updated,
       };
 
@@ -139,12 +146,18 @@ const QuestionController = {
     try {
       const { id } = req.params;
 
-      const question = await QuestionService.deleteQuestion(id);
+      if (!req.user?.id) {
+        throw new ApiError(401, "auth.login-first", true);
+      }
+
+      const userId = req.user.id;
+
+      const question = await QuestionService.deleteQuestion(id, userId);
 
       const resBody: ApiResponse = {
         success: true,
         statusCode: 200,
-        message: 'question.deleted-successfully',
+        message: "question.deleted-successfully",
         content: question,
       };
 
@@ -157,14 +170,14 @@ const QuestionController = {
   vote: (async (req, res, next) => {
     try {
       if (!req.user?.id) {
-        throw new ApiError(401, 'auth.login-first', true);
+        throw new ApiError(401, "auth.login-first", true);
       }
       const userId = req.user.id;
       const { id } = req.params;
       const { type } = req.query;
 
       if (![1, -1].includes(Number(type))) {
-        throw new ApiError(400, 'vote.invalid-type', true);
+        throw new ApiError(400, "vote.invalid-type", true);
       }
 
       const result = await QuestionService.voteQuestion(
@@ -189,7 +202,7 @@ const QuestionController = {
   getVoteStatus: (async (req, res, next) => {
     try {
       if (!req.user?.id) {
-        throw new ApiError(401, 'auth.login-first', true);
+        throw new ApiError(401, "auth.login-first", true);
       }
 
       const userId = req.user.id;
@@ -214,14 +227,14 @@ const QuestionController = {
       const { createdAt, direction } = req.query;
 
       if (!createdAt || !direction) {
-        throw new ApiError(400, 'edit-history.missing-params', true);
+        throw new ApiError(400, "edit-history.missing-params", true);
       }
 
       const parsedCreatedAt = new Date(createdAt as string);
       const parsedDirection = parseInt(direction as string, 10);
 
       if (![1, -1].includes(parsedDirection)) {
-        throw new ApiError(400, 'edit-history.invalid-direction', true);
+        throw new ApiError(400, "edit-history.invalid-direction", true);
       }
 
       const edit = await QuestionService.getEditHistory(

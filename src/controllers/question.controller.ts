@@ -22,6 +22,24 @@ const QuestionController = {
     }
   }) as RequestHandler,
 
+  getByTag: (async (req, res, next) => {
+    try {
+      const { tagId } = req.params;
+
+      const questions = await QuestionService.getQuestionsByTag(tagId);
+
+      const resBody: ApiResponse = {
+        success: true,
+        statusCode: 200,
+        content: questions,
+      };
+
+      res.status(200).json(resBody);
+    } catch (err) {
+      next(err);
+    }
+  }) as RequestHandler,
+
   getByParams: (async (req, res, next) => {
     try {
       const {

@@ -39,6 +39,28 @@ const QuestionService = {
     return question;
   },
 
+  getQuestionsByTag: async (tagId: string) => {
+    const questions = await prisma.question.findMany({
+      where: {
+        tags: {
+          some: {
+            id: tagId,
+          },
+        },
+      },
+      include: {
+        tags: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    });
+
+    return questions;
+  },
+
   getQuestions: async (params: GetQuestionsParam) => {
     const {
       titleKeyword,

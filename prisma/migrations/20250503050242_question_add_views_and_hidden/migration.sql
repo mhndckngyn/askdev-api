@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Question" ADD COLUMN     "isHidden" BOOLEAN NOT NULL DEFAULT false,
+ADD COLUMN     "views" INTEGER NOT NULL DEFAULT 0;

@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import QuestionController from '@/controllers/question.controller';
-import { authMiddleware } from '@/middlewares/auth';
+import { authUser } from '@/middlewares/auth';
 import upload from '@/middlewares/multer';
 
 const router = Router();
@@ -12,25 +12,25 @@ router.get('/', QuestionController.getByParams);
 router.post(
   '/',
   upload.array('images'),
-  authMiddleware,
+  authUser,
   QuestionController.create
 );
 
-router.put('/:id', authMiddleware, QuestionController.update);
+router.put('/:id', authUser, QuestionController.update);
 
-router.delete('/:id', authMiddleware, QuestionController.delete);
+// router.delete('/:id', authMiddleware, QuestionController.delete);
 
-router.post('/:id/vote', authMiddleware, QuestionController.vote);
+router.post('/:id/vote', authUser, QuestionController.vote);
 
 router.get(
   '/:id/vote-status',
-  authMiddleware,
+  authUser,
   QuestionController.getVoteStatus
 );
 
 router.get(
   '/:id/edit-history',
-  authMiddleware,
+  authUser,
   QuestionController.getEditHistory
 );
 

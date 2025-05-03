@@ -1,11 +1,11 @@
 import { Router } from "express";
 import ReportController from "@/controllers/report.controller";
-import { authMiddleware } from "@/middlewares/auth";
+import { authUser } from "@/middlewares/auth";
 
 const router = Router();
 
-router.post("/", authMiddleware, ReportController.create);
+router.post("/", authUser, ReportController.create);
 
-router.delete("/:id", authMiddleware, ReportController.delete);
+router.delete("/:id", authUser, ReportController.delete);
 
 export default router;

@@ -1,25 +1,25 @@
 import { Router } from "express";
 import AnswerController from "@/controllers/answer.controller";
-import { authMiddleware } from "@/middlewares/auth";
+import { authUser } from "@/middlewares/auth";
 
 const router = Router();
 
-router.get("/:id", authMiddleware, AnswerController.getById);
+router.get("/:id", authUser, AnswerController.getById);
 
-router.post("/", authMiddleware, AnswerController.create);
+router.post("/", authUser, AnswerController.create);
 
-router.put("/:id", authMiddleware, AnswerController.update);
+router.put("/:id", authUser, AnswerController.update);
 
-router.delete("/:id", authMiddleware, AnswerController.delete);
+router.delete("/:id", authUser, AnswerController.delete);
 
 router.get(
   "/question/:questionId",
-  authMiddleware,
+  authUser,
   AnswerController.getByQuestionId
 );
 
-router.post("/:id/vote", authMiddleware, AnswerController.vote);
+router.post("/:id/vote", authUser, AnswerController.vote);
 
-router.get("/:id/vote-status", authMiddleware, AnswerController.getVoteStatus);
+router.get("/:id/vote-status", authUser, AnswerController.getVoteStatus);
 
 export default router;

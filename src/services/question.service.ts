@@ -17,7 +17,12 @@ type CreateQuestionPayload = {
 
 const QuestionService = {
   getQuestionById: async (id: string) => {
-    const question = await prisma.question.findFirst({
+    const question = await prisma.question.update({
+      data: {
+        views: {
+          increment: 1,
+        },
+      },
       where: { id },
       include: {
         tags: {
@@ -40,6 +45,7 @@ const QuestionService = {
       tags,
       username,
       isAnswered,
+      hiddenOption,
       isEdited,
       startDate,
       endDate,
@@ -57,6 +63,7 @@ const QuestionService = {
         title: { contains: titleKeyword, mode: 'insensitive' },
       }),
       ...(isAnswered !== undefined && { isSolved: isAnswered }),
+      ...(hiddenOption !== undefined && { isHidden: hiddenOption }),
       ...(isEdited !== undefined && { isEdited }),
       ...(Object.keys(createdAtFilter).length > 0 && {
         createdAt: createdAtFilter,
@@ -90,8 +97,10 @@ const QuestionService = {
           createdAt: true,
           updatedAt: true,
           isSolved: true,
+          views: true,
           upvotes: true,
           downvotes: true,
+          isHidden: true,
           tags: {
             select: {
               id: true,
@@ -117,11 +126,12 @@ const QuestionService = {
       id: q.id,
       title: q.title,
       tags: q.tags,
-      views: 0, // TODO: chưa có trường views
+      views: q.views, // TODO: chưa có trường views
       votes: q.upvotes - q.downvotes,
       answers: q.answers.length,
       user: q.user,
       isAnswered: q.isSolved,
+      isHidden: q.isHidden,
       createdAt: q.createdAt.toISOString(),
       editedAt: q.updatedAt?.toISOString() || '',
     }));
@@ -423,6 +433,21 @@ const QuestionService = {
       }
     }
     return null;
+  },
+  toggleHideQuestions: async (ids: string[], hidden: boolean) => {
+    // prisma trả về số bản ghi được cập nhật
+    const result = await prisma.question.updateMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+      data: {
+        isHidden: hidden,
+      },
+    });
+
+    return result;
   },
 };
 

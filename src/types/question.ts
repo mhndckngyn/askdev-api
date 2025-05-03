@@ -3,6 +3,7 @@ export interface GetQuestionsParam {
   tags?: string[];
   username?: string;
   isAnswered?: boolean;
+  hiddenOption?: boolean;
   isEdited?: boolean;
   startDate?: Date;
   endDate?: Date;

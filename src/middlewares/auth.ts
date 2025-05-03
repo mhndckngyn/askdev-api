@@ -5,7 +5,7 @@ import { constants } from '@/config/constants';
 import { TokenPayload } from '@/types/auth.type';
 import prisma from '@/prisma';
 
-export const authMiddleware: RequestHandler = async (req, _res, next) => {
+export const authUser: RequestHandler = async (req, _res, next) => {
   try {
     const token = req.cookies.jwt || req.headers.authorization?.split(' ')[1];
 
@@ -31,6 +31,19 @@ export const authMiddleware: RequestHandler = async (req, _res, next) => {
       avatar: user.profilePicture,
     };
     next();
+  } catch (err) {
+    next(err);
+  }
+};
+
+// phải đặt sau authUser middleware
+export const authAdmin: RequestHandler = async (req, _res, next) => {
+  try {
+    console.log('User role: ', req.user?.role);
+
+    if (!(req.user?.role !== 'admin')) {
+      throw new ApiError(403, 'auth.unauthorized', true);
+    }
   } catch (err) {
     next(err);
   }

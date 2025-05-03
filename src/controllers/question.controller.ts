@@ -29,6 +29,7 @@ const QuestionController = {
         tags,
         username,
         isAnswered,
+        hiddenOption,
         isEdited,
         startDate,
         endDate,
@@ -36,6 +37,7 @@ const QuestionController = {
         pageSize = '10',
       } = req.query;
 
+      // ép kiểu về string
       const filterParams = {
         titleKeyword: titleKeyword as string | undefined,
         tags: typeof tags === 'string' ? tags.split(',') : undefined,
@@ -44,6 +46,12 @@ const QuestionController = {
           isAnswered === 'true'
             ? true
             : isAnswered === 'false'
+            ? false
+            : undefined,
+        hiddenOption:
+          hiddenOption === 'true'
+            ? true
+            : hiddenOption === 'false'
             ? false
             : undefined,
         isEdited:
@@ -226,6 +234,44 @@ const QuestionController = {
         success: true,
         statusCode: 200,
         content: edit,
+      };
+
+      res.status(200).json(resBody);
+    } catch (err) {
+      next(err);
+    }
+  }) as RequestHandler,
+
+  hideQuestions: (async (req, res, next) => {
+    try {
+      const { ids } = req.body;
+
+      const result = await QuestionService.toggleHideQuestions(ids, true);
+
+      const resBody: ApiResponse = {
+        success: true,
+        statusCode: 200,
+        message: 'question.hideSuccess',
+        content: result,
+      };
+
+      res.status(200).json(resBody);
+    } catch (err) {
+      next(err);
+    }
+  }) as RequestHandler,
+
+  unhideQuestions: (async (req, res, next) => {
+    try {
+      const { ids } = req.body;
+
+      const result = await QuestionService.toggleHideQuestions(ids, false);
+
+      const resBody: ApiResponse = {
+        success: true,
+        statusCode: 200,
+        message: 'question.hideSuccess',
+        content: result,
       };
 
       res.status(200).json(resBody);

@@ -79,13 +79,15 @@ model Question {
   title     String
   content   Json
   images    String[]
+  views     Int       @default(0)
   upvotes   Int       @default(0)
   downvotes Int       @default(0)
   isSolved  Boolean   @default(false)
+  isHidden  Boolean   @default(false)
   createdAt DateTime  @default(now())
-  updatedAt  DateTime?
+  updatedAt DateTime?
 
-  user      User?     @relation(fields: [userId], references: [id])
+  user  User?          @relation(fields: [userId], references: [id])
   edits QuestionEdit[]
   tags  Tag[]          @relation("QuestionTags")
 

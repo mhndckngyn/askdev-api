@@ -6,6 +6,8 @@ const router = Router();
 
 router.get("/:id", authUser, AnswerController.getById);
 
+router.get('/',authUser, AnswerController.getByParams);
+
 router.post("/", authUser, AnswerController.create);
 
 router.put("/:id", authUser, AnswerController.update);

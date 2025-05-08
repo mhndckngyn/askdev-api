@@ -1,6 +1,6 @@
 import { uploadMultiple } from "@/config/cloudinary";
 import prisma from "@/prisma";
-import { GetQuestionsParam } from "@/types/question";
+import { GetQuestionsParam } from "@/types/question.type";
 import { Pagination } from "@/types/response.type";
 import { ApiError } from "@/utils/ApiError";
 import TagService from "./tag.service";
@@ -148,7 +148,7 @@ const QuestionService = {
       id: q.id,
       title: q.title,
       tags: q.tags,
-      views: q.views, // TODO: chưa có trường views
+      views: q.views,
       votes: q.upvotes - q.downvotes,
       answers: q.answers.length,
       user: q.user,

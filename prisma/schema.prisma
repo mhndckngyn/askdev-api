@@ -130,11 +130,12 @@ model Answer {
   userId     String
   questionId String
   content    String
-  createdAt  DateTime @default(now())
-  isEdited   Boolean  @default(false)
   upvotes    Int      @default(0)
   downvotes  Int      @default(0)
   isChosen   Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now())
+  isHidden   Boolean  @default(false)
 
   user     User         @relation(fields: [userId], references: [id])
   question Question     @relation(fields: [questionId], references: [id])

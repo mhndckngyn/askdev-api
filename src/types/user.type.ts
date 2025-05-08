@@ -9,3 +9,12 @@ export interface GetUsersParam {
   page: number;
   pageSize: number;
 }
+
+export interface ProfileUpdateData {
+  userId: string;
+  username: string;
+  github: string;
+  showGithub: boolean;
+  aboutMe: string;
+  avatar: Express.Multer.File;
+}

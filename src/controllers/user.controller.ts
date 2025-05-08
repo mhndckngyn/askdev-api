@@ -2,6 +2,7 @@ import AuthService from '@/services/auth.service';
 import UserService from '@/services/user.service';
 import { ApiResponse } from '@/types/response.type';
 import { GetUsersParam } from '@/types/user.type';
+import { ApiError } from '@/utils/ApiError';
 import { RequestHandler } from 'express';
 
 const UserController = {
@@ -60,6 +61,59 @@ const UserController = {
         statusCode: 200,
         message: 'user.fetched',
         content: result,
+      };
+
+      res.status(200).json(resBody);
+    } catch (err) {
+      next(err);
+    }
+  }) as RequestHandler,
+
+  updateProfile: (async (req, res, next) => {
+    try {
+      const userId = req.user?.id;
+
+      if (!userId) {
+        throw new ApiError(401, 'auth.login-first');
+      }
+
+      const { username, github, showGithub, aboutMe } = req.body;
+
+      const avatar = (req.files as Express.Multer.File[])[0];
+
+      const user = await UserService.updateProfile({
+        userId,
+        username,
+        github,
+        showGithub: showGithub === 'true',
+        aboutMe,
+        avatar,
+      });
+
+      const resBody: ApiResponse = {
+        success: true,
+        statusCode: 200,
+        message: 'user.profile-updated',
+        content: user,
+      };
+
+      res.status(200).json(resBody);
+    } catch (err) {
+      next(err);
+    }
+  }) as RequestHandler,
+
+  getProfileById: (async (req, res, next) => {
+    try {
+      const { id } = req.params;
+
+      const profile = await UserService.getProfileById(id);
+
+      const resBody: ApiResponse = {
+        success: true,
+        statusCode: 200,
+        message: 'user.profile-fetched',
+        content: profile,
       };
 
       res.status(200).json(resBody);

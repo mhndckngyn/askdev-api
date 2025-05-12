@@ -70,6 +70,29 @@ const TagService = {
     });
   },
 
+  createTag: async (
+    name: string,
+    descriptionVi: string,
+    descriptionEn: string
+  ) => {
+    const existingTag = await prisma.tag.findUnique({
+      where: { name },
+    });
+
+    if (existingTag) {
+      throw new ApiError(409, "api:tag.duplicate-name", true);
+    }
+
+    const newTag = await prisma.tag.create({
+      data: {
+        name,
+        descriptionVi,
+        descriptionEn,
+      },
+    });
+    return newTag;
+  },
+
   updateTag: async (
     id: string,
     name: string,
@@ -82,6 +105,14 @@ const TagService = {
 
     if (!existingTag) {
       throw new ApiError(404, "api:tag.not-found", true);
+    }
+
+    const duplicateTag = await prisma.tag.findUnique({
+      where: { name },
+    });
+
+    if (duplicateTag && duplicateTag.id !== id) {
+      throw new ApiError(409, "api:tag.duplicate-name", true);
     }
 
     const updatedTag = await prisma.tag.update({

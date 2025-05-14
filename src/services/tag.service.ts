@@ -1,15 +1,16 @@
-import prisma from '@/prisma';
-import { Prisma } from 'generated/prisma';
+import prisma from "@/prisma";
+import { Prisma } from "generated/prisma";
+import { ApiError } from "@/utils/ApiError";
 
 const TagService = {
   searchTags: async (
     keyword: string,
     limit: number,
     page: number,
-    sortBy: 'name' | 'popularity'
+    sortBy: "name" | "popularity"
   ) => {
     const where: Prisma.TagWhereInput =
-      keyword !== ''
+      keyword !== ""
         ? {
             name: {
               startsWith: keyword,
@@ -20,13 +21,13 @@ const TagService = {
 
     // sap xep theo Ten (A -> Z) hoac theo so cau hoi
     const orderBy: Prisma.TagOrderByWithRelationInput =
-      sortBy === 'name'
+      sortBy === "name"
         ? {
-            name: 'asc',
+            name: "asc",
           }
         : {
             questions: {
-              _count: 'desc',
+              _count: "desc",
             },
           };
 
@@ -67,6 +68,128 @@ const TagService = {
       select: { id: true },
       skipDuplicates: true,
     });
+  },
+
+  createTag: async (
+    name: string,
+    descriptionVi: string,
+    descriptionEn: string
+  ) => {
+    const existingTag = await prisma.tag.findUnique({
+      where: { name },
+    });
+
+    if (existingTag) {
+      throw new ApiError(409, "api:tag.duplicate-name", true);
+    }
+
+    const newTag = await prisma.tag.create({
+      data: {
+        name,
+        descriptionVi,
+        descriptionEn,
+      },
+    });
+    return newTag;
+  },
+
+  updateTag: async (
+    id: string,
+    name: string,
+    descriptionVi: string,
+    descriptionEn: string
+  ) => {
+    const existingTag = await prisma.tag.findUnique({
+      where: { id },
+    });
+
+    if (!existingTag) {
+      throw new ApiError(404, "api:tag.not-found", true);
+    }
+
+    const duplicateTag = await prisma.tag.findUnique({
+      where: { name },
+    });
+
+    if (duplicateTag && duplicateTag.id !== id) {
+      throw new ApiError(409, "api:tag.duplicate-name", true);
+    }
+
+    const updatedTag = await prisma.tag.update({
+      where: { id },
+      data: {
+        name,
+        descriptionVi,
+        descriptionEn,
+      },
+    });
+
+    return updatedTag;
+  },
+
+  mergeTags: async (
+    sourceTagIds: string[],
+    name: string,
+    descriptionVi: string,
+    descriptionEn: string
+  ) => {
+    let targetTag = await prisma.tag.findUnique({
+      where: { name },
+    });
+
+    if (targetTag) {
+      await prisma.tag.update({
+        where: { id: targetTag.id },
+        data: {
+          descriptionVi,
+          descriptionEn,
+        },
+      });
+    } else {
+      targetTag = await prisma.tag.create({
+        data: {
+          name,
+          descriptionVi,
+          descriptionEn,
+        },
+      });
+    }
+
+    const questions = await prisma.question.findMany({
+      where: {
+        tags: {
+          some: {
+            id: { in: sourceTagIds },
+          },
+        },
+      },
+    });
+
+    for (const question of questions) {
+      await prisma.question.update({
+        where: {
+          id: question.id,
+        },
+        data: {
+          tags: {
+            connect: [{ id: targetTag.id }],
+            disconnect: sourceTagIds
+              .filter((id) => id !== targetTag!.id)
+              .map((id) => ({ id })),
+          },
+        },
+      });
+    }
+
+    await prisma.tag.deleteMany({
+      where: {
+        id: {
+          in: sourceTagIds.filter((id) => id !== targetTag!.id),
+        },
+      },
+    });
+
+    return targetTag;
   },
 };
 

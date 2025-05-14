@@ -29,3 +29,17 @@ export interface GetQuestionReturn {
   createdAt: string;
   editedAt: string;
 }
+
+export type QuestionCreatePayload = {
+  userId: string;
+  title: string;
+  content: string;
+  existingTags: string[];
+  newTags: string[];
+  imageFiles: Express.Multer.File[];
+};
+
+export type QuestionUpdatePayload = QuestionCreatePayload & {
+  id: string;
+  currentImages: string[];
+};

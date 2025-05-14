@@ -13,7 +13,7 @@ router.get("/", QuestionController.getByParams);
 
 router.post("/", upload.array("images"), authUser, QuestionController.create);
 
-router.put("/:id", authUser, QuestionController.update);
+router.put("/:id", upload.array("images"), authUser, QuestionController.update);
 
 // router.delete('/:id', authMiddleware, QuestionController.delete);
 

@@ -97,7 +97,7 @@ model Question {
 
 model QuestionEdit {
   questionId      String
-  createdAt       DateTime
+  createdAt       DateTime  @default(now())
   previousContent Json?
   previousTitle   String?
   previousImages  String[]

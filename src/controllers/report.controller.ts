@@ -156,6 +156,62 @@ const ReportController = {
       next(err);
     }
   }) as RequestHandler,
+
+  updateStatus: (async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const { status } = req.query;
+      const validStatuses = ["PENDING", "REVIEWED", "REJECTED"];
+      if (!validStatuses.includes(status as string)) {
+        throw new ApiError(400, "api:report.invalid-status", true);
+      }
+      const updatedReport = await ReportService.updateStatus(
+        id,
+        status as "PENDING" | "REVIEWED" | "REJECTED"
+      );
+
+      if (!updatedReport) {
+        throw new ApiError(404, "api:report.not-found", true);
+      }
+
+      const resBody: ApiResponse = {
+        success: true,
+        statusCode: 200,
+        message: "api:report.status-updated",
+        content: updatedReport,
+      };
+
+      res.status(200).json(resBody);
+    } catch (err) {
+      next(err);
+    }
+  }) as RequestHandler,
+
+  getReportedContentDetails: (async (req, res, next) => {
+    try {
+      const { contentType, contentId } = req.query;
+
+      if (!contentType || !contentId) {
+        throw new ApiError(400, "api:report.invalid-query", true);
+      }
+
+      const data = await ReportService.getReportedContentDetails(
+        contentType.toString() as "QUESTION" | "ANSWER" | "COMMENT",
+        contentId.toString()
+      );
+
+      const resBody: ApiResponse = {
+        success: true,
+        statusCode: 200,
+        message: "api:report.content-detail-success",
+        content: data,
+      };
+
+      res.status(200).json(resBody);
+    } catch (err) {
+      next(err);
+    }
+  }) as RequestHandler,
 };
 
 export default ReportController;

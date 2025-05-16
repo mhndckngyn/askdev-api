@@ -1,4 +1,5 @@
 import prisma from "@/prisma";
+import { ApiError } from "@/utils/ApiError";
 
 type CreateReportPayload = {
   reportedById: string;
@@ -166,6 +167,125 @@ const ReportService = {
     });
 
     return updated;
+  },
+
+  updateStatus: async (
+    id: string,
+    status: "PENDING" | "REVIEWED" | "REJECTED"
+  ) => {
+    const updated = await prisma.report.update({
+      where: { id },
+      data: { status },
+    });
+    return updated;
+  },
+
+  getReportedContentDetails: async (
+    contentType: "QUESTION" | "ANSWER" | "COMMENT",
+    contentId: string
+  ) => {
+    let question = null;
+    let answer = null;
+    let comment = null;
+
+    if (contentType === "COMMENT") {
+      comment = await prisma.comment.findUnique({
+        where: { id: contentId },
+        include: {
+          user: {
+            select: {
+              username: true,
+              profilePicture: true,
+            },
+          },
+          answer: {
+            include: {
+              user: {
+                select: {
+                  username: true,
+                  profilePicture: true,
+                },
+              },
+              question: {
+                include: {
+                  tags: {
+                    select: {
+                      id: true,
+                      name: true,
+                    },
+                  },
+                  user: {
+                    select: {
+                      username: true,
+                      profilePicture: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+      if (!comment)
+        throw new ApiError(404, "api:report.content-not-found", true);
+      answer = comment.answer;
+      question = comment.answer?.question ?? null;
+    } else if (contentType === "ANSWER") {
+      answer = await prisma.answer.findUnique({
+        where: { id: contentId },
+        include: {
+          user: {
+            select: {
+              username: true,
+              profilePicture: true,
+            },
+          },
+          question: {
+            include: {
+              tags: {
+                select: {
+                  id: true,
+                  name: true,
+                },
+              },
+              user: {
+                select: {
+                  username: true,
+                  profilePicture: true,
+                },
+              },
+            },
+          },
+        },
+      });
+      if (!answer)
+        throw new ApiError(404, "api:report.content-not-found", true);
+      question = answer.question;
+    } else if (contentType === "QUESTION") {
+      question = await prisma.question.findUnique({
+        where: { id: contentId },
+        include: {
+          tags: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+          user: {
+            select: {
+              username: true,
+              profilePicture: true,
+            },
+          },
+        },
+      });
+      if (!question)
+        throw new ApiError(404, "api:report.content-not-found", true);
+    } else {
+      throw new ApiError(400, "api:report.invalid-content-type", true);
+    }
+
+    return { question, answer, comment };
   },
 };
 

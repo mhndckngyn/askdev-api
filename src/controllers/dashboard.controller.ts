@@ -4,6 +4,23 @@ import DashboardService from "@/services/dashboard.service";
 import { ApiResponse } from "@/types/response.type";
 
 const DashboardController = {
+  getWeeklyTrends: (async (req, res, next) => {
+    try {
+      const trends = await DashboardService.getWeeklyTrends();
+
+      const response: ApiResponse = {
+        success: true,
+        statusCode: 200,
+        message: "dashboard.weeklyTrendsSuccess",
+        content: trends,
+      };
+
+      res.status(200).json(response);
+    } catch (error) {
+      next(error);
+    }
+  }) as RequestHandler,
+
   getGeneralStatsWithPercentage: (async (req, res, next) => {
     try {
       const stats = await DashboardService.getGeneralStatsWithPercentage();

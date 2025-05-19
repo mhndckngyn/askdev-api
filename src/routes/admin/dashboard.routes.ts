@@ -2,6 +2,9 @@ import DashboardController from "@/controllers/dashboard.controller";
 import { Router } from "express";
 
 const router = Router();
+
+router.get("/weekly-trends", DashboardController.getWeeklyTrends);
+
 router.get("/general-stats", DashboardController.getGeneralStatsWithPercentage);
 
 router.get("/top-tags-stats", DashboardController.getTopTagsWithStats);

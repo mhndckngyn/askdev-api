@@ -1,5 +1,6 @@
 import prisma from "@/prisma";
 import dayjs from "dayjs";
+import { subDays, startOfDay } from "date-fns";
 
 interface TagStat {
   name: string | null;
@@ -7,6 +8,65 @@ interface TagStat {
 }
 
 const DashboardService = {
+  getWeeklyTrends: async () => {
+    const today = startOfDay(new Date());
+    const get7DayCounts = async (
+      model: any,
+      field: string,
+      startOffset: number
+    ) => {
+      const counts = [];
+      for (let i = 0; i < 7; i++) {
+        const from = subDays(today, startOffset + 6 - i);
+        const to = subDays(today, startOffset + 6 - i - 1);
+
+        const count = await model.count({
+          where: {
+            [field]: {
+              gte: from,
+              lt: to,
+            },
+          },
+        });
+
+        counts.push(count);
+      }
+      return counts;
+    };
+
+    const calc = (current: number[], previous: number[]) => {
+      const sumCurrent = current.reduce((a, b) => a + b, 0);
+      const sumPrevious = previous.reduce((a, b) => a + b, 0);
+      const changePercent =
+        sumPrevious === 0
+          ? null
+          : ((sumCurrent - sumPrevious) / sumPrevious) * 100;
+      return { current, changePercent };
+    };
+
+    const [
+      usersThisWeek,
+      usersLastWeek,
+      questionsThisWeek,
+      questionsLastWeek,
+      reportsThisWeek,
+      reportsLastWeek,
+    ] = await Promise.all([
+      get7DayCounts(prisma.user, "createdAt", 0),
+      get7DayCounts(prisma.user, "createdAt", 7),
+      get7DayCounts(prisma.question, "createdAt", 0),
+      get7DayCounts(prisma.question, "createdAt", 7),
+      get7DayCounts(prisma.report, "createdAt", 0),
+      get7DayCounts(prisma.report, "createdAt", 7),
+    ]);
+
+    return {
+      newUsers: calc(usersThisWeek, usersLastWeek),
+      questions: calc(questionsThisWeek, questionsLastWeek),
+      reports: calc(reportsThisWeek, reportsLastWeek),
+    };
+  },
+
   getGeneralStatsWithPercentage: async () => {
     const now = new Date();
     const currentMonth = now.getMonth() + 1;

@@ -1,14 +1,14 @@
-import { uploadMultiple } from '@/config/cloudinary';
-import prisma from '@/prisma';
+import { uploadMultiple } from "@/config/cloudinary";
+import prisma from "@/prisma";
 import {
   QuestionCreatePayload,
   GetQuestionsParam,
   QuestionUpdatePayload,
-} from '@/types/question.type';
-import { Pagination } from '@/types/response.type';
-import { ApiError } from '@/utils/ApiError';
-import TagService from './tag.service';
-import dayjs from 'dayjs';
+} from "@/types/question.type";
+import { Pagination } from "@/types/response.type";
+import { ApiError } from "@/utils/ApiError";
+import TagService from "./tag.service";
+import dayjs from "dayjs";
 
 const QuestionService = {
   getQuestionById: async (id: string) => {
@@ -26,10 +26,16 @@ const QuestionService = {
             name: true,
           },
         },
+        user: {
+          select: {
+            username: true,
+            profilePicture: true,
+          },
+        },
       },
     });
     if (!question) {
-      throw new ApiError(404, 'api:question.not-found', true);
+      throw new ApiError(404, "api:question.not-found", true);
     }
     return question;
   },
@@ -72,12 +78,12 @@ const QuestionService = {
 
     const createdAtFilter: Record<string, Date> = {};
     if (startDate)
-      createdAtFilter.gte = dayjs(startDate).startOf('day').toDate();
-    if (endDate) createdAtFilter.lte = dayjs(endDate).endOf('day').toDate();
+      createdAtFilter.gte = dayjs(startDate).startOf("day").toDate();
+    if (endDate) createdAtFilter.lte = dayjs(endDate).endOf("day").toDate();
 
     const where: any = {
       ...(titleKeyword && {
-        title: { contains: titleKeyword, mode: 'insensitive' },
+        title: { contains: titleKeyword, mode: "insensitive" },
       }),
       ...(isAnswered !== undefined && { isSolved: isAnswered }),
       ...(hiddenOption !== undefined && { isHidden: hiddenOption }),
@@ -107,7 +113,7 @@ const QuestionService = {
         where,
         skip,
         take: pageSize,
-        orderBy: { createdAt: 'desc' },
+        orderBy: { createdAt: "desc" },
         select: {
           id: true,
           title: true,
@@ -150,7 +156,7 @@ const QuestionService = {
       isAnswered: q.isSolved,
       isHidden: q.isHidden,
       createdAt: q.createdAt.toISOString(),
-      editedAt: q.updatedAt?.toISOString() || '',
+      editedAt: q.updatedAt?.toISOString() || "",
     }));
 
     const pagination: Pagination = {
@@ -221,19 +227,20 @@ const QuestionService = {
     });
 
     if (!existing) {
-      throw new ApiError(404, 'api:question.not-found', true);
+      throw new ApiError(404, "api:question.not-found", true);
     }
 
     if (existing.userId !== userId) {
-      throw new ApiError(403, 'api:question.forbidden', true);
+      throw new ApiError(403, "api:question.forbidden", true);
     }
 
     await prisma.questionEdit.create({
       data: {
         questionId: id,
-        previousContent: existing.content ?? '',
+        previousContent: existing.content ?? "",
         previousTitle: existing.title,
         previousImages: existing.images,
+        createdAt: existing.updatedAt || existing.createdAt,
       },
     });
 
@@ -265,11 +272,11 @@ const QuestionService = {
     });
 
     if (!existing) {
-      throw new ApiError(404, 'api:question.not-found', true);
+      throw new ApiError(404, "api:question.not-found", true);
     }
 
     if (existing.userId !== userId) {
-      throw new ApiError(403, 'api:question.forbidden', true);
+      throw new ApiError(403, "api:question.forbidden", true);
     }
 
     await prisma.questionEdit.deleteMany({
@@ -281,7 +288,7 @@ const QuestionService = {
     });
 
     if (!question) {
-      throw new ApiError(404, 'question.not-found', true);
+      throw new ApiError(404, "question.not-found", true);
     }
 
     return question;
@@ -319,7 +326,7 @@ const QuestionService = {
           },
         });
 
-        return { action: 'removed' };
+        return { action: "removed" };
       } else {
         await prisma.questionVote.update({
           where: {
@@ -343,7 +350,7 @@ const QuestionService = {
           },
         });
 
-        return { action: 'changed' };
+        return { action: "changed" };
       }
     } else {
       await prisma.questionVote.create({
@@ -366,7 +373,7 @@ const QuestionService = {
         },
       });
 
-      return { action: 'created' };
+      return { action: "created" };
     }
   },
 
@@ -381,10 +388,10 @@ const QuestionService = {
     });
 
     if (!existingVote) {
-      return { status: 'none' };
+      return { status: "none" };
     }
 
-    return { status: existingVote.type === 1 ? 'like' : 'dislike' };
+    return { status: existingVote.type === 1 ? "like" : "dislike" };
   },
 
   getEditHistory: async (
@@ -397,10 +404,14 @@ const QuestionService = {
     });
 
     if (!question) {
-      throw new ApiError(404, 'api:question.not-found', true);
+      throw new ApiError(404, "api:question.not-found", true);
     }
 
-    if (question.createdAt.getTime() === createdAt.getTime()) {
+    const updatedAt = question.updatedAt
+      ? question.updatedAt
+      : question.createdAt;
+
+    if (updatedAt.getTime() === createdAt.getTime()) {
       if (direction === -1) {
         const edit = await prisma.questionEdit.findFirst({
           where: {
@@ -408,7 +419,7 @@ const QuestionService = {
             createdAt: { lt: createdAt },
           },
           orderBy: {
-            createdAt: 'desc',
+            createdAt: "desc",
           },
         });
 
@@ -442,7 +453,7 @@ const QuestionService = {
             createdAt: { lt: createdAt },
           },
           orderBy: {
-            createdAt: 'desc',
+            createdAt: "desc",
           },
         });
 
@@ -461,7 +472,7 @@ const QuestionService = {
             createdAt: { gt: createdAt },
           },
           orderBy: {
-            createdAt: 'asc',
+            createdAt: "asc",
           },
         });
 
@@ -470,7 +481,7 @@ const QuestionService = {
             title: question.title,
             content: question.content,
             images: question.images,
-            createdAt: question.createdAt,
+            createdAt: updatedAt,
           };
         }
 

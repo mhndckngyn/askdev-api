@@ -130,7 +130,28 @@ const AuthController = {
         statusCode: 200,
         message: 'auth.password-change-successful',
         content: null,
+      };
+
+      res.status(200).json(resBody);
+    } catch (err) {
+      next(err);
+    }
+  }) as RequestHandler,
+
+  checkOAuth: (async (req, res, next) => {
+    try {
+      if (!req.user) {
+        throw new ApiError(401, 'api:auth.login-first', true);
       }
+
+      const userId = req.user.id;
+      
+      const isOAuth: boolean = await AuthService.isUserOAuth(userId);
+      const resBody: ApiResponse = {
+        success: true,
+        statusCode: 200,
+        content: { isOAuth },
+      };
 
       res.status(200).json(resBody);
     } catch (err) {

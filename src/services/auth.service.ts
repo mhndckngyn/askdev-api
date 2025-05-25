@@ -281,6 +281,16 @@ const AuthService = {
       },
     });
   },
+
+  isUserOAuth: async (userId: string) => {
+    const account = await prisma.account.findFirst({ where: { userId } });
+
+    if (!account) {
+      throw new ApiError(404, 'auth.user-not-found');
+    }
+
+    return !!account.providerUserId; // nếu là Oauth thì sẽ được cung cấp id này
+  },
 };
 
 export default AuthService;

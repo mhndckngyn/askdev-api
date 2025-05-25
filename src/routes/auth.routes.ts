@@ -38,4 +38,6 @@ router.post('/logout', AuthController.logout);
 
 router.patch('/:id/password', authUser, AuthController.changePassword);
 
+router.get('/:id/isOAuth', authUser, AuthController.checkOAuth);
+
 export default router;

@@ -1,5 +1,6 @@
 import '@/config/passport';
 import AuthController from '@/controllers/auth.controller';
+import { authUser } from '@/middlewares/auth';
 import { Router } from 'express';
 import passport from 'passport';
 
@@ -34,5 +35,7 @@ router.post('/verify-email', AuthController.verifyEmail);
 router.post('/resend-verification-email', AuthController.resendVerificationEmail);
 
 router.post('/logout', AuthController.logout);
+
+router.patch('/:id/password', authUser, AuthController.changePassword);
 
 export default router;

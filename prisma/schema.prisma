@@ -43,7 +43,7 @@ model User {
 
   account Account? @relation()
 
-  questions Question[] // 👈 Thêm dòng này
+  questions Question[]
 
   answers       Answer[]
   answerVotes   AnswerVote[]

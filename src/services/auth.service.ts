@@ -1,7 +1,7 @@
 import { uploadFromUrl } from '@/config/cloudinary';
 import { constants } from '@/config/constants';
 import prisma from '@/prisma';
-import { OAuthProvider } from '@/types/auth.type';
+import { ChangePasswordPayload, OAuthProvider } from '@/types/auth.type';
 import { EmailSignupData } from '@/types/user.type';
 import { ApiError } from '@/utils/ApiError';
 import { generateToken } from '@/utils/jwt';
@@ -236,6 +236,48 @@ const AuthService = {
       data: {
         verificationToken,
         tokenExpiry,
+      },
+    });
+  },
+
+  changePassword: async (payload: ChangePasswordPayload) => {
+    const { userId, currentPassword, newPassword } = payload;
+
+    const account = await prisma.account.findFirst({
+      where: {
+        userId,
+      },
+    });
+
+    if (!account) {
+      throw new ApiError(404, 'auth.user-not-found', true);
+    }
+
+    if (!account.isVerified) {
+      throw new ApiError(403, 'auth.account-not-verified', true);
+    }
+
+    if (account.provider !== 'EMAIL' || !account.password) {
+      throw new ApiError(400, 'auth.cannot-change-oauth-password', true); // không thể đổi mật khẩu nếu login bằng oauth
+    }
+
+    const isMatch = await bcrypt.compare(currentPassword, account.password);
+
+    if (!isMatch) {
+      throw new ApiError(401, 'auth.incorrect-current-password', true);
+    }
+
+    const hashedPassword = await bcrypt.hash(
+      newPassword,
+      constants.saltWorkFactor
+    );
+
+    await prisma.account.update({
+      where: {
+        userId,
+      },
+      data: {
+        password: hashedPassword,
       },
     });
   },

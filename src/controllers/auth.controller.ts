@@ -109,6 +109,34 @@ const AuthController = {
 
     res.status(200).json(resBody);
   }) as RequestHandler,
+
+  changePassword: (async (req, res, next) => {
+    try {
+      if (!req.user) {
+        throw new ApiError(401, 'api:auth.login-first', true);
+      }
+
+      const userId = req.user.id;
+      const { currentPassword, newPassword } = req.body;
+
+      await AuthService.changePassword({
+        userId,
+        currentPassword,
+        newPassword,
+      });
+
+      const resBody: ApiResponse = {
+        success: true,
+        statusCode: 200,
+        message: 'auth.password-change-successful',
+        content: null,
+      }
+
+      res.status(200).json(resBody);
+    } catch (err) {
+      next(err);
+    }
+  }) as RequestHandler,
 };
 
 export default AuthController;

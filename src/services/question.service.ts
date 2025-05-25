@@ -56,10 +56,21 @@ const QuestionService = {
             name: true,
           },
         },
+        user: {
+          select: {
+            username: true,
+            profilePicture: true,
+          },
+        },
       },
     });
 
-    return questions;
+    const tag = await prisma.tag.findUnique({
+      where: { id: tagId },
+      select: { name: true },
+    });
+
+    return { tagName: tag?.name, questions };
   },
 
   getQuestions: async (params: GetQuestionsParam) => {

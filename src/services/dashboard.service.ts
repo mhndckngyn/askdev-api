@@ -430,13 +430,17 @@ const DashboardService = {
       },
       orderBy: {
         questions: {
-          _count: "asc",
+          _count: "desc",
         },
       },
       take: 10,
     });
 
-    return result.map((tag) => ({
+    const sortedAsc = result.sort((a, b) => {
+      return a._count.questions - b._count.questions;
+    });
+
+    return sortedAsc.map((tag) => ({
       tagId: tag.id,
       tagName: tag.name,
       postCount: tag._count.questions,

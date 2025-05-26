@@ -68,7 +68,8 @@ model Account {
   verificationToken String?
   tokenExpiry       DateTime?
 
-  user User @relation(fields: [userId], references: [id])
+  user               User                @relation(fields: [userId], references: [id])
+  passwordResetToken PasswordResetToken? @relation()
 
   @@unique([provider, providerUserId])
 }
@@ -97,7 +98,7 @@ model Question {
 
 model QuestionEdit {
   questionId      String
-  createdAt       DateTime  @default(now())
+  createdAt       DateTime @default(now())
   previousContent Json?
   previousTitle   String?
   previousImages  String[]
@@ -117,11 +118,11 @@ model QuestionVote {
 }
 
 model Tag {
-  id            String  @id @default(uuid())
-  name          String  @unique
+  id            String   @id @default(uuid())
+  name          String   @unique
   descriptionVi String?
   descriptionEn String?
-  createdAt     DateTime @default(now()) 
+  createdAt     DateTime @default(now())
 
   questions Question[] @relation("QuestionTags")
 }
@@ -214,9 +215,19 @@ model Report {
   reason       String
   status       ReportStatus @default(PENDING)
   createdAt    DateTime     @default(now())
-  isHidden  Boolean   @default(false)
+  isHidden     Boolean      @default(false)
 
   reportedBy User @relation(fields: [reportedById], references: [id])
 
   @@index([contentId])
+}
+
+model PasswordResetToken {
+  id        String   @id @default(uuid())
+  token     String
+  createdAt DateTime @default(now())
+  expiredAt DateTime
+
+  account   Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  accountId String  @unique
 }

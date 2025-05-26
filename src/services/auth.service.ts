@@ -286,10 +286,91 @@ const AuthService = {
     const account = await prisma.account.findFirst({ where: { userId } });
 
     if (!account) {
-      throw new ApiError(404, 'auth.user-not-found');
+      throw new ApiError(404, 'auth.user-not-found', true);
     }
 
     return !!account.providerUserId; // nếu là Oauth thì sẽ được cung cấp id này
+  },
+
+  resetPasswordRequest: async (email: string) => {
+    const account = await prisma.account.findFirst({ where: { email } });
+
+    if (!account) {
+      throw new ApiError(404, 'auth.email-not-found', true);
+    }
+
+    const token = uuidv4();
+    const tokenExpiry = new Date(Date.now() + constants.passwordResetExp);
+
+    const existingToken = await prisma.passwordResetToken.findFirst({
+      where: {
+        accountId: account.id,
+      },
+    });
+
+    if (existingToken) {
+      await prisma.passwordResetToken.delete({
+        where: { id: existingToken.id },
+      });
+    }
+
+    await prisma.passwordResetToken.create({
+      data: {
+        token,
+        expiredAt: tokenExpiry,
+        accountId: account.id,
+      },
+    });
+
+    try {
+      await MailService.sendPasswordResetEmail(
+        account.email!, // account đã được tìm theo email
+        token,
+        tokenExpiry
+      );
+    } catch (err) {
+      throw new ApiError(500, 'auth.password-reset-send-failed');
+    }
+  },
+
+  validatePasswordResetToken: async (token: string) => {
+    const record = await prisma.passwordResetToken.findFirst({
+      where: {
+        token,
+      },
+    });
+
+    if (!record) {
+      throw new ApiError(400, 'auth.reset-password-token-invalid', true);
+    }
+
+    if (record.expiredAt < new Date()) {
+      throw new ApiError(400, 'auth.reset-password-token-expired', true);
+    }
+
+    return record;
+  },
+
+  resetPassword: async (token: string, newPassword: string) => {
+    const record = await AuthService.validatePasswordResetToken(token);
+
+    const hashedPassword = await bcrypt.hash(
+      newPassword,
+      constants.saltWorkFactor
+    );
+    try {
+      await prisma.$transaction([
+        prisma.account.update({
+          where: { id: record.accountId },
+          data: { password: hashedPassword },
+        }),
+        prisma.passwordResetToken.delete({
+          where: { id: record.id },
+        }),
+      ]);
+    } catch (err) {
+      throw new ApiError(500, 'auth.reset-password-unexpected-error');
+    }
   },
 };
 

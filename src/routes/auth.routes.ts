@@ -40,4 +40,10 @@ router.patch('/:id/password', authUser, AuthController.changePassword);
 
 router.get('/:id/isOAuth', authUser, AuthController.checkOAuth);
 
+router.post('/password-reset/request', AuthController.resetPasswordRequest);
+
+router.get('/password-reset/validate', AuthController.validatePasswordResetToken);
+
+router.post('/password-reset/confirm', AuthController.resetPassword);
+
 export default router;

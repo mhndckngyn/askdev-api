@@ -46,4 +46,5 @@ export const constants = {
   defaultAvatar:
     'https://res.cloudinary.com/dd9pxbgax/image/upload/v1744253824/user_s8cg2b.svg',
   saltWorkFactor: 10,
+  passwordResetExp: 3600000,
 };

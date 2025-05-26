@@ -145,12 +145,91 @@ const AuthController = {
       }
 
       const userId = req.user.id;
-      
+
       const isOAuth: boolean = await AuthService.isUserOAuth(userId);
       const resBody: ApiResponse = {
         success: true,
         statusCode: 200,
         content: { isOAuth },
+      };
+
+      res.status(200).json(resBody);
+    } catch (err) {
+      next(err);
+    }
+  }) as RequestHandler,
+
+  resetPasswordRequest: (async (req, res, next) => {
+    try {
+      if (!req.body) {
+        throw new ApiError(400, 'auth.reset-password-invalid-data', true);
+      }
+
+      const { email } = req.body;
+
+      if (!email || typeof email !== 'string') {
+        throw new ApiError(400, 'auth.reset-password-invalid-data', true);
+      }
+
+      await AuthService.resetPasswordRequest(email);
+      const resBody: ApiResponse = {
+        success: true,
+        statusCode: 200,
+        message: 'auth.reset-password-email-sent',
+        content: null,
+      };
+
+      res.status(200).json(resBody);
+    } catch (err) {
+      next(err);
+    }
+  }) as RequestHandler,
+
+  validatePasswordResetToken: (async (req, res, next) => {
+    try {
+      const { token } = req.query;
+
+      if (typeof token !== 'string') {
+        throw new ApiError(400, 'auth.reset-password-token-invalid', true);
+      }
+
+      const result = await AuthService.validatePasswordResetToken(token);
+      const resBody: ApiResponse = {
+        success: true,
+        statusCode: 200,
+        message: 'auth.reset-password-token-valid',
+        content: result,
+      };
+
+      res.status(200).json(resBody);
+    } catch (err) {
+      next(err);
+    }
+  }) as RequestHandler,
+
+  resetPassword: (async (req, res, next) => {
+    try {
+      if (!req.body) {
+        throw new ApiError(400, 'auth.reset-password-invalid-data', true);
+      }
+
+      const { token, newPassword } = req.body;
+
+      if (
+        !token ||
+        !newPassword ||
+        typeof token !== 'string' ||
+        typeof newPassword !== 'string'
+      ) {
+        throw new ApiError(400, 'auth.reset-password-invalid-data', true);
+      }
+
+      await AuthService.resetPassword(token, newPassword);
+      const resBody: ApiResponse = {
+        success: true,
+        statusCode: 200,
+        message: 'auth.reset-password-succesful',
+        content: null,
       };
 
       res.status(200).json(resBody);

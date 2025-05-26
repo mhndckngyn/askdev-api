@@ -8,6 +8,8 @@ import userRoute from "./user.routes";
 import tagRoute from "./tag.routes";
 import reportRoute from "./report.routes";
 import homeRoute from "./home.routes";
+import notificationRoute from "./notification.routes";
+
 import { authAdmin, authUser } from "@/middlewares/auth";
 const router = Router();
 
@@ -20,4 +22,5 @@ router.use("/answer", answerRoute);
 router.use("/comment", commentRoute);
 router.use("/report", reportRoute);
 router.use("/admin", /* authUser, authAdmin, TODO: uncomment*/ adminRoute);
+router.use("/notification", notificationRoute);
 export default router;

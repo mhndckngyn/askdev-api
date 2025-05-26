@@ -51,6 +51,23 @@ const CommentService = {
         createdAt: true,
       },
     });
+
+    const answer = await prisma.answer.findUnique({
+      where: { id: answerId },
+      select: { userId: true },
+    });
+
+    if (answer && answer.userId !== userId) {
+      await prisma.notification.create({
+        data: {
+          userId: answer.userId,
+          actorId: userId,
+          contentTitle: content,
+          type: "COMMENT",
+        },
+      });
+    }
+
     return comment;
   },
 

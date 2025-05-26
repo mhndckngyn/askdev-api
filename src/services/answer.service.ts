@@ -1,8 +1,8 @@
-import prisma from '@/prisma';
-import { GetAnswersParam } from '@/types/answer.type';
-import { Pagination } from '@/types/response.type';
-import { ApiError } from '@/utils/ApiError';
-import dayjs from 'dayjs';
+import prisma from "@/prisma";
+import { GetAnswersParam } from "@/types/answer.type";
+import { Pagination } from "@/types/response.type";
+import { ApiError } from "@/utils/ApiError";
+import dayjs from "dayjs";
 
 type CreateAnswerPayload = {
   userId: string;
@@ -14,7 +14,7 @@ const AnswerService = {
   getAnswersByQuestionId: async (questionId: string) => {
     const answers = await prisma.answer.findMany({
       where: { questionId },
-      orderBy: { createdAt: 'asc' },
+      orderBy: { createdAt: "asc" },
       select: {
         id: true,
         userId: true,
@@ -51,15 +51,15 @@ const AnswerService = {
 
     const createdAtFilter: Record<string, Date> = {};
     if (startDate) {
-      createdAtFilter.gte = dayjs(startDate).startOf('day').toDate();
+      createdAtFilter.gte = dayjs(startDate).startOf("day").toDate();
     }
     if (endDate) {
-      createdAtFilter.lte = dayjs(endDate).endOf('day').toDate();
+      createdAtFilter.lte = dayjs(endDate).endOf("day").toDate();
     }
 
     const where: any = {
       ...(content && {
-        content: { contains: content, mode: 'insensitive' },
+        content: { contains: content, mode: "insensitive" },
       }),
       ...(questionId && {
         questionId,
@@ -85,7 +85,7 @@ const AnswerService = {
         where,
         skip,
         take: pageSize,
-        orderBy: { createdAt: 'desc' },
+        orderBy: { createdAt: "desc" },
         select: {
           id: true,
           content: true,
@@ -118,7 +118,7 @@ const AnswerService = {
       comments: a.comments.length,
       votes: a.upvotes - a.downvotes,
       createdAt: a.createdAt.toISOString(),
-      updatedAt: a.updatedAt?.toISOString() || '',
+      updatedAt: a.updatedAt?.toISOString() || "",
       user: a.user,
     }));
 
@@ -140,7 +140,7 @@ const AnswerService = {
       where: { id },
     });
     if (!answer) {
-      throw new ApiError(404, 'api:answer.not-found', true);
+      throw new ApiError(404, "api:answer.not-found", true);
     }
     return answer;
   },
@@ -161,6 +161,23 @@ const AnswerService = {
         id: true,
       },
     });
+
+    const question = await prisma.question.findUnique({
+      where: { id: questionId },
+      select: { userId: true },
+    });
+
+    if (question && question.userId !== userId) {
+      await prisma.notification.create({
+        data: {
+          userId: question.userId,
+          actorId: userId,
+          contentTitle: content,
+          type: "ANSWER",
+        },
+      });
+    }
+
     return answer;
   },
 
@@ -170,11 +187,11 @@ const AnswerService = {
     });
 
     if (!existing) {
-      throw new ApiError(404, 'api:answer.not-found', true);
+      throw new ApiError(404, "api:answer.not-found", true);
     }
 
     if (existing.userId !== userId) {
-      throw new ApiError(403, 'api:answer.forbidden', true);
+      throw new ApiError(403, "api:answer.forbidden", true);
     }
 
     await prisma.answerEdit.create({
@@ -201,11 +218,11 @@ const AnswerService = {
     });
 
     if (!existing) {
-      throw new ApiError(404, 'api:answer.not-found', true);
+      throw new ApiError(404, "api:answer.not-found", true);
     }
 
     if (existing.userId !== userId) {
-      throw new ApiError(403, 'api:answer.forbidden', true);
+      throw new ApiError(403, "api:answer.forbidden", true);
     }
 
     await prisma.answerEdit.deleteMany({
@@ -228,6 +245,24 @@ const AnswerService = {
         },
       },
     });
+
+    const answer = await prisma.answer.findUnique({
+      where: { id: answerId },
+      select: { userId: true, content: true },
+    });
+
+    if (!answer) throw new ApiError(404, "question.not-found", true);
+
+    if (answer.userId !== userId) {
+      await prisma.notification.create({
+        data: {
+          userId: answer.userId,
+          actorId: userId,
+          contentTitle: answer.content,
+          type: "ANSWER_VOTE",
+        },
+      });
+    }
 
     if (existingVote) {
       if (existingVote.type === type) {
@@ -252,7 +287,7 @@ const AnswerService = {
           },
         });
 
-        return { action: 'removed' };
+        return { action: "removed" };
       } else {
         await prisma.answerVote.update({
           where: {
@@ -276,7 +311,7 @@ const AnswerService = {
           },
         });
 
-        return { action: 'changed' };
+        return { action: "changed" };
       }
     } else {
       await prisma.answerVote.create({
@@ -299,7 +334,7 @@ const AnswerService = {
         },
       });
 
-      return { action: 'created' };
+      return { action: "created" };
     }
   },
 
@@ -314,9 +349,9 @@ const AnswerService = {
     });
 
     if (!existingVote) {
-      return { status: 'none' };
+      return { status: "none" };
     }
-    return { status: existingVote.type === 1 ? 'like' : 'dislike' };
+    return { status: existingVote.type === 1 ? "like" : "dislike" };
   },
 
   toggleHideQuestions: async (ids: string[], hidden: boolean) => {

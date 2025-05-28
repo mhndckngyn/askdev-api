@@ -164,7 +164,7 @@ const AnswerService = {
 
     const question = await prisma.question.findUnique({
       where: { id: questionId },
-      select: { userId: true },
+      select: { userId: true, title: true },
     });
 
     if (question && question.userId !== userId) {
@@ -172,8 +172,9 @@ const AnswerService = {
         data: {
           userId: question.userId,
           actorId: userId,
-          contentTitle: content,
+          contentTitle: question.title,
           type: "ANSWER",
+          questionId: questionId,
         },
       });
     }
@@ -248,7 +249,7 @@ const AnswerService = {
 
     const answer = await prisma.answer.findUnique({
       where: { id: answerId },
-      select: { userId: true, content: true },
+      select: { userId: true, content: true, questionId: true },
     });
 
     if (!answer) throw new ApiError(404, "question.not-found", true);
@@ -260,6 +261,7 @@ const AnswerService = {
           actorId: userId,
           contentTitle: answer.content,
           type: "ANSWER_VOTE",
+          questionId: answer.questionId,
         },
       });
     }

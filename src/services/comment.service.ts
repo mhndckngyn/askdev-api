@@ -54,7 +54,13 @@ const CommentService = {
 
     const answer = await prisma.answer.findUnique({
       where: { id: answerId },
-      select: { userId: true },
+      select: {
+        userId: true,
+        questionId: true,
+        question: {
+          select: { title: true },
+        },
+      },
     });
 
     if (answer && answer.userId !== userId) {
@@ -62,8 +68,9 @@ const CommentService = {
         data: {
           userId: answer.userId,
           actorId: userId,
-          contentTitle: content,
+          contentTitle: answer.question.title,
           type: "COMMENT",
+          questionId: answer.questionId,
         },
       });
     }
@@ -124,6 +131,33 @@ const CommentService = {
         },
       },
     });
+
+    const comment = await prisma.comment.findUnique({
+      where: { id: commentId },
+      select: {
+        userId: true,
+        content: true,
+        answer: {
+          select: {
+            questionId: true,
+          },
+        },
+      },
+    });
+
+    if (!comment) throw new ApiError(404, "comment.not-found", true);
+
+    if (comment.userId !== userId) {
+      await prisma.notification.create({
+        data: {
+          userId: comment.userId,
+          actorId: userId,
+          contentTitle: comment.content,
+          questionId: comment.answer.questionId,
+          type: "COMMENT_VOTE",
+        },
+      });
+    }
 
     if (existingVote) {
       if (existingVote.type === type) {

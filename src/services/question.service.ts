@@ -329,6 +329,7 @@ const QuestionService = {
           actorId: userId,
           contentTitle: question.title,
           type: "QUESTION_VOTE",
+          questionId: questionId,
         },
       });
     }

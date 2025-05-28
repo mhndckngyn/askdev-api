@@ -34,6 +34,7 @@ enum ReportStatus {
 enum  NotificationType{
   QUESTION_VOTE
   ANSWER_VOTE
+  COMMENT_VOTE
   COMMENT
   ANSWER
   ANSWER_CHOSEN
@@ -250,6 +251,7 @@ model Notification {
   userId       String
   actorId      String  
   contentTitle String
+  questionId   String?
   createdAt    DateTime @default(now())
   isRead       Boolean  @default(false)
 

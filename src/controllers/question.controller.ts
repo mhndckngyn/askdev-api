@@ -136,7 +136,7 @@ const QuestionController = {
       }
 
       const { id } = req.params;
-      const { title, content, existingTags, newTags, currentImages, images } =
+      const { title, content, existingTags, newTags, currentImages } =
         req.body;
       const imageFiles = req.files as Express.Multer.File[];
 
@@ -149,7 +149,7 @@ const QuestionController = {
         content,
         existingTags: JSON.parse(existingTags),
         newTags: JSON.parse(newTags),
-        currentImages,
+        currentImages: JSON.parse(currentImages),
         imageFiles,
       });
 

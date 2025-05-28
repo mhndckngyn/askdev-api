@@ -38,6 +38,7 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
+    "@google/genai": "^1.1.0",
     "@prisma/client": "^6.6.0",
     "@types/bcrypt": "^5.0.2",
     "@types/streamifier": "^0.1.2",

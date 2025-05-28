@@ -21,6 +21,10 @@ export const constants = {
     client_id: ensureEnv('GITHUB_CLIENT_ID'),
     client_secret: ensureEnv('GITHUB_CLIENT_SECRET'),
   },
+  gemini: {
+    model: "gemini-2.0-flash-001",
+    key: ensureEnv('GEMINI_API_KEY')
+  },
   cloudinary: {
     name: ensureEnv('CLOUDINARY_CLOUD_NAME'),
     key: ensureEnv('CLOUDINARY_API_KEY'),

@@ -1,3 +1,4 @@
+import AIService from '@/services/ai.service';
 import QuestionService from '@/services/question.service';
 import { ApiResponse } from '@/types/response.type';
 import { ApiError } from '@/utils/ApiError';
@@ -307,6 +308,29 @@ const QuestionController = {
         success: true,
         statusCode: 200,
         message: 'question.hideSuccess',
+        content: result,
+      };
+
+      res.status(200).json(resBody);
+    } catch (err) {
+      next(err);
+    }
+  }) as RequestHandler,
+
+  getContentSuggestion: (async (req, res, next) => {
+    try {
+      const { questionTitle } = req.body;
+
+      if (!questionTitle || typeof questionTitle !== 'string') {
+        throw new ApiError(400, 'question.question-title-required', true);
+      }
+
+      const result = await AIService.getContentSuggestion(questionTitle);
+
+      const resBody: ApiResponse = {
+        success: true,
+        statusCode: 200,
+        message: 'question.suggestion-fetch-success',
         content: result,
       };
 

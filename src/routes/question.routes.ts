@@ -23,4 +23,6 @@ router.get("/:id/vote-status", authUser, QuestionController.getVoteStatus);
 
 router.get("/:id/edit-history", authUser, QuestionController.getEditHistory);
 
+router.post('/suggest-content', authUser, QuestionController.getContentSuggestion);
+
 export default router;

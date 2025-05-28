@@ -1,8 +1,13 @@
 import { uploadToCloudinary } from '@/config/cloudinary';
 import prisma from '@/prisma';
 import { Pagination } from '@/types/response.type';
-import { GetUsersParam, ProfileUpdateData } from '@/types/user.type';
+import ProfileGetData, {
+  GetUsersParam,
+  InterestTags,
+  ProfileUpdateData,
+} from '@/types/user.type';
 import { ApiError } from '@/utils/ApiError';
+import { buildProfileResponse, computeInterestTags } from '@/utils/profile';
 
 const UserService = {
   getUserByUsernameKeyword: async ({
@@ -90,7 +95,85 @@ const UserService = {
     return updated;
   },
 
-  getProfileById: async (id: string) => {
+  getProfile: async (userId: string): Promise<ProfileGetData> => {
+    const profile = await prisma.user.findFirst({
+      where: { id: userId },
+      select: {
+        username: true,
+        profilePicture: true,
+        showGithub: true,
+        github: true,
+        bio: true,
+        createdAt: true,
+      },
+    });
+
+    if (!profile) {
+      throw new ApiError(404, 'user.not-found', true);
+    }
+
+    const questions = await prisma.question.findMany({
+      where: { userId },
+      orderBy: {
+        upvotes: 'desc', // cho đơn giản thay vì upvotes - downvotes
+      },
+      select: {
+        id: true,
+        title: true,
+        upvotes: true,
+        downvotes: true,
+        createdAt: true,
+        tags: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    });
+
+    const answers = await prisma.answer.findMany({
+      where: { userId },
+      orderBy: {
+        upvotes: 'desc',
+      },
+      select: {
+        id: true,
+        upvotes: true,
+        downvotes: true,
+        createdAt: true,
+        question: {
+          select: {
+            title: true,
+            tags: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const upvotesReceived = [...questions, ...answers].reduce(
+      (sum, cur) => sum + cur.upvotes,
+      0
+    );
+
+    const result = buildProfileResponse({
+      userId,
+      profile,
+      questions,
+      answers,
+      interestTags: computeInterestTags(questions, answers),
+      upvotesReceived,
+    });
+
+    return result;
+  },
+  
+  getProfileForEdit: async (id: string) => {
     const profile = prisma.user.findFirst({ where: { id } });
 
     if (!profile) {

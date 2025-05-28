@@ -107,7 +107,26 @@ const UserController = {
     try {
       const { id } = req.params;
 
-      const profile = await UserService.getProfileById(id);
+      const profile = await UserService.getProfile(id);
+
+      const resBody: ApiResponse = {
+        success: true,
+        statusCode: 200,
+        message: 'user.profile-fetched',
+        content: profile,
+      };
+
+      res.status(200).json(resBody);
+    } catch (err) {
+      next(err);
+    }
+  }) as RequestHandler,
+
+  getProfileForEdit: (async (req, res, next) => {
+    try {
+      const { id } = req.params;
+
+      const profile = await UserService.getProfileForEdit(id);
 
       const resBody: ApiResponse = {
         success: true,

@@ -43,3 +43,15 @@ export type QuestionUpdatePayload = QuestionCreatePayload & {
   id: string;
   currentImages: string[];
 };
+
+export type QuestionForProfile = {
+  id: string;
+  createdAt: Date;
+  title: string;
+  upvotes: number;
+  downvotes: number;
+  tags: {
+    id: string;
+    name: string;
+  }[];
+};

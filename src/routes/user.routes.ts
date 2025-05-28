@@ -20,4 +20,6 @@ router.post(
 
 router.get('/profile/:id', UserController.getProfileById);
 
+router.get('/profile/:id/edit', UserController.getProfileForEdit);
+
 export default router;

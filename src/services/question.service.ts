@@ -315,6 +315,24 @@ const QuestionService = {
       },
     });
 
+    const question = await prisma.question.findUnique({
+      where: { id: questionId },
+      select: { userId: true, title: true },
+    });
+
+    if (!question) throw new ApiError(404, "question.not-found", true);
+
+    if (question.userId !== userId) {
+      await prisma.notification.create({
+        data: {
+          userId: question.userId,
+          actorId: userId,
+          contentTitle: question.title,
+          type: "QUESTION_VOTE",
+        },
+      });
+    }
+
     if (existingVote) {
       if (existingVote.type === type) {
         await prisma.questionVote.delete({

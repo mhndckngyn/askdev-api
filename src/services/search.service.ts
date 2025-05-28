@@ -62,15 +62,14 @@ const SearchService = {
         .map((q) => ({
           id: q.id,
           title: q.title,
-          content:
-            typeof q.content === "object" ? JSON.stringify(q.content) : "",
+          content: q.content || "",
           author: q.user?.username || "Ẩn danh",
           views: q.views,
           upvotes: q.upvotes,
           answers: q.answers.length,
           isSolved: q.isSolved,
           tags: q.tags.map((tag) => tag.name),
-          createdAt: q.createdAt.toISOString(),
+          createdAt: q.updatedAt ?? q.createdAt,
         })),
 
       tags: tags

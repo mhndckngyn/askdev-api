@@ -371,6 +371,36 @@ const AnswerService = {
 
     return result;
   },
+
+  markChosen: async (answerId: string, userId: string) => {
+    const answer = await prisma.answer.findFirst({
+      where: { id: answerId },
+      include: { question: { select: { id: true, userId: true } } },
+    });
+
+    if (!answer) {
+      throw new ApiError(404, 'answer.not-found', true);
+    }
+
+    if (answer.question.userId !== userId) {
+      throw new ApiError(403, 'answer.mark-chosen-not-allowed', true);
+    }
+
+    try {
+      await prisma.$transaction([
+        prisma.answer.update({
+          where: { id: answer.id },
+          data: { isChosen: true },
+        }),
+        prisma.question.update({
+          where: { id: answer.question.id },
+          data: { isSolved: true },
+        }),
+      ]);
+    } catch (err) {
+      throw new ApiError(500, 'answer.mark-chosen-unexpected-error');
+    }
+  },
 };
 
 export default AnswerService;

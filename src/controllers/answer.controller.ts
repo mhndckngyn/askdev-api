@@ -283,6 +283,30 @@ const AnswerController = {
       next(err);
     }
   }) as RequestHandler,
+
+  markChosen: (async (req, res, next) => {
+    try {
+      const { id: answerId } = req.params;
+      const userId = req.user?.id!; // đã có middleware handle
+
+      if (!answerId || typeof answerId !== 'string') {
+        throw new ApiError(400, 'answer.mark-chosen-missing-attributes', true);
+      }
+
+      await AnswerService.markChosen(answerId, userId);
+
+      const resBody: ApiResponse = {
+        success: true,
+        statusCode: 200,
+        message: 'answer.mark-chosen-successful',
+        content: null,
+      };
+
+      res.status(200).json(resBody);
+    } catch (err) {
+      next(err);
+    }
+  }) as RequestHandler,
 };
 
 export default AnswerController;

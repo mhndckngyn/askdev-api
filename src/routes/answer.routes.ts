@@ -26,4 +26,6 @@ router.get("/:id/vote-status", authUser, AnswerController.getVoteStatus);
 
 router.post('/grade-toxicity', authUser, AnswerController.getToxicityGrading);
 
+router.post("/:id/mark-chosen", authUser, AnswerController.markChosen);
+
 export default router;

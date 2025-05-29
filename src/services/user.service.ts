@@ -114,7 +114,7 @@ const UserService = {
     }
 
     const questions = await prisma.question.findMany({
-      where: { userId: profile.id },
+      where: { userId: profile.id, isHidden: false },
       orderBy: {
         upvotes: 'desc', // cho đơn giản thay vì upvotes - downvotes
       },
@@ -134,7 +134,7 @@ const UserService = {
     });
 
     const answers = await prisma.answer.findMany({
-      where: { userId: profile.id },
+      where: { userId: profile.id, isHidden: false },
       orderBy: {
         upvotes: 'desc',
       },

@@ -2,6 +2,7 @@ import { RequestHandler } from 'express';
 import AnswerService from '@/services/answer.service';
 import { ApiResponse } from '@/types/response.type';
 import { ApiError } from '@/utils/ApiError';
+import AIService from '@/services/ai.service';
 
 const AnswerController = {
   getByQuestionId: (async (req, res, next) => {
@@ -57,7 +58,7 @@ const AnswerController = {
         success: true,
         statusCode: 200,
         message: 'answer.fetch-successful',
-        content: result
+        content: result,
       };
 
       res.status(200).json(resBody);
@@ -243,6 +244,37 @@ const AnswerController = {
         success: true,
         statusCode: 200,
         message: 'answer.unhideSuccess',
+        content: result,
+      };
+
+      res.status(200).json(resBody);
+    } catch (err) {
+      next(err);
+    }
+  }) as RequestHandler,
+
+  getToxicityGrading: (async (req, res, next) => {
+    try {
+      const { questionTitle, answer } = req.body;
+
+      if (
+        !questionTitle ||
+        !answer ||
+        typeof questionTitle !== 'string' ||
+        typeof answer !== 'string'
+      ) {
+        throw new ApiError(400, 'answer.toxicity-missing-attributes', true);
+      }
+
+      const result = await AIService.getAnswerToxicityGrading(
+        questionTitle,
+        answer
+      );
+
+      const resBody: ApiResponse = {
+        success: true,
+        statusCode: 200,
+        message: 'answer.toxicity-grading-successful',
         content: result,
       };
 

@@ -1,4 +1,4 @@
-import { GenerateContentParameters, Type } from '@google/genai';
+import { Type } from '@google/genai';
 import { constants } from './constants';
 
 export const questionContentSuggestion = {
@@ -47,6 +47,92 @@ Output:
           },
         },
       },
+    },
+  },
+};
+
+export const answerToxicityGrading = {
+  prompt_prefix: `
+Đánh giá mức độ độc hại của một bình luận liên quan đến một câu hỏi/vấn đề/bài viết liên quan đến lập trình, dựa trên nội dung của bình luận và tiêu đề của bài viết. Chấm điểm mức độ độc hại trên thang điểm từ 1 đến 10, trong đó:
+
+  1-2: Bình luận lịch sự, tôn trọng và mang tính xây dựng, không có ngôn từ tiêu cực.
+  3-4: Có chút phê bình nhưng mang tính xây dựng; có thể có sự thất vọng nhẹ nhưng không có ngôn ngữ xúc phạm.
+  5-6: Thể hiện sự khó chịu rõ rệt hoặc thiếu kiên nhẫn, có thể có lời nhận xét tiêu cực nhẹ, nhưng không có ngôn từ lạm dụng.
+  7-8: Bình luận mang tính gây hấn, có chứa xúc phạm, mỉa mai hoặc giọng điệu bác bỏ, có thể gây tổn thương hoặc xúc phạm người khác.
+  9-10: Cực kỳ độc hại, có lời lẽ xúc phạm rõ ràng, ngôn từ thù ghét, đe dọa hoặc quấy rối.
+
+Trước khi đưa ra điểm số, hãy phân tích cẩn thận ngôn ngữ, giọng điệu, mục đích và mức độ liên quan của bình luận đối với tiêu đề bài viết.
+Định dạng đầu ra
+
+Cung cấp một đối tượng JSON với cấu trúc sau:
+
+{
+  "toxicity_score": [số nguyên từ 1 đến 10],
+  "justification": "Giải thích ngắn gọn lý do tại sao điểm số này được đưa ra dựa trên nội dung bình luận và tiêu đề bài viết."
+}
+
+Ví dụ
+
+Tiêu đề bài viết: "Làm sao để sửa lỗi NullPointerException trong Java?"
+Bình luận: "Nếu bạn học Java đàng hoàng thì đã không mắc những lỗi cơ bản như vậy."
+
+Đầu ra mẫu:
+
+{
+  "toxicity_score": 7,
+  "justification": "Bình luận mang giọng điệu trịch thượng và ám chỉ sự kém cỏi, điều này gây cảm giác công kích và coi thường."
+}
+
+Ghi chú:
+Phần giải thích lý do (justification) được viết bằng tiếng Việt.
+`,
+  params: {
+    model: constants.gemini.model,
+    config: {
+      responseMimeType: 'application/json',
+    },
+  },
+};
+
+export const commentToxicityGrading = {
+  prompt_prefix: `
+Đánh giá mức độ độc hại của một bình luận đối với một câu trả lời, dựa trên nội dung bình luận và câu trả lời gốc. Chấm điểm mức độ độc hại trên thang điểm từ 1 đến 10, trong đó:
+
+    1-2: Phản hồi lịch sự, tôn trọng và mang tính xây dựng, không có ngôn từ tiêu cực.
+    3-4: Có chút phê bình hoặc phản bác nhẹ nhưng vẫn mang tính xây dựng; có thể có sự thất vọng nhẹ nhưng không dùng ngôn từ xúc phạm.
+    5-6: Thể hiện sự khó chịu rõ rệt hoặc thiếu kiên nhẫn, có thể có lời nhận xét tiêu cực nhẹ hoặc châm biếm, nhưng không có lời lẽ lạm dụng.
+    7-8: Phản hồi mang tính gây hấn, có chứa xúc phạm, mỉa mai hoặc giọng điệu bác bỏ, có thể gây tổn thương hoặc xúc phạm người khác.
+    9-10: Phản hồi cực kỳ độc hại, có lời lẽ xúc phạm rõ ràng, ngôn từ thù ghét, đe dọa hoặc quấy rối.
+
+Trước khi đưa ra điểm số, hãy phân tích cẩn thận ngôn ngữ, giọng điệu, mục đích và mức độ phù hợp của bình luận với câu trả lời gốc.
+Định dạng đầu ra
+
+Cung cấp một đối tượng JSON với cấu trúc sau:
+
+{
+  "toxicity_score": [số nguyên từ 1 đến 10],
+  "justification": "Giải thích ngắn gọn lý do tại sao điểm số này được đưa ra dựa trên nội dung phản hồi và bình luận gốc."
+}
+
+Ví dụ
+
+Câu trả lời gốc: "Tôi nghĩ bạn nên thử dùng JSON.stringify trước khi gửi dữ liệu."
+Bình luận: "Bạn sai rồi, đừng phát biểu lung tung nếu không biết chắc."
+
+Đầu ra mẫu:
+
+{
+  "toxicity_score": 7,
+  "justification": "Bình luận mang tính bác bỏ thô lỗ, kèm theo mệnh lệnh và đả kích cá nhân."
+}
+
+Ghi chú:
+Phần giải thích lý do (justification) được viết bằng tiếng Việt.
+`,
+  params: {
+    model: constants.gemini.model,
+    config: {
+      responseMimeType: 'application/json',
     },
   },
 };

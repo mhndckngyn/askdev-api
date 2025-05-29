@@ -20,4 +20,6 @@ router.post("/:id/vote", authUser, CommentController.vote);
 
 router.get("/:id/vote-status", authUser, CommentController.getVoteStatus);
 
+router.post('/grade-toxicity', authUser, CommentController.getToxicityGrading);
+
 export default router;

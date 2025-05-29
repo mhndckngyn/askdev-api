@@ -103,11 +103,11 @@ const UserController = {
     }
   }) as RequestHandler,
 
-  getProfileById: (async (req, res, next) => {
+  getProfileByUsername: (async (req, res, next) => {
     try {
-      const { id } = req.params;
+      const { username } = req.params;
 
-      const profile = await UserService.getProfile(id);
+      const profile = await UserService.getProfileByUsername(username);
 
       const resBody: ApiResponse = {
         success: true,

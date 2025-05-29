@@ -18,7 +18,7 @@ router.post(
   UserController.updateProfile
 );
 
-router.get('/profile/:id', UserController.getProfileById);
+router.get('/profile/:username', UserController.getProfileByUsername);
 
 router.get('/profile/:id/edit', UserController.getProfileForEdit);
 

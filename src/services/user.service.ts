@@ -95,10 +95,11 @@ const UserService = {
     return updated;
   },
 
-  getProfile: async (userId: string): Promise<ProfileGetData> => {
+  getProfileByUsername: async (username: string): Promise<ProfileGetData> => {
     const profile = await prisma.user.findFirst({
-      where: { id: userId },
+      where: { username },
       select: {
+        id: true,
         username: true,
         profilePicture: true,
         showGithub: true,
@@ -113,7 +114,7 @@ const UserService = {
     }
 
     const questions = await prisma.question.findMany({
-      where: { userId },
+      where: { userId: profile.id },
       orderBy: {
         upvotes: 'desc', // cho đơn giản thay vì upvotes - downvotes
       },
@@ -133,7 +134,7 @@ const UserService = {
     });
 
     const answers = await prisma.answer.findMany({
-      where: { userId },
+      where: { userId: profile.id },
       orderBy: {
         upvotes: 'desc',
       },
@@ -162,7 +163,7 @@ const UserService = {
     );
 
     const result = buildProfileResponse({
-      userId,
+      userId: profile.id,
       profile,
       questions,
       answers,
@@ -172,7 +173,7 @@ const UserService = {
 
     return result;
   },
-  
+
   getProfileForEdit: async (id: string) => {
     const profile = prisma.user.findFirst({ where: { id } });
 

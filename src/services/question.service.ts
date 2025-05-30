@@ -267,7 +267,7 @@ const QuestionService = {
         previousContent: existing.content ?? "",
         previousTitle: existing.title,
         previousImages: existing.images,
-        createdAt: existing.updatedAt || existing.createdAt,
+        createdAt: existing.updatedAt ?? existing.createdAt,
       },
     });
 

@@ -1,8 +1,8 @@
-import { RequestHandler } from 'express';
-import AnswerService from '@/services/answer.service';
-import { ApiResponse } from '@/types/response.type';
-import { ApiError } from '@/utils/ApiError';
-import AIService from '@/services/ai.service';
+import { RequestHandler } from "express";
+import AnswerService from "@/services/answer.service";
+import { ApiResponse } from "@/types/response.type";
+import { ApiError } from "@/utils/ApiError";
+import AIService from "@/services/ai.service";
 
 const AnswerController = {
   getByQuestionId: (async (req, res, next) => {
@@ -32,8 +32,8 @@ const AnswerController = {
         hiddenOption,
         startDate,
         endDate,
-        page = '1',
-        pageSize = '15',
+        page = "1",
+        pageSize = "15",
       } = req.query;
 
       const filterParams = {
@@ -41,9 +41,9 @@ const AnswerController = {
         questionId: questionId as string | undefined,
         username: username as string | undefined,
         hiddenOption:
-          hiddenOption === 'true'
+          hiddenOption === "true"
             ? true
-            : hiddenOption === 'false'
+            : hiddenOption === "false"
             ? false
             : undefined,
         startDate: startDate ? new Date(startDate as string) : undefined,
@@ -57,7 +57,7 @@ const AnswerController = {
       const resBody: ApiResponse = {
         success: true,
         statusCode: 200,
-        message: 'answer.fetch-successful',
+        message: "answer.fetch-successful",
         content: result,
       };
 
@@ -88,22 +88,25 @@ const AnswerController = {
   create: (async (req, res, next) => {
     try {
       if (!req.user?.id) {
-        throw new ApiError(401, 'api:auth.login-first', true);
+        throw new ApiError(401, "api:auth.login-first", true);
       }
 
       const { questionId, content } = req.body;
       const userId = req.user.id;
 
+      const imageFiles = (req.files as Express.Multer.File[]) || [];
+
       const answer = await AnswerService.createAnswer({
         userId,
         questionId,
         content,
+        imageFiles,
       });
 
       const resBody: ApiResponse = {
         success: true,
         statusCode: 201,
-        message: 'api:answer.created-successfully',
+        message: "api:answer.created-successfully",
         content: answer,
       };
 
@@ -116,20 +119,25 @@ const AnswerController = {
   update: (async (req, res, next) => {
     try {
       const { id } = req.params;
-      const { content } = req.body;
+      const { content, images } = req.body;
 
       if (!req.user?.id) {
-        throw new ApiError(401, 'api:auth.login-first', true);
+        throw new ApiError(401, "api:auth.login-first", true);
       }
 
       const userId = req.user.id;
 
-      const updated = await AnswerService.updateAnswer(id, content, userId);
+      const updated = await AnswerService.updateAnswer(
+        id,
+        content,
+        userId,
+        images
+      );
 
       const resBody: ApiResponse = {
         success: true,
         statusCode: 200,
-        message: 'api:answer.updated-successfully',
+        message: "api:answer.updated-successfully",
         content: updated,
       };
 
@@ -142,7 +150,7 @@ const AnswerController = {
   delete: (async (req, res, next) => {
     try {
       if (!req.user?.id) {
-        throw new ApiError(401, 'api:auth.login-first', true);
+        throw new ApiError(401, "api:auth.login-first", true);
       }
 
       const userId = req.user.id;
@@ -154,7 +162,7 @@ const AnswerController = {
       const resBody: ApiResponse = {
         success: true,
         statusCode: 200,
-        message: 'api:answer.deleted-successfully',
+        message: "api:answer.deleted-successfully",
         content: answer,
       };
 
@@ -167,7 +175,7 @@ const AnswerController = {
   vote: (async (req, res, next) => {
     try {
       if (!req.user?.id) {
-        throw new ApiError(401, 'auth.login-first', true);
+        throw new ApiError(401, "auth.login-first", true);
       }
 
       const userId = req.user.id;
@@ -175,7 +183,7 @@ const AnswerController = {
       const { type } = req.query;
 
       if (![1, -1].includes(Number(type))) {
-        throw new ApiError(400, 'vote.invalid-type', true);
+        throw new ApiError(400, "vote.invalid-type", true);
       }
 
       const result = await AnswerService.voteAnswer(userId, id, Number(type));
@@ -196,7 +204,7 @@ const AnswerController = {
   getVoteStatus: (async (req, res, next) => {
     try {
       if (!req.user?.id) {
-        throw new ApiError(401, 'auth.login-first', true);
+        throw new ApiError(401, "auth.login-first", true);
       }
 
       const userId = req.user.id;
@@ -224,7 +232,7 @@ const AnswerController = {
       const resBody: ApiResponse = {
         success: true,
         statusCode: 200,
-        message: 'answer.hideSuccess',
+        message: "answer.hideSuccess",
         content: result,
       };
 
@@ -243,7 +251,7 @@ const AnswerController = {
       const resBody: ApiResponse = {
         success: true,
         statusCode: 200,
-        message: 'answer.unhideSuccess',
+        message: "answer.unhideSuccess",
         content: result,
       };
 
@@ -260,10 +268,10 @@ const AnswerController = {
       if (
         !questionTitle ||
         !answer ||
-        typeof questionTitle !== 'string' ||
-        typeof answer !== 'string'
+        typeof questionTitle !== "string" ||
+        typeof answer !== "string"
       ) {
-        throw new ApiError(400, 'answer.toxicity-missing-attributes', true);
+        throw new ApiError(400, "answer.toxicity-missing-attributes", true);
       }
 
       const result = await AIService.getAnswerToxicityGrading(
@@ -274,7 +282,7 @@ const AnswerController = {
       const resBody: ApiResponse = {
         success: true,
         statusCode: 200,
-        message: 'answer.toxicity-grading-successful',
+        message: "answer.toxicity-grading-successful",
         content: result,
       };
 

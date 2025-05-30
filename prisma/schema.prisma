@@ -148,7 +148,8 @@ model Answer {
   downvotes  Int      @default(0)
   isChosen   Boolean  @default(false)
   createdAt  DateTime @default(now())
-  updatedAt  DateTime @default(now())
+  updatedAt  DateTime?
+  images     String[] @default([])
   isHidden   Boolean  @default(false)
 
   user     User         @relation(fields: [userId], references: [id])
@@ -161,6 +162,7 @@ model Answer {
 model AnswerEdit {
   answerId        String
   createdAt       DateTime @default(now())
+  previousImages  String[] @default([])
   previousContent String
 
   answer Answer @relation(fields: [answerId], references: [id])
@@ -187,7 +189,9 @@ model Comment {
   upvotes   Int      @default(0)
   downvotes Int      @default(0)
   createdAt DateTime @default(now())
-  isEdited  Boolean  @default(false)
+  updatedAt  DateTime?
+  images     String[] @default([])
+  isHidden   Boolean  @default(false)
 
   user   User          @relation(fields: [userId], references: [id])
   answer Answer        @relation(fields: [answerId], references: [id])
@@ -201,6 +205,7 @@ model Comment {
 model CommentEdit {
   commentId       String
   createdAt       DateTime @default(now())
+  previousImages  String[] @default([])
   previousContent String
 
   comment Comment @relation(fields: [commentId], references: [id])

@@ -1,10 +1,12 @@
 import prisma from "@/prisma";
 import { ApiError } from "@/utils/ApiError";
+import { uploadMultiple } from "@/config/cloudinary";
 
 type CreateCommentPayload = {
   userId: string;
   answerId: string;
   content: string;
+  imageFiles: Express.Multer.File[];
 };
 
 const CommentService = {
@@ -16,8 +18,8 @@ const CommentService = {
         id: true,
         userId: true,
         content: true,
+        images: true,
         createdAt: true,
-        isEdited: true,
         upvotes: true,
         downvotes: true,
         user: {
@@ -36,18 +38,24 @@ const CommentService = {
     userId,
     answerId,
     content,
+    imageFiles,
   }: CreateCommentPayload) => {
+    const images =
+      imageFiles.length > 0 ? await uploadMultiple(imageFiles) : [];
+
     const comment = await prisma.comment.create({
       data: {
         userId,
         answerId,
         content,
+        images,
         createdAt: new Date(),
       },
       select: {
         id: true,
         userId: true,
         content: true,
+        images: true,
         createdAt: true,
       },
     });
@@ -57,9 +65,7 @@ const CommentService = {
       select: {
         userId: true,
         questionId: true,
-        question: {
-          select: { title: true },
-        },
+        question: { select: { title: true } },
       },
     });
 
@@ -78,7 +84,12 @@ const CommentService = {
     return comment;
   },
 
-  updateComment: async (id: string, content: string, userId: string) => {
+  updateComment: async (
+    id: string,
+    content: string,
+    userId: string,
+    imageFiles: Express.Multer.File[] = []
+  ) => {
     const existing = await prisma.comment.findUnique({
       where: { id },
     });
@@ -91,12 +102,24 @@ const CommentService = {
       throw new ApiError(403, "api:comment.forbidden", true);
     }
 
+    const images =
+      imageFiles.length > 0 ? await uploadMultiple(imageFiles) : [];
+
+    await prisma.commentEdit.create({
+      data: {
+        commentId: id,
+        previousContent: existing.content,
+        previousImages: existing.images ?? [],
+        createdAt: existing.updatedAt ?? existing.createdAt,
+      },
+    });
+
     const updated = await prisma.comment.update({
       where: { id },
       data: {
         content,
-        isEdited: true,
-        createdAt: new Date(),
+        images,
+        updatedAt: new Date(),
       },
     });
 

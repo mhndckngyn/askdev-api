@@ -119,7 +119,7 @@ const AnswerController = {
   update: (async (req, res, next) => {
     try {
       const { id } = req.params;
-      const { content, images } = req.body;
+      const { content } = req.body;
 
       if (!req.user?.id) {
         throw new ApiError(401, "api:auth.login-first", true);
@@ -127,11 +127,13 @@ const AnswerController = {
 
       const userId = req.user.id;
 
+      const imageFiles = (req.files as Express.Multer.File[]) || [];
+
       const updated = await AnswerService.updateAnswer(
         id,
         content,
         userId,
-        images
+        imageFiles
       );
 
       const resBody: ApiResponse = {

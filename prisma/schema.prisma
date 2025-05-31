@@ -45,6 +45,28 @@ enum BanAction {
   UNBAN
 }
 
+
+enum HistoryType {
+  QUESTION_CREATE
+  ANSWER_CREATE
+  COMMENT_CREATE
+  QUESTION_EDIT
+  ANSWER_EDIT
+  COMMENT_EDIT
+  QUESTION_VOTE
+  ANSWER_VOTE
+  COMMENT_VOTE
+  QUESTION_DOWNVOTE
+  ANSWER_DOWNVOTE
+  COMMENT_DOWNVOTE
+  ANSWER_CHOSEN
+  REPORT_CREATE
+  QUESTION_DELETE
+  ANSWER_DELETE
+  COMMENT_DELETE
+}
+
+
 model User {
   id             String   @id @default(uuid())
   role           Role     @default(MEMBER)
@@ -66,6 +88,7 @@ model User {
   questionVotes QuestionVote[]
   commentVotes  CommentVote[]
   reports       Report[]
+  history       History[]
 
   notifications          Notification[]  @relation("UserNotifications")
   actedNotifications     Notification[]  @relation("NotificationActor")
@@ -157,7 +180,8 @@ model Answer {
   downvotes  Int      @default(0)
   isChosen   Boolean  @default(false)
   createdAt  DateTime @default(now())
-  updatedAt  DateTime @default(now())
+  updatedAt  DateTime?
+  images     String[] @default([])
   isHidden   Boolean  @default(false)
 
   user     User         @relation(fields: [userId], references: [id])
@@ -170,6 +194,7 @@ model Answer {
 model AnswerEdit {
   answerId        String
   createdAt       DateTime @default(now())
+  previousImages  String[] @default([])
   previousContent String
 
   answer Answer @relation(fields: [answerId], references: [id])
@@ -196,7 +221,9 @@ model Comment {
   upvotes   Int      @default(0)
   downvotes Int      @default(0)
   createdAt DateTime @default(now())
-  isEdited  Boolean  @default(false)
+  updatedAt  DateTime?
+  images     String[] @default([])
+  isHidden   Boolean  @default(false)
 
   user   User          @relation(fields: [userId], references: [id])
   answer Answer        @relation(fields: [answerId], references: [id])
@@ -210,6 +237,7 @@ model Comment {
 model CommentEdit {
   commentId       String
   createdAt       DateTime @default(now())
+  previousImages  String[] @default([])
   previousContent String
 
   comment Comment @relation(fields: [commentId], references: [id])
@@ -282,3 +310,16 @@ model BanLog {
   user       User     @relation("BannedUser", fields: [userId], references: [id])
   admin      User     @relation("BanActor", fields: [actorId], references: [id])
 }
+
+
+model History {
+  id           String   @id @default(uuid())
+  type         HistoryType
+  userId       String 
+  contentTitle String
+  questionId   String?
+  createdAt    DateTime @default(now())
+
+  user         User     @relation(fields: [userId], references: [id])
+}
+

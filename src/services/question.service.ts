@@ -67,10 +67,15 @@ const QuestionService = {
 
     const tag = await prisma.tag.findUnique({
       where: { id: tagId },
-      select: { name: true },
+      select: { name: true, descriptionEn: true, descriptionVi: true },
     });
 
-    return { tagName: tag?.name, questions };
+    return {
+      tagName: tag?.name,
+      descriptionVi: tag?.descriptionVi,
+      descriptionEn: tag?.descriptionEn,
+      questions,
+    };
   },
 
   getQuestions: async (params: GetQuestionsParam) => {
@@ -127,7 +132,10 @@ const QuestionService = {
         orderBy: { createdAt: "desc" },
         select: {
           id: true,
+          userId: true,
+          images: true,
           title: true,
+          content: true,
           createdAt: true,
           updatedAt: true,
           isSolved: true,
@@ -145,6 +153,7 @@ const QuestionService = {
             select: {
               id: true,
               username: true,
+              profilePicture: true,
             },
           },
           answers: {
@@ -164,6 +173,13 @@ const QuestionService = {
       votes: q.upvotes - q.downvotes,
       answers: q.answers.length,
       user: q.user,
+      userId: q.userId,
+      images: q.images,
+      content: q.content,
+      updatedAt: q.updatedAt,
+      isSolved: q.isSolved,
+      upvotes: q.upvotes,
+      downvotes: q.downvotes,
       isAnswered: q.isSolved,
       isHidden: q.isHidden,
       createdAt: q.createdAt.toISOString(),
@@ -251,7 +267,7 @@ const QuestionService = {
         previousContent: existing.content ?? "",
         previousTitle: existing.title,
         previousImages: existing.images,
-        createdAt: existing.updatedAt || existing.createdAt,
+        createdAt: existing.updatedAt ?? existing.createdAt,
       },
     });
 

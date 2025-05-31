@@ -1,8 +1,8 @@
-import { RequestHandler } from 'express';
-import CommentService from '@/services/comment.service';
-import { ApiResponse } from '@/types/response.type';
-import { ApiError } from '@/utils/ApiError';
-import AIService from '@/services/ai.service';
+import { RequestHandler } from "express";
+import CommentService from "@/services/comment.service";
+import { ApiResponse } from "@/types/response.type";
+import { ApiError } from "@/utils/ApiError";
+import AIService from "@/services/ai.service";
 
 const CommentController = {
   getByAnswerId: (async (req, res, next) => {
@@ -26,22 +26,25 @@ const CommentController = {
   create: (async (req, res, next) => {
     try {
       if (!req.user?.id) {
-        throw new ApiError(401, 'api:auth.login-first', true);
+        throw new ApiError(401, "api:auth.login-first", true);
       }
 
       const { answerId, content } = req.body;
       const userId = req.user.id;
 
+      const imageFiles = (req.files as Express.Multer.File[]) || [];
+
       const comment = await CommentService.createComment({
         userId,
         answerId,
         content,
+        imageFiles,
       });
 
       const resBody: ApiResponse = {
         success: true,
         statusCode: 201,
-        message: 'api:comment.created-successfully',
+        message: "api:comment.created-successfully",
         content: comment,
       };
 
@@ -57,17 +60,24 @@ const CommentController = {
       const { content } = req.body;
 
       if (!req.user?.id) {
-        throw new ApiError(401, 'api:auth.login-first', true);
+        throw new ApiError(401, "api:auth.login-first", true);
       }
 
       const userId = req.user.id;
 
-      const updated = await CommentService.updateComment(id, content, userId);
+      const imageFiles = (req.files as Express.Multer.File[]) || [];
+
+      const updated = await CommentService.updateComment(
+        id,
+        content,
+        userId,
+        imageFiles
+      );
 
       const resBody: ApiResponse = {
         success: true,
         statusCode: 200,
-        message: 'api:comment.updated-successfully',
+        message: "api:comment.updated-successfully",
         content: updated,
       };
 
@@ -82,7 +92,7 @@ const CommentController = {
       const { id } = req.params;
 
       if (!req.user?.id) {
-        throw new ApiError(401, 'api:auth.login-first', true);
+        throw new ApiError(401, "api:auth.login-first", true);
       }
 
       const userId = req.user.id;
@@ -92,7 +102,7 @@ const CommentController = {
       const resBody: ApiResponse = {
         success: true,
         statusCode: 200,
-        message: 'api:comment.deleted-successfully',
+        message: "api:comment.deleted-successfully",
         content: comment,
       };
 
@@ -105,7 +115,7 @@ const CommentController = {
   vote: (async (req, res, next) => {
     try {
       if (!req.user?.id) {
-        throw new ApiError(401, 'auth.login-first', true);
+        throw new ApiError(401, "auth.login-first", true);
       }
 
       const userId = req.user.id;
@@ -113,7 +123,7 @@ const CommentController = {
       const { type } = req.query;
 
       if (![1, -1].includes(Number(type))) {
-        throw new ApiError(400, 'vote.invalid-type', true);
+        throw new ApiError(400, "vote.invalid-type", true);
       }
 
       const result = await CommentService.voteComment(userId, id, Number(type));
@@ -134,7 +144,7 @@ const CommentController = {
   getVoteStatus: (async (req, res, next) => {
     try {
       if (!req.user?.id) {
-        throw new ApiError(401, 'auth.login-first', true);
+        throw new ApiError(401, "auth.login-first", true);
       }
 
       const userId = req.user.id;
@@ -160,10 +170,10 @@ const CommentController = {
       if (
         !answer ||
         !comment ||
-        typeof answer !== 'string' ||
-        typeof comment !== 'string'
+        typeof answer !== "string" ||
+        typeof comment !== "string"
       ) {
-        throw new ApiError(400, 'comment.toxicity-missing-attributes', true);
+        throw new ApiError(400, "comment.toxicity-missing-attributes", true);
       }
 
       const result = await AIService.getCommentToxicityGrading(answer, comment);
@@ -171,7 +181,7 @@ const CommentController = {
       const resBody: ApiResponse = {
         success: true,
         statusCode: 200,
-        message: 'comment.toxicity-grading-successful',
+        message: "comment.toxicity-grading-successful",
         content: result,
       };
 

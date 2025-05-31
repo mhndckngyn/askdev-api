@@ -3,11 +3,13 @@ import { GetAnswersParam } from "@/types/answer.type";
 import { Pagination } from "@/types/response.type";
 import { ApiError } from "@/utils/ApiError";
 import dayjs from "dayjs";
+import { uploadMultiple } from "@/config/cloudinary";
 
 type CreateAnswerPayload = {
   userId: string;
   questionId: string;
   content: string;
+  imageFiles: Express.Multer.File[];
 };
 
 const AnswerService = {
@@ -22,6 +24,7 @@ const AnswerService = {
         createdAt: true,
         updatedAt: true,
         upvotes: true,
+        images: true,
         downvotes: true,
         isChosen: true,
         isHidden: true,
@@ -149,16 +152,24 @@ const AnswerService = {
     userId,
     questionId,
     content,
+    imageFiles,
   }: CreateAnswerPayload) => {
+    const images =
+      imageFiles.length > 0 ? await uploadMultiple(imageFiles) : [];
+
     const answer = await prisma.answer.create({
       data: {
         userId,
         questionId,
         content,
+        images,
         createdAt: new Date(),
       },
       select: {
         id: true,
+        content: true,
+        images: true,
+        createdAt: true,
       },
     });
 
@@ -174,7 +185,7 @@ const AnswerService = {
           actorId: userId,
           contentTitle: question.title,
           type: "ANSWER",
-          questionId: questionId,
+          questionId,
         },
       });
     }
@@ -182,10 +193,13 @@ const AnswerService = {
     return answer;
   },
 
-  updateAnswer: async (id: string, content: string, userId: string) => {
-    const existing = await prisma.answer.findUnique({
-      where: { id },
-    });
+  updateAnswer: async (
+    id: string,
+    content: string,
+    userId: string,
+    imageFiles: Express.Multer.File[] = []
+  ) => {
+    const existing = await prisma.answer.findUnique({ where: { id } });
 
     if (!existing) {
       throw new ApiError(404, "api:answer.not-found", true);
@@ -195,10 +209,15 @@ const AnswerService = {
       throw new ApiError(403, "api:answer.forbidden", true);
     }
 
+    const images =
+      imageFiles.length > 0 ? await uploadMultiple(imageFiles) : [];
+
     await prisma.answerEdit.create({
       data: {
         answerId: id,
         previousContent: existing.content,
+        previousImages: existing.images ?? [],
+        createdAt: existing.updatedAt ?? existing.createdAt,
       },
     });
 
@@ -206,6 +225,7 @@ const AnswerService = {
       where: { id },
       data: {
         content,
+        images,
         updatedAt: new Date(),
       },
     });

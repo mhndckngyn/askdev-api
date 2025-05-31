@@ -40,6 +40,28 @@ enum  NotificationType{
   ANSWER_CHOSEN
 }
 
+
+enum HistoryType {
+  QUESTION_CREATE
+  ANSWER_CREATE
+  COMMENT_CREATE
+  QUESTION_EDIT
+  ANSWER_EDIT
+  COMMENT_EDIT
+  QUESTION_VOTE
+  ANSWER_VOTE
+  COMMENT_VOTE
+  QUESTION_DOWNVOTE
+  ANSWER_DOWNVOTE
+  COMMENT_DOWNVOTE
+  ANSWER_CHOSEN
+  REPORT_CREATE
+  QUESTION_DELETE
+  ANSWER_DELETE
+  COMMENT_DELETE
+}
+
+
 model User {
   id             String   @id @default(uuid())
   role           Role     @default(MEMBER)
@@ -60,6 +82,7 @@ model User {
   questionVotes QuestionVote[]
   commentVotes  CommentVote[]
   reports       Report[]
+  history       History[]
 
   notifications          Notification[]  @relation("UserNotifications")
   actedNotifications     Notification[]  @relation("NotificationActor")
@@ -266,3 +289,16 @@ model Notification {
   @@index([userId])
   @@index([actorId])
 }
+
+
+model History {
+  id           String   @id @default(uuid())
+  type         HistoryType
+  userId       String 
+  contentTitle String
+  questionId   String?
+  createdAt    DateTime @default(now())
+
+  user         User     @relation(fields: [userId], references: [id])
+}
+

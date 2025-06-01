@@ -4,6 +4,8 @@ import { Pagination } from "@/types/response.type";
 import { ApiError } from "@/utils/ApiError";
 import dayjs from "dayjs";
 import { uploadMultiple } from "@/config/cloudinary";
+import HistoryService from "./history.service";
+import { HistoryType } from "@/types/history.type";
 
 type CreateAnswerPayload = {
   userId: string;
@@ -99,7 +101,7 @@ const AnswerService = {
           question: {
             select: {
               title: true,
-            }
+            },
           },
           user: {
             select: {
@@ -199,6 +201,15 @@ const AnswerService = {
       });
     }
 
+    if (question) {
+      await HistoryService.createHistory({
+        userId,
+        type: HistoryType.ANSWER_CREATE,
+        contentTitle: answer.content,
+        questionId,
+      });
+    }
+
     return answer;
   },
 
@@ -208,7 +219,17 @@ const AnswerService = {
     userId: string,
     imageFiles: Express.Multer.File[] = []
   ) => {
-    const existing = await prisma.answer.findUnique({ where: { id } });
+    const existing = await prisma.answer.findUnique({
+      where: { id },
+      include: {
+        question: {
+          select: {
+            title: true,
+            id: true,
+          },
+        },
+      },
+    });
 
     if (!existing) {
       throw new ApiError(404, "api:answer.not-found", true);
@@ -239,12 +260,27 @@ const AnswerService = {
       },
     });
 
+    await HistoryService.createHistory({
+      userId,
+      type: HistoryType.ANSWER_EDIT,
+      contentTitle: content,
+      questionId: existing.question.id,
+    });
+
     return updated;
   },
 
   deleteAnswer: async (id: string, userId: string) => {
     const existing = await prisma.answer.findUnique({
       where: { id },
+      include: {
+        question: {
+          select: {
+            title: true,
+            id: true,
+          },
+        },
+      },
     });
 
     if (!existing) {
@@ -263,6 +299,13 @@ const AnswerService = {
       where: { id },
     });
 
+    await HistoryService.createHistory({
+      userId,
+      type: HistoryType.ANSWER_DELETE,
+      contentTitle: answer.content,
+      questionId: existing.question.id,
+    });
+
     return answer;
   },
 
@@ -278,7 +321,16 @@ const AnswerService = {
 
     const answer = await prisma.answer.findUnique({
       where: { id: answerId },
-      select: { userId: true, content: true, questionId: true },
+      select: {
+        userId: true,
+        content: true,
+        questionId: true,
+        question: {
+          select: {
+            title: true,
+          },
+        },
+      },
     });
 
     if (!answer) throw new ApiError(404, "question.not-found", true);
@@ -294,6 +346,9 @@ const AnswerService = {
         },
       });
     }
+
+    let action = "";
+    let historyType: "ANSWER_VOTE" | "ANSWER_DOWNVOTE" | null = null;
 
     if (existingVote) {
       if (existingVote.type === type) {
@@ -318,7 +373,7 @@ const AnswerService = {
           },
         });
 
-        return { action: "removed" };
+        action = "removed";
       } else {
         await prisma.answerVote.update({
           where: {
@@ -342,7 +397,8 @@ const AnswerService = {
           },
         });
 
-        return { action: "changed" };
+        action = "changed";
+        historyType = type === 1 ? "ANSWER_VOTE" : "ANSWER_DOWNVOTE";
       }
     } else {
       await prisma.answerVote.create({
@@ -365,8 +421,20 @@ const AnswerService = {
         },
       });
 
-      return { action: "created" };
+      action = "created";
+      historyType = type === 1 ? "ANSWER_VOTE" : "ANSWER_DOWNVOTE";
     }
+
+    if (historyType && answer.question) {
+      await HistoryService.createHistory({
+        userId,
+        type: historyType as HistoryType,
+        contentTitle: answer.content,
+        questionId: answer.questionId,
+      });
+    }
+
+    return { action };
   },
 
   getVoteStatus: async (userId: string, answerId: string) => {
@@ -404,15 +472,17 @@ const AnswerService = {
   markChosen: async (answerId: string, userId: string) => {
     const answer = await prisma.answer.findFirst({
       where: { id: answerId },
-      include: { question: { select: { id: true, userId: true } } },
+      include: {
+        question: { select: { id: true, userId: true, title: true } },
+      },
     });
 
     if (!answer) {
-      throw new ApiError(404, 'answer.not-found', true);
+      throw new ApiError(404, "answer.not-found", true);
     }
 
     if (answer.question.userId !== userId) {
-      throw new ApiError(403, 'answer.mark-chosen-not-allowed', true);
+      throw new ApiError(403, "answer.mark-chosen-not-allowed", true);
     }
 
     try {
@@ -426,8 +496,15 @@ const AnswerService = {
           data: { isSolved: true },
         }),
       ]);
+
+      await HistoryService.createHistory({
+        userId,
+        type: HistoryType.ANSWER_CHOSEN,
+        contentTitle: answer.content,
+        questionId: answer.question.id,
+      });
     } catch (err) {
-      throw new ApiError(500, 'answer.mark-chosen-unexpected-error');
+      throw new ApiError(500, "answer.mark-chosen-unexpected-error");
     }
   },
 };

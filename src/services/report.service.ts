@@ -1,5 +1,7 @@
 import prisma from "@/prisma";
 import { ApiError } from "@/utils/ApiError";
+import HistoryService from "./history.service";
+import { HistoryType } from "@/types/history.type";
 
 type CreateReportPayload = {
   reportedById: string;
@@ -32,6 +34,55 @@ export interface ReportAdminView {
 
 const ReportService = {
   createReport: async (payload: CreateReportPayload) => {
+    let contentTitle = "";
+    let questionId: string | undefined;
+
+    try {
+      if (payload.contentType === "QUESTION") {
+        const question = await prisma.question.findUnique({
+          where: { id: payload.contentId },
+          select: { title: true, id: true },
+        });
+        if (question) {
+          contentTitle = question.title;
+          questionId = question.id;
+        }
+      } else if (payload.contentType === "ANSWER") {
+        const answer = await prisma.answer.findUnique({
+          where: { id: payload.contentId },
+          select: {
+            content: true,
+            questionId: true,
+            question: { select: { title: true } },
+          },
+        });
+        if (answer) {
+          contentTitle = answer.content;
+          questionId = answer.questionId;
+        }
+      } else if (payload.contentType === "COMMENT") {
+        const comment = await prisma.comment.findUnique({
+          where: { id: payload.contentId },
+          select: {
+            content: true,
+            answer: {
+              select: {
+                questionId: true,
+                question: { select: { title: true } },
+              },
+            },
+          },
+        });
+        if (comment) {
+          contentTitle = comment.content;
+          questionId = comment.answer?.questionId;
+        }
+      }
+    } catch (error) {
+      console.error(error);
+      contentTitle = payload.contentType;
+    }
+
     const report = await prisma.report.create({
       data: {
         reportedById: payload.reportedById,
@@ -40,6 +91,14 @@ const ReportService = {
         reason: payload.reason,
       },
     });
+
+    await HistoryService.createHistory({
+      userId: payload.reportedById,
+      type: HistoryType.REPORT_CREATE,
+      contentTitle: contentTitle || `${payload.contentType} Report`,
+      questionId,
+    });
+
     return report;
   },
 

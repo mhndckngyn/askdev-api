@@ -8,7 +8,9 @@ import {
 import { Pagination } from "@/types/response.type";
 import { ApiError } from "@/utils/ApiError";
 import TagService from "./tag.service";
+import HistoryService from "./history.service";
 import dayjs from "dayjs";
+import { HistoryType } from "@/types/history.type";
 
 const QuestionService = {
   getQuestionById: async (id: string) => {
@@ -100,8 +102,8 @@ const QuestionService = {
     const where: any = {
       ...(titleKeyword && {
         OR: [
-          { title: { contains: titleKeyword, mode: 'insensitive' } },
-          { id: { contains: titleKeyword, mode: 'insensitive' } },
+          { title: { contains: titleKeyword, mode: "insensitive" } },
+          { id: { contains: titleKeyword, mode: "insensitive" } },
         ],
       }),
       ...(isAnswered !== undefined && { isSolved: isAnswered }),
@@ -234,6 +236,13 @@ const QuestionService = {
       },
     });
 
+    await HistoryService.createHistory({
+      userId,
+      type: HistoryType.QUESTION_CREATE,
+      contentTitle: title,
+      questionId: question.id,
+    });
+
     return question;
   },
 
@@ -293,6 +302,13 @@ const QuestionService = {
       },
     });
 
+    await HistoryService.createHistory({
+      userId,
+      type: HistoryType.QUESTION_EDIT,
+      contentTitle: title,
+      questionId: id,
+    });
+
     return updated;
   },
 
@@ -320,6 +336,13 @@ const QuestionService = {
     if (!question) {
       throw new ApiError(404, "question.not-found", true);
     }
+
+    await HistoryService.createHistory({
+      userId,
+      type: HistoryType.QUESTION_DELETE,
+      contentTitle: existing.title,
+      questionId: id,
+    });
 
     return question;
   },
@@ -353,6 +376,9 @@ const QuestionService = {
       });
     }
 
+    let action = "";
+    let historyType: "QUESTION_VOTE" | "QUESTION_DOWNVOTE" | null = null;
+
     if (existingVote) {
       if (existingVote.type === type) {
         await prisma.questionVote.delete({
@@ -375,7 +401,7 @@ const QuestionService = {
           },
         });
 
-        return { action: "removed" };
+        action = "removed";
       } else {
         await prisma.questionVote.update({
           where: {
@@ -399,7 +425,8 @@ const QuestionService = {
           },
         });
 
-        return { action: "changed" };
+        action = "changed";
+        historyType = type === 1 ? "QUESTION_VOTE" : "QUESTION_DOWNVOTE";
       }
     } else {
       await prisma.questionVote.create({
@@ -422,8 +449,20 @@ const QuestionService = {
         },
       });
 
-      return { action: "created" };
+      action = "created";
+      historyType = type === 1 ? "QUESTION_VOTE" : "QUESTION_DOWNVOTE";
     }
+
+    if (historyType) {
+      await HistoryService.createHistory({
+        userId,
+        type: historyType as HistoryType,
+        contentTitle: question.title,
+        questionId,
+      });
+    }
+
+    return { action };
   },
 
   getVoteStatus: async (userId: string, questionId: string) => {
@@ -544,8 +583,8 @@ const QuestionService = {
     }
     return null;
   },
+
   toggleHideQuestions: async (ids: string[], hidden: boolean) => {
-    // prisma trả về số bản ghi được cập nhật
     const result = await prisma.question.updateMany({
       where: {
         id: {

@@ -7,8 +7,6 @@ const router = Router();
 
 router.get("/:id", authUser, AnswerController.getById);
 
-router.get("/", authUser, AnswerController.getByParams);
-
 router.post("/", upload.array("images"), authUser, AnswerController.create);
 
 router.put("/:id", upload.array("images"), authUser, AnswerController.update);

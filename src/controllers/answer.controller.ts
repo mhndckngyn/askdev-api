@@ -225,11 +225,11 @@ const AnswerController = {
     }
   }) as RequestHandler,
 
-  hideQuestions: (async (req, res, next) => {
+  hideAnswers: (async (req, res, next) => {
     try {
       const { ids } = req.body;
 
-      const result = await AnswerService.toggleHideQuestions(ids, true);
+      const result = await AnswerService.toggleHideAnswers(ids, true);
 
       const resBody: ApiResponse = {
         success: true,
@@ -244,11 +244,11 @@ const AnswerController = {
     }
   }) as RequestHandler,
 
-  unhideQuestions: (async (req, res, next) => {
+  unhideAnswers: (async (req, res, next) => {
     try {
       const { ids } = req.body;
 
-      const result = await AnswerService.toggleHideQuestions(ids, false);
+      const result = await AnswerService.toggleHideAnswers(ids, false);
 
       const resBody: ApiResponse = {
         success: true,

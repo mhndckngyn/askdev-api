@@ -196,7 +196,7 @@ const CommentController = {
     try {
       const {
         content,
-        answerId,
+        parentId,
         username,
         hiddenOption,
         startDate,
@@ -207,7 +207,7 @@ const CommentController = {
 
       const filterParams: GetCommentsParam = {
         content: content as string | undefined,
-        parentId: answerId as string | undefined,
+        parentId: parentId as string | undefined,
         username: username as string | undefined,
         hiddenOption:
           hiddenOption === "true"

@@ -96,10 +96,16 @@ const AnswerService = {
           updatedAt: true,
           isHidden: true,
           questionId: true,
+          question: {
+            select: {
+              title: true,
+            }
+          },
           user: {
             select: {
               id: true,
               username: true,
+              profilePicture: true,
             },
           },
           upvotes: true,
@@ -116,7 +122,10 @@ const AnswerService = {
     const result = answers.map((a) => ({
       id: a.id,
       content: a.content,
-      questionId: a.questionId,
+      question: {
+        id: a.questionId,
+        title: a.question.title,
+      },
       isHidden: a.isHidden,
       comments: a.comments.length,
       votes: a.upvotes - a.downvotes,
@@ -376,7 +385,7 @@ const AnswerService = {
     return { status: existingVote.type === 1 ? "like" : "dislike" };
   },
 
-  toggleHideQuestions: async (ids: string[], hidden: boolean) => {
+  toggleHideAnswers: async (ids: string[], hidden: boolean) => {
     // prisma trả về số bản ghi được cập nhật
     const result = await prisma.answer.updateMany({
       where: {
@@ -390,6 +399,36 @@ const AnswerService = {
     });
 
     return result;
+  },
+
+  markChosen: async (answerId: string, userId: string) => {
+    const answer = await prisma.answer.findFirst({
+      where: { id: answerId },
+      include: { question: { select: { id: true, userId: true } } },
+    });
+
+    if (!answer) {
+      throw new ApiError(404, 'answer.not-found', true);
+    }
+
+    if (answer.question.userId !== userId) {
+      throw new ApiError(403, 'answer.mark-chosen-not-allowed', true);
+    }
+
+    try {
+      await prisma.$transaction([
+        prisma.answer.update({
+          where: { id: answer.id },
+          data: { isChosen: true },
+        }),
+        prisma.question.update({
+          where: { id: answer.question.id },
+          data: { isSolved: true },
+        }),
+      ]);
+    } catch (err) {
+      throw new ApiError(500, 'answer.mark-chosen-unexpected-error');
+    }
   },
 };
 

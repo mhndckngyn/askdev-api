@@ -99,7 +99,10 @@ const QuestionService = {
 
     const where: any = {
       ...(titleKeyword && {
-        title: { contains: titleKeyword, mode: "insensitive" },
+        OR: [
+          { title: { contains: titleKeyword, mode: 'insensitive' } },
+          { id: { contains: titleKeyword, mode: 'insensitive' } },
+        ],
       }),
       ...(isAnswered !== undefined && { isSolved: isAnswered }),
       ...(hiddenOption !== undefined && { isHidden: hiddenOption }),

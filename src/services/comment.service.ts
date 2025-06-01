@@ -1,6 +1,10 @@
-import prisma from "@/prisma";
-import { ApiError } from "@/utils/ApiError";
-import { uploadMultiple } from "@/config/cloudinary";
+import prisma from '@/prisma';
+import { uploadMultiple } from '@/config/cloudinary';
+import { GetCommentsParam } from '@/types/comment.type';
+import { Pagination } from '@/types/response.type';
+import { ApiError } from '@/utils/ApiError';
+import dayjs from 'dayjs';
+import { Prisma } from 'generated/prisma';
 
 type CreateCommentPayload = {
   userId: string;
@@ -13,7 +17,7 @@ const CommentService = {
   getCommentsByAnswerId: async (answerId: string) => {
     const comments = await prisma.comment.findMany({
       where: { answerId },
-      orderBy: { createdAt: "asc" },
+      orderBy: { createdAt: 'asc' },
       select: {
         id: true,
         userId: true,
@@ -75,7 +79,7 @@ const CommentService = {
           userId: answer.userId,
           actorId: userId,
           contentTitle: answer.question.title,
-          type: "COMMENT",
+          type: 'COMMENT',
           questionId: answer.questionId,
         },
       });
@@ -84,22 +88,137 @@ const CommentService = {
     return comment;
   },
 
+  getComments: async (params: GetCommentsParam) => {
+    const {
+      content,
+      parentId,
+      username,
+      hiddenOption,
+      startDate,
+      endDate,
+      page,
+      pageSize,
+    } = params;
+
+    const createdAtFilter: Record<string, Date> = {};
+    if (startDate) {
+      createdAtFilter.gte = dayjs(startDate).startOf('day').toDate();
+    }
+    if (endDate) {
+      createdAtFilter.lte = dayjs(endDate).endOf('day').toDate();
+    }
+
+    const where: Prisma.CommentWhereInput = {
+      ...(content && {
+        OR: [
+          { content: { contains: content, mode: 'insensitive' } },
+          { id: { contains: content, mode: 'insensitive' } },
+        ],
+      }),
+      ...(parentId && {
+        OR: [
+          { answerId: parentId },
+          {
+            answer: {
+              questionId: parentId,
+            },
+          },
+        ],
+      }),
+      ...(hiddenOption !== undefined && {
+        isHidden: hiddenOption,
+      }),
+      ...(username && {
+        user: {
+          username: { contains: username },
+        },
+      }),
+      ...(Object.keys(createdAtFilter).length > 0 && {
+        createdAt: createdAtFilter,
+      }),
+    };
+
+    const skip = (page - 1) * pageSize;
+
+    const [total, comments] = await Promise.all([
+      prisma.comment.count({ where }),
+      prisma.comment.findMany({
+        where,
+        skip,
+        take: pageSize,
+        orderBy: { createdAt: 'desc' },
+        select: {
+          id: true,
+          content: true,
+          createdAt: true,
+          updatedAt: true,
+          isHidden: true,
+          answerId: true,
+          answer: {
+            select: {
+              content: true,
+              questionId: true
+            },
+          },
+          user: {
+            select: {
+              id: true,
+              username: true,
+              profilePicture: true,
+            },
+          },
+          upvotes: true,
+          downvotes: true,
+        },
+      }),
+    ]);
+
+    const result = comments.map((a) => ({
+      id: a.id,
+      content: a.content,
+      answer: {
+        id: a.answerId,
+        content: a.answer.content,
+      },
+      question: {
+        id: a.answer.questionId,
+      },
+      isHidden: a.isHidden,
+      votes: a.upvotes - a.downvotes,
+      createdAt: a.createdAt.toISOString(),
+      updatedAt: a.updatedAt?.toISOString() || '',
+      user: a.user,
+    }));
+
+    const pagination: Pagination = {
+      total,
+      count: result.length,
+      currentPage: page,
+      totalPages: Math.ceil(total / pageSize),
+    };
+
+    return {
+      comments: result,
+      pagination,
+    };
+  },
+
   updateComment: async (
     id: string,
     content: string,
     userId: string,
-    imageFiles: Express.Multer.File[] = []
+    imageFiles: Express.Multer.File[]
   ) => {
     const existing = await prisma.comment.findUnique({
       where: { id },
     });
 
     if (!existing) {
-      throw new ApiError(404, "api:comment.not-found", true);
+      throw new ApiError(404, 'api:comment.not-found', true);
     }
 
     if (existing.userId !== userId) {
-      throw new ApiError(403, "api:comment.forbidden", true);
+      throw new ApiError(403, 'api:comment.forbidden', true);
     }
 
     const images =
@@ -132,11 +251,11 @@ const CommentService = {
     });
 
     if (!existing) {
-      throw new ApiError(404, "api:comment.not-found", true);
+      throw new ApiError(404, 'api:comment.not-found', true);
     }
 
     if (existing.userId !== userId) {
-      throw new ApiError(403, "api:comment.forbidden", true);
+      throw new ApiError(403, 'api:comment.forbidden', true);
     }
     const comment = await prisma.comment.delete({
       where: { id },
@@ -168,7 +287,7 @@ const CommentService = {
       },
     });
 
-    if (!comment) throw new ApiError(404, "comment.not-found", true);
+    if (!comment) throw new ApiError(404, 'comment.not-found', true);
 
     if (comment.userId !== userId) {
       await prisma.notification.create({
@@ -177,7 +296,7 @@ const CommentService = {
           actorId: userId,
           contentTitle: comment.content,
           questionId: comment.answer.questionId,
-          type: "COMMENT_VOTE",
+          type: 'COMMENT_VOTE',
         },
       });
     }
@@ -205,7 +324,7 @@ const CommentService = {
           },
         });
 
-        return { action: "removed" };
+        return { action: 'removed' };
       } else {
         await prisma.commentVote.update({
           where: {
@@ -229,7 +348,7 @@ const CommentService = {
           },
         });
 
-        return { action: "changed" };
+        return { action: 'changed' };
       }
     } else {
       await prisma.commentVote.create({
@@ -252,7 +371,7 @@ const CommentService = {
         },
       });
 
-      return { action: "created" };
+      return { action: 'created' };
     }
   },
 
@@ -267,9 +386,25 @@ const CommentService = {
     });
 
     if (!existingVote) {
-      return { status: "none" };
+      return { status: 'none' };
     }
-    return { status: existingVote.type === 1 ? "like" : "dislike" };
+    return { status: existingVote.type === 1 ? 'like' : 'dislike' };
+  },
+
+  toggleHideComment: async (ids: string[], hidden: boolean) => {
+    // prisma trả về số bản ghi được cập nhật
+    const result = await prisma.comment.updateMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+      data: {
+        isHidden: hidden,
+      },
+    });
+
+    return result;
   },
 };
 

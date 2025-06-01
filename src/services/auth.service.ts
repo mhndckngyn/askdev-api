@@ -32,6 +32,10 @@ const AuthService = {
       return;
     }
 
+    if (account.user.isBanned) {
+      throw new ApiError(403, 'auth.account-banned', true);
+    }
+
     /* 
       TODO: kiểm tra xác nhận email
       - nếu email chưa xác nhận:
@@ -62,6 +66,10 @@ const AuthService = {
       where: { provider, providerUserId },
       include: { user: true },
     });
+
+    if (account?.user.isBanned) {
+      throw new ApiError(403, 'auth.account-banned', true);
+    }
 
     let user = account?.user!; // user chắc chắn tồn tại trước khi sử dụng
 

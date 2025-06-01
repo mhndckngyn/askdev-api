@@ -3,6 +3,7 @@ import CommentService from "@/services/comment.service";
 import { ApiResponse } from "@/types/response.type";
 import { ApiError } from "@/utils/ApiError";
 import AIService from "@/services/ai.service";
+import { GetCommentsParam } from "@/types/comment.type";
 
 const CommentController = {
   getByAnswerId: (async (req, res, next) => {
@@ -182,6 +183,88 @@ const CommentController = {
         success: true,
         statusCode: 200,
         message: "comment.toxicity-grading-successful",
+        content: result,
+      };
+
+      res.status(200).json(resBody);
+    } catch (err) {
+      next(err);
+    }
+  }) as RequestHandler,
+
+  getByParams: (async (req, res, next) => {
+    try {
+      const {
+        content,
+        parentId,
+        username,
+        hiddenOption,
+        startDate,
+        endDate,
+        page = "1",
+        pageSize = "15",
+      } = req.query;
+
+      const filterParams: GetCommentsParam = {
+        content: content as string | undefined,
+        parentId: parentId as string | undefined,
+        username: username as string | undefined,
+        hiddenOption:
+          hiddenOption === "true"
+            ? true
+            : hiddenOption === "false"
+            ? false
+            : undefined,
+        startDate: startDate ? new Date(startDate as string) : undefined,
+        endDate: endDate ? new Date(endDate as string) : undefined,
+        page: parseInt(page as string, 10),
+        pageSize: parseInt(pageSize as string, 10),
+      };
+
+      const result = await CommentService.getComments(filterParams);
+
+      const resBody: ApiResponse = {
+        success: true,
+        statusCode: 200,
+        message: "answer.fetch-successful",
+        content: result,
+      };
+
+      res.status(200).json(resBody);
+    } catch (err) {
+      next(err);
+    }
+  }) as RequestHandler,
+
+  hideComments: (async (req, res, next) => {
+    try {
+      const { ids } = req.body;
+
+      const result = await CommentService.toggleHideComment(ids, true);
+
+      const resBody: ApiResponse = {
+        success: true,
+        statusCode: 200,
+        message: "comment.hide-success",
+        content: result,
+      };
+
+      res.status(200).json(resBody);
+    } catch (err) {
+      next(err);
+    }
+  }) as RequestHandler,
+
+  unhideComments: (async (req, res, next) => {
+    try {
+      const { ids } = req.body;
+
+      const result = await CommentService.toggleHideComment(ids, false);
+
+      const resBody: ApiResponse = {
+        success: true,
+        statusCode: 200,
+        message: "comment.unhide-success",
         content: result,
       };
 

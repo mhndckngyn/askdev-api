@@ -7,8 +7,6 @@ const router = Router();
 
 router.get("/:id", authUser, AnswerController.getById);
 
-router.get("/", authUser, AnswerController.getByParams);
-
 router.post("/", upload.array("images"), authUser, AnswerController.create);
 
 router.put("/:id", upload.array("images"), authUser, AnswerController.update);
@@ -22,5 +20,7 @@ router.post("/:id/vote", authUser, AnswerController.vote);
 router.get("/:id/vote-status", authUser, AnswerController.getVoteStatus);
 
 router.post("/grade-toxicity", authUser, AnswerController.getToxicityGrading);
+
+router.post("/:id/mark-chosen", authUser, AnswerController.markChosen);
 
 export default router;

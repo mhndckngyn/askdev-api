@@ -64,3 +64,16 @@ export type ProfileInfo = {
   bio: string | null;
   createdAt: Date;
 };
+
+export type AdminGetUserParams = {
+  usernameKeyword?: string;
+  joinedOn?: {
+    startDate: string;
+    endDate: string;
+  };
+  isBanned?: boolean;
+  sortBy?: 'username' | 'joinedOn' | 'contributions';
+  sortMode?: 'asc' | 'desc';
+  page: number;
+  pageSize: number;
+};

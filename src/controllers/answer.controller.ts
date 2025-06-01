@@ -225,11 +225,11 @@ const AnswerController = {
     }
   }) as RequestHandler,
 
-  hideQuestions: (async (req, res, next) => {
+  hideAnswers: (async (req, res, next) => {
     try {
       const { ids } = req.body;
 
-      const result = await AnswerService.toggleHideQuestions(ids, true);
+      const result = await AnswerService.toggleHideAnswers(ids, true);
 
       const resBody: ApiResponse = {
         success: true,
@@ -244,11 +244,11 @@ const AnswerController = {
     }
   }) as RequestHandler,
 
-  unhideQuestions: (async (req, res, next) => {
+  unhideAnswers: (async (req, res, next) => {
     try {
       const { ids } = req.body;
 
-      const result = await AnswerService.toggleHideQuestions(ids, false);
+      const result = await AnswerService.toggleHideAnswers(ids, false);
 
       const resBody: ApiResponse = {
         success: true,
@@ -286,6 +286,30 @@ const AnswerController = {
         statusCode: 200,
         message: "answer.toxicity-grading-successful",
         content: result,
+      };
+
+      res.status(200).json(resBody);
+    } catch (err) {
+      next(err);
+    }
+  }) as RequestHandler,
+
+  markChosen: (async (req, res, next) => {
+    try {
+      const { id: answerId } = req.params;
+      const userId = req.user?.id!; // đã có middleware handle
+
+      if (!answerId || typeof answerId !== 'string') {
+        throw new ApiError(400, 'answer.mark-chosen-missing-attributes', true);
+      }
+
+      await AnswerService.markChosen(answerId, userId);
+
+      const resBody: ApiResponse = {
+        success: true,
+        statusCode: 200,
+        message: 'answer.mark-chosen-successful',
+        content: null,
       };
 
       res.status(200).json(resBody);

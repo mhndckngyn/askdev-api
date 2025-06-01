@@ -1,8 +1,10 @@
 import AuthService from '@/services/auth.service';
+import BanService from '@/services/ban.service';
 import UserService from '@/services/user.service';
 import { ApiResponse } from '@/types/response.type';
-import { GetUsersParam } from '@/types/user.type';
+import { AdminGetUserParams, GetUsersParam } from '@/types/user.type';
 import { ApiError } from '@/utils/ApiError';
+import { resolveObjectURL } from 'buffer';
 import { RequestHandler } from 'express';
 
 const UserController = {
@@ -133,6 +135,94 @@ const UserController = {
         statusCode: 200,
         message: 'user.profile-fetched',
         content: profile,
+      };
+
+      res.status(200).json(resBody);
+    } catch (err) {
+      next(err);
+    }
+  }) as RequestHandler,
+
+  adminGet: (async (req, res, next) => {
+    try {
+      const {
+        usernameKeyword,
+        startDate,
+        endDate,
+        isBanned,
+        sortBy,
+        sortMode,
+        page = '1',
+        pageSize = '15',
+      } = req.query;
+
+      const params: AdminGetUserParams = {
+        usernameKeyword:
+          typeof usernameKeyword === 'string' ? usernameKeyword : undefined,
+        joinedOn:
+          typeof startDate === 'string' && typeof endDate === 'string'
+            ? {
+                startDate,
+                endDate,
+              }
+            : undefined,
+        isBanned:
+          isBanned === 'true' ? true : isBanned === 'false' ? false : undefined,
+        sortBy: sortBy as AdminGetUserParams['sortBy'],
+        sortMode: sortMode as AdminGetUserParams['sortMode'],
+        page: Number(page),
+        pageSize: Number(pageSize),
+      };
+
+      const result = await UserService.adminGet(params);
+
+      const resBody: ApiResponse = {
+        success: true,
+        statusCode: 200,
+        message: 'user.fetch-succesful',
+        content: result,
+      }
+
+      res.status(200).json(resBody);
+    } catch (err) {
+      next(err);
+    }
+  }) as RequestHandler,
+
+  banUser: (async (req, res, next) => {
+    try {
+      const userId = req.params.id;
+      const actorId = req.user?.id!; // middleware handle
+      const reason = req.body?.reason ?? '';
+
+      await BanService.banUser(userId, actorId, reason);
+
+      const resBody: ApiResponse = {
+        success: true,
+        statusCode: 200,
+        message: 'user.ban-successful',
+        content: null,
+      };
+
+      res.status(200).json(resBody);
+    } catch (err) {
+      next(err);
+    }
+  }) as RequestHandler,
+
+  unbanUser: (async (req, res, next) => {
+    try {
+      const userId = req.params.id;
+      const actorId = req.user?.id!; // middleware handle
+      const reason = req.body?.reason ?? '';
+
+      await BanService.unbanUser(userId, actorId, reason);
+
+      const resBody: ApiResponse = {
+        success: true,
+        statusCode: 200,
+        message: 'user.unban-successful',
+        content: null,
       };
 
       res.status(200).json(resBody);

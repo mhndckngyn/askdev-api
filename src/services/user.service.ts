@@ -2,12 +2,14 @@ import { uploadToCloudinary } from '@/config/cloudinary';
 import prisma from '@/prisma';
 import { Pagination } from '@/types/response.type';
 import ProfileGetData, {
+  AdminGetUserParams,
   GetUsersParam,
   InterestTags,
   ProfileUpdateData,
 } from '@/types/user.type';
 import { ApiError } from '@/utils/ApiError';
 import { buildProfileResponse, computeInterestTags } from '@/utils/profile';
+import { Prisma } from '@prisma/client';
 
 const UserService = {
   getUserByUsernameKeyword: async ({
@@ -18,7 +20,7 @@ const UserService = {
     const where: any = {
       ...(username && {
         username: {
-          startsWith: username,
+          contains: username,
           mode: 'insensitive',
         },
       }),
@@ -114,7 +116,7 @@ const UserService = {
     }
 
     const questions = await prisma.question.findMany({
-      where: { userId: profile.id },
+      where: { userId: profile.id, isHidden: false },
       orderBy: {
         upvotes: 'desc', // cho đơn giản thay vì upvotes - downvotes
       },
@@ -134,7 +136,7 @@ const UserService = {
     });
 
     const answers = await prisma.answer.findMany({
-      where: { userId: profile.id },
+      where: { userId: profile.id, isHidden: false },
       orderBy: {
         upvotes: 'desc',
       },
@@ -182,6 +184,129 @@ const UserService = {
     }
 
     return profile;
+  },
+
+  adminGet: async (params: AdminGetUserParams) => {
+    const {
+      usernameKeyword,
+      joinedOn,
+      isBanned,
+      sortBy = 'username',
+      sortMode = 'asc',
+      page = 1,
+      pageSize = 15,
+    } = params;
+
+    const whereClause = {
+      ...(usernameKeyword && {
+        username: {
+          contains: usernameKeyword,
+          mode: Prisma.QueryMode.insensitive,
+        },
+      }),
+      ...(joinedOn && {
+        createdAt: {
+          gte: new Date(new Date(joinedOn.startDate).setHours(0, 0, 0, 0)),
+          lte: new Date(new Date(joinedOn.endDate).setHours(23, 59, 59, 999)),
+        },
+      }),
+      ...(isBanned && {
+        isBanned,
+      }),
+    };
+
+    const sortOrder =
+      sortMode === 'asc' ? Prisma.SortOrder.asc : Prisma.SortOrder.desc;
+    const order =
+      sortBy === 'username'
+        ? { username: sortOrder }
+        : sortBy === 'joinedOn'
+        ? { createdAt: sortOrder }
+        : {};
+
+    const [total, results] = await prisma.$transaction([
+      prisma.user.count({
+        where: whereClause,
+      }),
+      prisma.user.findMany({
+        where: whereClause,
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+        orderBy: order,
+        include: {
+          questions: true,
+          answers: true,
+          comments: true,
+          reports: {
+            select: {
+              id: true,
+            },
+          },
+        },
+      }),
+    ]);
+
+    let transformed = results.map((user) => {
+      const getContribution = (u: typeof user) => {
+        const questions = u.questions.length;
+        const answers = u.answers.length;
+        const comments = u.comments.length;
+        const reports = u.reports.length;
+
+        return {
+          questions,
+          answers,
+          comments,
+          reports,
+          total: questions + answers + comments + reports,
+        };
+      };
+
+      const getReputation = (u: typeof user) => {
+        const questions = u.questions.reduce((sum, q) => sum + q.upvotes, 0);
+        const answers = u.answers.reduce((sum, a) => sum + a.upvotes, 0);
+        const comments = u.comments.reduce((sum, c) => sum + c.upvotes, 0);
+
+        return {
+          questions,
+          answers,
+          comments,
+          total: questions + answers + comments,
+        };
+      };
+
+      return {
+        id: user.id,
+        username: user.username,
+        avatar: user.profilePicture,
+        joinedOn: user.createdAt,
+        role: user.role,
+        isBanned: user.isBanned,
+        contribution: getContribution(user),
+        reputation: getReputation(user),
+      };
+    });
+
+    if (sortBy === 'contributions') {
+      const sortOrderMultiplier = sortMode === 'asc' ? 1 : -1;
+
+      transformed.sort(
+        (a, b) =>
+          (a.contribution.total - b.contribution.total) * sortOrderMultiplier
+      );
+    }
+
+    const pagination: Pagination = {
+      total,
+      totalPages: Math.ceil(total / pageSize),
+      currentPage: page,
+      count: pageSize,
+    };
+
+    return {
+      users: transformed,
+      pagination,
+    };
   },
 };
 

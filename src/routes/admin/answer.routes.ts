@@ -3,7 +3,8 @@ import { Router } from 'express';
 
 const router = Router();
 
-router.post('/hide', AnswerController.hideQuestions);
-router.post('/unhide', AnswerController.unhideQuestions);
+router.get("/", AnswerController.getByParams);
+router.patch('/hide', AnswerController.hideAnswers);
+router.patch('/unhide', AnswerController.unhideAnswers);
 
 export default router;

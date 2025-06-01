@@ -40,6 +40,11 @@ enum  NotificationType{
   ANSWER_CHOSEN
 }
 
+enum BanAction {
+  BAN
+  UNBAN
+}
+
 
 enum HistoryType {
   QUESTION_CREATE
@@ -71,6 +76,7 @@ model User {
   github         String?
   showGithub     Boolean  @default(false)
   createdAt      DateTime @default(now())
+  isBanned       Boolean  @default(false)
 
   account Account? @relation()
 
@@ -86,6 +92,9 @@ model User {
 
   notifications          Notification[]  @relation("UserNotifications")
   actedNotifications     Notification[]  @relation("NotificationActor")
+
+  banLogs        BanLog[] @relation("BannedUser")
+  bansIssued     BanLog[] @relation("BanActor")
 }
 
 model Account {
@@ -288,6 +297,18 @@ model Notification {
 
   @@index([userId])
   @@index([actorId])
+}
+
+model BanLog {
+  id         String   @id @default(uuid())
+  userId     String
+  actorId    String   // người ban
+  action     BanAction
+  reason     String?
+  createdAt  DateTime @default(now())
+
+  user       User     @relation("BannedUser", fields: [userId], references: [id])
+  admin      User     @relation("BanActor", fields: [actorId], references: [id])
 }
 
 

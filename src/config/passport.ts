@@ -8,6 +8,15 @@ import {
 import { VerifyCallback } from 'passport-oauth2';
 import { constants } from './constants';
 
+
+/* 
+  Người dùng truy cập /auth/google → redirect đến Google và đăng nhập
+  Google redirect về /auth/google/callback?code=...
+  Middleware: Passport dùng code để lấy access token + thông tin profile
+  Sau khi lấy thành công, password gọi service với profile để lấy thông tin user và tạo jwt token
+  Gán user và token vào req.user, tiếp tục đến controller OAuth callback để gán token và return về app
+*/
+
 passport.use(
   new GoogleStrategy(
     {

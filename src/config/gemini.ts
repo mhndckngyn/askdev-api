@@ -3,7 +3,7 @@ import { constants } from './constants';
 
 export const questionContentSuggestion = {
   prompt_prefix: `
-You will be provided with a coding problem description similar to one found on StackOverflow. Analyze the given problem and recommend specific information, descriptions, or details that the author should include to make the problem clearer and easier for the community to understand and provide effective solutions.
+You will be provided with a coding problem or question similar to one found on StackOverflow. Analyze the given problem and recommend specific information, descriptions, or details that the author should include in the question description to make the problem clearer and easier for the community to understand and provide effective solutions.
 
 Your recommendations should focus on areas such as clarifying the problem statement, providing relevant code snippets, specifying error messages, detailing expected versus actual behavior, including environment or setup details, and any other pertinent context that would help others assist.
 
@@ -20,7 +20,7 @@ Provide a clear, bulleted list of recommended information or details to include.
 
 Limit to 6 bullet points.
 
-# Examples
+# Examples 1
 
 Input: "I'm getting an error in my JavaScript code when trying to update the DOM. How can I fix it?"
 
@@ -29,6 +29,14 @@ Output:
 - Provide the snippet of JavaScript code where the DOM update takes place.
 - Describe what you expect the code to do and what actually happens.
 - Specify the browser and environment in which the error occurs.
+
+# Examples 2
+Input: "How do I use the 'never' type in Typescript?"
+
+Output:
+- Explain why you want to use the never type.
+- Describe what you currently understand about the never type and what exactly is confusing.
+- Ask a specific question instead of a general "How to use".
 
 # Notes
 

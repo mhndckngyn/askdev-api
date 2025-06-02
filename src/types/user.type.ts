@@ -42,6 +42,7 @@ export default interface ProfileGetData {
 
 interface PostPreview {
   id: string;
+  questionId?: string;
   questionTitle: string;
   upvotes: number;
   tags: Tag[];

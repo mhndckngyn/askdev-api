@@ -94,6 +94,7 @@ export function buildProfileResponse({
     })),
     answers: answers.slice(0, 8).map((a) => ({
       id: a.id,
+      questionId: a.questionId,
       questionTitle: a.question.title,
       upvotes: a.upvotes,
       tags: a.question.tags,

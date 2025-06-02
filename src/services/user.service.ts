@@ -145,6 +145,7 @@ const UserService = {
         upvotes: true,
         downvotes: true,
         createdAt: true,
+        questionId: true,
         question: {
           select: {
             title: true,

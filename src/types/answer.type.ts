@@ -12,6 +12,7 @@ export type GetAnswersParam = {
 export type AnswerForProfile = {
   id: string;
   createdAt: Date;
+  questionId: string;
   question: {
     title: string;
     tags: {

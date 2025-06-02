@@ -1,10 +1,12 @@
-import prisma from '@/prisma';
-import { uploadMultiple } from '@/config/cloudinary';
-import { GetCommentsParam } from '@/types/comment.type';
-import { Pagination } from '@/types/response.type';
-import { ApiError } from '@/utils/ApiError';
-import dayjs from 'dayjs';
-import { Prisma } from 'generated/prisma';
+import prisma from "@/prisma";
+import { uploadMultiple } from "@/config/cloudinary";
+import { GetCommentsParam } from "@/types/comment.type";
+import { Pagination } from "@/types/response.type";
+import { ApiError } from "@/utils/ApiError";
+import dayjs from "dayjs";
+import { Prisma } from "generated/prisma";
+import HistoryService from "./history.service";
+import { HistoryType } from "@/types/history.type";
 
 type CreateCommentPayload = {
   userId: string;
@@ -17,7 +19,7 @@ const CommentService = {
   getCommentsByAnswerId: async (answerId: string) => {
     const comments = await prisma.comment.findMany({
       where: { answerId },
-      orderBy: { createdAt: 'asc' },
+      orderBy: { createdAt: "asc" },
       select: {
         id: true,
         userId: true,
@@ -79,9 +81,18 @@ const CommentService = {
           userId: answer.userId,
           actorId: userId,
           contentTitle: answer.question.title,
-          type: 'COMMENT',
+          type: "COMMENT",
           questionId: answer.questionId,
         },
+      });
+    }
+
+    if (answer) {
+      await HistoryService.createHistory({
+        userId,
+        type: HistoryType.COMMENT_CREATE,
+        contentTitle: content,
+        questionId: answer.questionId,
       });
     }
 
@@ -102,17 +113,17 @@ const CommentService = {
 
     const createdAtFilter: Record<string, Date> = {};
     if (startDate) {
-      createdAtFilter.gte = dayjs(startDate).startOf('day').toDate();
+      createdAtFilter.gte = dayjs(startDate).startOf("day").toDate();
     }
     if (endDate) {
-      createdAtFilter.lte = dayjs(endDate).endOf('day').toDate();
+      createdAtFilter.lte = dayjs(endDate).endOf("day").toDate();
     }
 
     const where: Prisma.CommentWhereInput = {
       ...(content && {
         OR: [
-          { content: { contains: content, mode: 'insensitive' } },
-          { id: { contains: content, mode: 'insensitive' } },
+          { content: { contains: content, mode: "insensitive" } },
+          { id: { contains: content, mode: "insensitive" } },
         ],
       }),
       ...(parentId && {
@@ -146,7 +157,7 @@ const CommentService = {
         where,
         skip,
         take: pageSize,
-        orderBy: { createdAt: 'desc' },
+        orderBy: { createdAt: "desc" },
         select: {
           id: true,
           content: true,
@@ -157,7 +168,7 @@ const CommentService = {
           answer: {
             select: {
               content: true,
-              questionId: true
+              questionId: true,
             },
           },
           user: {
@@ -186,7 +197,7 @@ const CommentService = {
       isHidden: a.isHidden,
       votes: a.upvotes - a.downvotes,
       createdAt: a.createdAt.toISOString(),
-      updatedAt: a.updatedAt?.toISOString() || '',
+      updatedAt: a.updatedAt?.toISOString() || "",
       user: a.user,
     }));
 
@@ -211,14 +222,26 @@ const CommentService = {
   ) => {
     const existing = await prisma.comment.findUnique({
       where: { id },
+      include: {
+        answer: {
+          select: {
+            questionId: true,
+            question: {
+              select: {
+                title: true,
+              },
+            },
+          },
+        },
+      },
     });
 
     if (!existing) {
-      throw new ApiError(404, 'api:comment.not-found', true);
+      throw new ApiError(404, "api:comment.not-found", true);
     }
 
     if (existing.userId !== userId) {
-      throw new ApiError(403, 'api:comment.forbidden', true);
+      throw new ApiError(403, "api:comment.forbidden", true);
     }
 
     const images =
@@ -242,23 +265,50 @@ const CommentService = {
       },
     });
 
+    await HistoryService.createHistory({
+      userId,
+      type: HistoryType.COMMENT_EDIT,
+      contentTitle: content,
+      questionId: existing.answer.questionId,
+    });
+
     return updated;
   },
 
   deleteComment: async (id: string, userId: string) => {
     const existing = await prisma.comment.findUnique({
       where: { id },
+      include: {
+        answer: {
+          select: {
+            questionId: true,
+            question: {
+              select: {
+                title: true,
+              },
+            },
+          },
+        },
+      },
     });
 
     if (!existing) {
-      throw new ApiError(404, 'api:comment.not-found', true);
+      throw new ApiError(404, "api:comment.not-found", true);
     }
 
     if (existing.userId !== userId) {
-      throw new ApiError(403, 'api:comment.forbidden', true);
+      throw new ApiError(403, "api:comment.forbidden", true);
     }
+
     const comment = await prisma.comment.delete({
       where: { id },
+    });
+
+    await HistoryService.createHistory({
+      userId,
+      type: HistoryType.COMMENT_DELETE,
+      contentTitle: comment.content,
+      questionId: existing.answer.questionId,
     });
 
     return comment;
@@ -282,12 +332,17 @@ const CommentService = {
         answer: {
           select: {
             questionId: true,
+            question: {
+              select: {
+                title: true,
+              },
+            },
           },
         },
       },
     });
 
-    if (!comment) throw new ApiError(404, 'comment.not-found', true);
+    if (!comment) throw new ApiError(404, "comment.not-found", true);
 
     if (comment.userId !== userId) {
       await prisma.notification.create({
@@ -296,10 +351,13 @@ const CommentService = {
           actorId: userId,
           contentTitle: comment.content,
           questionId: comment.answer.questionId,
-          type: 'COMMENT_VOTE',
+          type: "COMMENT_VOTE",
         },
       });
     }
+
+    let action = "";
+    let historyType: "COMMENT_VOTE" | "COMMENT_DOWNVOTE" | null = null;
 
     if (existingVote) {
       if (existingVote.type === type) {
@@ -324,7 +382,7 @@ const CommentService = {
           },
         });
 
-        return { action: 'removed' };
+        action = "removed";
       } else {
         await prisma.commentVote.update({
           where: {
@@ -348,7 +406,8 @@ const CommentService = {
           },
         });
 
-        return { action: 'changed' };
+        action = "changed";
+        historyType = type === 1 ? "COMMENT_VOTE" : "COMMENT_DOWNVOTE";
       }
     } else {
       await prisma.commentVote.create({
@@ -371,8 +430,20 @@ const CommentService = {
         },
       });
 
-      return { action: 'created' };
+      action = "created";
+      historyType = type === 1 ? "COMMENT_VOTE" : "COMMENT_DOWNVOTE";
     }
+
+    if (historyType && comment.answer.question) {
+      await HistoryService.createHistory({
+        userId,
+        type: historyType as HistoryType,
+        contentTitle: comment.content,
+        questionId: comment.answer.questionId,
+      });
+    }
+
+    return { action };
   },
 
   getVoteStatus: async (userId: string, commentId: string) => {
@@ -386,9 +457,9 @@ const CommentService = {
     });
 
     if (!existingVote) {
-      return { status: 'none' };
+      return { status: "none" };
     }
-    return { status: existingVote.type === 1 ? 'like' : 'dislike' };
+    return { status: existingVote.type === 1 ? "like" : "dislike" };
   },
 
   toggleHideComment: async (ids: string[], hidden: boolean) => {

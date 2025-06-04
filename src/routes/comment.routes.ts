@@ -19,4 +19,6 @@ router.get("/:id/vote-status", authUser, CommentController.getVoteStatus);
 
 router.post("/grade-toxicity", authUser, CommentController.getToxicityGrading);
 
+router.patch("/:id/toggle-hidden", authUser, CommentController.toggleHidden);
+
 export default router;

@@ -17,7 +17,7 @@ type CreateAnswerPayload = {
 const AnswerService = {
   getAnswersByQuestionId: async (questionId: string) => {
     const answers = await prisma.answer.findMany({
-      where: { questionId },
+      where: { questionId, isHidden: false },
       orderBy: { createdAt: "asc" },
       select: {
         id: true,
@@ -36,10 +36,25 @@ const AnswerService = {
             profilePicture: true,
           },
         },
+        question: {
+          select: {
+            userId: true,
+            isSolved: true,
+            title: true,
+          },
+        },
       },
     });
 
-    return answers;
+    const question = await prisma.question.findUnique({
+      where: { id: questionId },
+      select: { title: true },
+    });
+
+    return {
+      answers,
+      title: question?.title ?? null,
+    };
   },
 
   getAnswers: async (params: GetAnswersParam) => {
@@ -473,7 +488,9 @@ const AnswerService = {
     const answer = await prisma.answer.findFirst({
       where: { id: answerId },
       include: {
-        question: { select: { id: true, userId: true, title: true } },
+        question: {
+          select: { id: true, userId: true, title: true, isSolved: true },
+        },
       },
     });
 
@@ -486,26 +503,75 @@ const AnswerService = {
     }
 
     try {
-      await prisma.$transaction([
-        prisma.answer.update({
-          where: { id: answer.id },
-          data: { isChosen: true },
-        }),
-        prisma.question.update({
+      const newIsChosen = !answer.isChosen;
+
+      await prisma.answer.update({
+        where: { id: answer.id },
+        data: { isChosen: newIsChosen },
+      });
+
+      if (newIsChosen && !answer.question.isSolved) {
+        await prisma.question.update({
           where: { id: answer.question.id },
           data: { isSolved: true },
-        }),
-      ]);
+        });
 
-      await HistoryService.createHistory({
-        userId,
-        type: HistoryType.ANSWER_CHOSEN,
-        contentTitle: answer.content,
-        questionId: answer.question.id,
-      });
+        await HistoryService.createHistory({
+          userId,
+          type: HistoryType.ANSWER_CHOSEN,
+          contentTitle: answer.content,
+          questionId: answer.question.id,
+        });
+      }
+
+      if (!newIsChosen) {
+        const otherChosen = await prisma.answer.findFirst({
+          where: {
+            questionId: answer.question.id,
+            isChosen: true,
+            NOT: { id: answer.id },
+          },
+        });
+
+        if (!otherChosen) {
+          await prisma.question.update({
+            where: { id: answer.question.id },
+            data: { isSolved: false },
+          });
+        }
+      }
     } catch (err) {
       throw new ApiError(500, "answer.mark-chosen-unexpected-error");
     }
+  },
+
+  toggleHiddenStatus: async (answerId: string, actorId: string) => {
+    const answer = await prisma.answer.findFirst({
+      where: {
+        id: answerId,
+        userId: actorId,
+      },
+      select: {
+        id: true,
+        isHidden: true,
+        userId: true,
+        question: {
+          select: {
+            title: true,
+            id: true,
+          },
+        },
+      },
+    });
+
+    if (!answer) throw new ApiError(404, "api:answer.not-found");
+
+    const updated = await prisma.answer.update({
+      where: { id: answerId },
+      data: { isHidden: !answer.isHidden },
+    });
+
+    return updated;
   },
 };
 

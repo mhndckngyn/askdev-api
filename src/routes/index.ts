@@ -11,6 +11,7 @@ import homeRoute from "./home.routes";
 import notificationRoute from "./notification.routes";
 import searchRoute from "./search.routes";
 import historyRoute from "./history.routes";
+import memberRoute from "./member.routes";
 
 import { authAdmin, authUser } from "@/middlewares/auth";
 const router = Router();
@@ -27,5 +28,6 @@ router.use("/admin", /* authUser, authAdmin, TODO: uncomment*/ adminRoute);
 router.use("/notification", notificationRoute);
 router.use("/search", searchRoute);
 router.use("/history", historyRoute);
+router.use("/member", memberRoute);
 
 export default router;

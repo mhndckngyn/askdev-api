@@ -273,6 +273,32 @@ const CommentController = {
       next(err);
     }
   }) as RequestHandler,
+
+  toggleHidden: (async (req, res, next) => {
+    try {
+      if (!req.user?.id) {
+        throw new ApiError(401, "api:auth.login-first", true);
+      }
+      const { id: commentId } = req.params;
+
+      const actorId = req.user.id;
+
+      const updatedAnswer = await CommentService.toggleHiddenStatus(
+        commentId,
+        actorId
+      );
+
+      const resBody: ApiResponse = {
+        success: true,
+        statusCode: 200,
+        content: updatedAnswer,
+      };
+
+      res.status(200).json(resBody);
+    } catch (err) {
+      next(err);
+    }
+  }) as RequestHandler,
 };
 
 export default CommentController;

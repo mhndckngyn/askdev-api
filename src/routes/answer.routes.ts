@@ -23,4 +23,6 @@ router.post("/grade-toxicity", authUser, AnswerController.getToxicityGrading);
 
 router.post("/:id/mark-chosen", authUser, AnswerController.markChosen);
 
+router.patch("/:id/toggle-hidden", authUser, AnswerController.toggleHidden);
+
 export default router;

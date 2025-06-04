@@ -299,8 +299,8 @@ const AnswerController = {
       const { id: answerId } = req.params;
       const userId = req.user?.id!; // đã có middleware handle
 
-      if (!answerId || typeof answerId !== 'string') {
-        throw new ApiError(400, 'answer.mark-chosen-missing-attributes', true);
+      if (!answerId || typeof answerId !== "string") {
+        throw new ApiError(400, "answer.mark-chosen-missing-attributes", true);
       }
 
       await AnswerService.markChosen(answerId, userId);
@@ -308,8 +308,34 @@ const AnswerController = {
       const resBody: ApiResponse = {
         success: true,
         statusCode: 200,
-        message: 'answer.mark-chosen-successful',
+        message: "answer.mark-chosen-successful",
         content: null,
+      };
+
+      res.status(200).json(resBody);
+    } catch (err) {
+      next(err);
+    }
+  }) as RequestHandler,
+
+  toggleHidden: (async (req, res, next) => {
+    try {
+      if (!req.user?.id) {
+        throw new ApiError(401, "api:auth.login-first", true);
+      }
+      const { id: answerId } = req.params;
+
+      const actorId = req.user.id;
+
+      const updatedAnswer = await AnswerService.toggleHiddenStatus(
+        answerId,
+        actorId
+      );
+
+      const resBody: ApiResponse = {
+        success: true,
+        statusCode: 200,
+        content: updatedAnswer,
       };
 
       res.status(200).json(resBody);

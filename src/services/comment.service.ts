@@ -18,7 +18,7 @@ type CreateCommentPayload = {
 const CommentService = {
   getCommentsByAnswerId: async (answerId: string) => {
     const comments = await prisma.comment.findMany({
-      where: { answerId },
+      where: { answerId, isHidden: false },
       orderBy: { createdAt: "asc" },
       select: {
         id: true,
@@ -476,6 +476,29 @@ const CommentService = {
     });
 
     return result;
+  },
+
+  toggleHiddenStatus: async (commentId: string, actorId: string) => {
+    const answer = await prisma.comment.findFirst({
+      where: {
+        id: commentId,
+        userId: actorId,
+      },
+      select: {
+        id: true,
+        isHidden: true,
+        userId: true,
+      },
+    });
+
+    if (!answer) throw new ApiError(404, "api:comment.not-found");
+
+    const updated = await prisma.comment.update({
+      where: { id: commentId },
+      data: { isHidden: !answer.isHidden },
+    });
+
+    return updated;
   },
 };
 

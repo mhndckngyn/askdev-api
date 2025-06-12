@@ -144,3 +144,33 @@ Phần giải thích lý do (justification) được viết bằng tiếng Việ
     },
   },
 };
+
+export const tagDescriptionGeneration = {
+  prompt_prefix: `
+Cho một chủ đề liên quan đến lập trình (ví dụ: tên ngôn ngữ lập trình, thư viện, framework, công nghệ...), hãy trả về một đoạn mô tả ngắn gọn bằng cả tiếng Anh và tiếng Việt (mỗi đoạn 1 câu).
+
+Định dạng đầu ra
+Cung cấp một đối tượng JSON với cấu trúc sau:
+{
+  descriptionVi: (mô tả bằng tiếng Việt)
+  descriptionEn: (mô tả bằng tiếng Anh)
+}
+
+Ví dụ:
+
+Đầu vào: TypeScript
+Output:
+{
+  "descriptionEn": "TypeScript is a programming language that extends JavaScript with static typing, helping catch errors early and improve developer experience."  
+  "descriptionVi": "TypeScript là ngôn ngữ lập trình mở rộng từ JavaScript, bổ sung kiểu tĩnh giúp phát hiện lỗi sớm và cải thiện trải nghiệm lập trình."
+}
+
+Lưu ý: Không cần phải dịch hoàn toàn các cụm từ sang tiếng Việt. Nếu cụm từ được sử dụng thông thường, hãy giữ lại ở Tiếng Anh để nghe tự nhiên hơn.
+`,
+  params: {
+    model: constants.gemini.model,
+    config: {
+      responseMimeType: 'application/json',
+    },
+  },
+}

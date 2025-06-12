@@ -11,6 +11,7 @@ import TagService from "./tag.service";
 import HistoryService from "./history.service";
 import dayjs from "dayjs";
 import { HistoryType } from "@/types/history.type";
+import { Prisma } from "generated/prisma";
 
 const QuestionService = {
   getQuestionById: async (id: string) => {
@@ -99,7 +100,7 @@ const QuestionService = {
       createdAtFilter.gte = dayjs(startDate).startOf("day").toDate();
     if (endDate) createdAtFilter.lte = dayjs(endDate).endOf("day").toDate();
 
-    const where: any = {
+    const where: Prisma.QuestionWhereInput = {
       ...(titleKeyword && {
         OR: [
           { title: { contains: titleKeyword, mode: "insensitive" } },

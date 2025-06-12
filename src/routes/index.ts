@@ -24,7 +24,7 @@ router.use("/tag", tagRoute);
 router.use("/answer", answerRoute);
 router.use("/comment", commentRoute);
 router.use("/report", reportRoute);
-router.use("/admin", /* authUser, authAdmin, TODO: uncomment*/ adminRoute);
+router.use("/admin", authUser, authAdmin, adminRoute);
 router.use("/notification", notificationRoute);
 router.use("/search", searchRoute);
 router.use("/history", historyRoute);

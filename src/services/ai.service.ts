@@ -3,6 +3,7 @@ import {
   answerToxicityGrading,
   commentToxicityGrading,
   questionContentSuggestion,
+  tagDescriptionGeneration,
 } from '@/config/gemini';
 import { ApiError } from '@/utils/ApiError';
 import { GoogleGenAI } from '@google/genai';
@@ -47,13 +48,12 @@ Bình luận: ${answer}
     }
   },
   getCommentToxicityGrading: async (answer: string, comment: string) => {
-    try {
-      const problem = `
+    const problem = `
 Dưới đây là dữ liệu cần xử lý:
 Bình luận gốc: ${answer}
 Phản hồi: ${comment}
 `;
-
+    try {
       const response = await ai.models.generateContent({
         ...commentToxicityGrading.params,
         contents: commentToxicityGrading.prompt_prefix + problem,
@@ -66,6 +66,25 @@ Phản hồi: ${comment}
       };
     } catch (err) {
       throw new ApiError(500, 'comment.grade-toxicity-failed');
+    }
+  },
+
+  generateTagDescription: async (tagName: string) => {
+    const problem = '\nĐây là thẻ chủ đề cần tạo mô tả: ' + tagName;
+
+    try {
+      const response = await ai.models.generateContent({
+        ...tagDescriptionGeneration.params,
+        contents: tagDescriptionGeneration.prompt_prefix + problem
+      });
+
+      const parsed = JSON.parse(response.text!);
+      return {
+        descriptionVi: parsed.descriptionVi,
+        descriptionEn: parsed.descriptionEn
+      }
+    } catch (err) {
+      throw new ApiError(500, 'tag.generate-description-failed');
     }
   },
 };

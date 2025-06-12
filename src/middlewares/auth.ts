@@ -39,11 +39,10 @@ export const authUser: RequestHandler = async (req, _res, next) => {
 // phải đặt sau authUser middleware
 export const authAdmin: RequestHandler = async (req, _res, next) => {
   try {
-    console.log('User role: ', req.user?.role);
-
-    if (!(req.user?.role !== 'admin')) {
+    if (req.user?.role !== 'ADMIN') {
       throw new ApiError(403, 'auth.unauthorized', true);
     }
+    next();
   } catch (err) {
     next(err);
   }

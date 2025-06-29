@@ -4,12 +4,10 @@ import { Pagination } from '@/types/response.type';
 import ProfileGetData, {
   AdminGetUserParams,
   GetUsersParam,
-  InterestTags,
   ProfileUpdateData,
 } from '@/types/user.type';
 import { ApiError } from '@/utils/ApiError';
 import { buildProfileResponse, computeInterestTags } from '@/utils/profile';
-import { Prisma } from '@prisma/client';
 
 const UserService = {
   getUserByUsernameKeyword: async ({
@@ -202,7 +200,7 @@ const UserService = {
       ...(usernameKeyword && {
         username: {
           contains: usernameKeyword,
-          mode: Prisma.QueryMode.insensitive,
+          mode: 'insensitive' as const,
         },
       }),
       ...(joinedOn && {
@@ -211,19 +209,18 @@ const UserService = {
           lte: new Date(new Date(joinedOn.endDate).setHours(23, 59, 59, 999)),
         },
       }),
-      ...(isBanned && {
+      ...(isBanned !== undefined && {
         isBanned,
       }),
     };
 
-    const sortOrder =
-      sortMode === 'asc' ? Prisma.SortOrder.asc : Prisma.SortOrder.desc;
-    const order =
+    const sortOrder = sortMode === 'asc' ? ('asc' as const) : ('desc' as const);
+    const order: any =
       sortBy === 'username'
         ? { username: sortOrder }
         : sortBy === 'joinedOn'
         ? { createdAt: sortOrder }
-        : {};
+        : { username: 'asc' as const };
 
     const [total, results] = await prisma.$transaction([
       prisma.user.count({
